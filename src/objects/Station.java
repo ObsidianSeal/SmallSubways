@@ -5,7 +5,9 @@
  * DESCRIPTION: Object; represents a subway station.
  */
 
-package main;
+package objects;
+
+import enums.Shape;
 
 /**
  * The Station object.
