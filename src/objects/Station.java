@@ -19,6 +19,7 @@ public class Station {
     private double size;
     private double x, y;
     private Shape type;
+    private boolean selected;
 
     /**
      * Station constructor; coordinates are from the 64x36 grid and converted to pixels.
@@ -98,13 +99,29 @@ public class Station {
     }
 
     /**
+     * Get whether the station is selected.
+     * @return Whether the station is selected or not.
+     */
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Set whether the station is selected.
+     * @param selected The selection state of the station.
+     */
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    /**
      * Draw the station.
      */
     public void draw() {
         int iX = (int) this.x;
         int iY = (int) this.y;
         int iSize = (int) this.size;
-        
+
         Main.g2D.setColor(Color.WHITE);
         switch (this.type) {
             case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
@@ -134,5 +151,11 @@ public class Station {
             case OVAL -> Main.g2D.drawOval(iX, iY, iSize, iSize);
         }
     }
-    
+
+    public void drawSelected() {
+        Main.g2D.setColor(Color.red);
+        Main.g2D.fillOval((int) this.x - 10, (int) this.y - 10, (int) this.size + 20, (int) this.size + 20);
+        draw();
+    }
+
 }

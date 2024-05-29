@@ -13,8 +13,7 @@ import utilities.ImageUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -43,6 +42,12 @@ public class Main {
     public static Graphics2D g2D;
     static GraphicsPanel graphicsPanel;
 
+    // booleans
+    public static boolean clicked;
+
+    // objects & object arrays :D
+    public static ArrayList<Station> stations = new ArrayList<Station>();
+
     // timer - for animation, etc.
     static int ticks = 500;
     Timer timer = new Timer(10, new ActionListener() {
@@ -69,6 +74,7 @@ public class Main {
 
         // graphics, added last to get the correct size
         graphicsPanel = new GraphicsPanel();
+        graphicsPanel.addMouseListener(new MouseListener());
         mainFrame.add(graphicsPanel);
 
         // begin!
@@ -82,11 +88,10 @@ public class Main {
 
         // variables
         int opacity = 0;
-        ArrayList<Station> stations = new ArrayList<Station>();
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
-        BufferedImage background = ImageUtilities.importImage("src\\images\\levels\\victoria.png");
+        BufferedImage background = ImageUtilities.importImage("src\\images\\levels\\waterloo.png");
 
         /**
          * GraphicsPanel constructor.
@@ -130,10 +135,39 @@ public class Main {
                 ImageUtilities.drawImageFullScreen(background);
 
                 for (Station station : stations) {
-                    station.draw();
+                    if (station.isSelected()) {
+                        station.drawSelected();
+                    } else {
+                        station.draw();
+                    }
                 }
             }
         }
+    }
+
+    private static class KeyboardListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+    }
+
+    private static class MouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            clicked = true;
+            for (Station s : stations) {
+                // System.out.println(e.getX() + " " + e.getY());
+                // System.out.println(s.getX() + " " + s.getY());
+                if (Math.abs(s.getX() - e.getX()) < 30 &&
+                Math.abs(s.getY() - e.getY()) < 30) {
+                    s.setSelected(true);
+                }
+            }
+        }
+    }
+
+    private static class MouseMotionListener extends MouseMotionAdapter {
 
     }
 

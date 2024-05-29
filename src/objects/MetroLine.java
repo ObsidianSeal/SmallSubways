@@ -7,9 +7,14 @@
 
 package objects;
 
+import java.awt.*;
+
 /**
  *
  */
 public class MetroLine {
 
+    MetroLine(Station[] stations, Color color) {
+
+    }
 }
