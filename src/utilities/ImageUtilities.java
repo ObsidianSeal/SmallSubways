@@ -7,6 +7,8 @@
 
 package utilities;
 
+import main.Main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -33,6 +35,16 @@ public class ImageUtilities {
         }
 
         return image;
+    }
+
+    /**
+     * Draw an image fullscreen, likely for a background.
+     * @param g2D The Graphics2D object, to draw the image.
+     * @param panel The JPanel object, to get 100% of the width and height.
+     * @param image The BufferedImage to draw fullscreen.
+     */
+    public static void drawImageFullScreen(BufferedImage image) {
+        Main.g2D.drawImage(image, 0, 0, Main.mainFrame.getWidth(), Main.mainFrame.getHeight(), null);
     }
 
 }

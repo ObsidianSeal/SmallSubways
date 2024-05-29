@@ -8,31 +8,52 @@
 package objects;
 
 import enums.Shape;
+import main.Main;
+
+import java.awt.*;
 
 /**
- * The Station object.
+ * The Station object; double values because of different screen sizes.
  */
 public class Station {
-    private int x, y;
+    private double size;
+    private double x, y;
     private Shape type;
 
     /**
-     * Station constructor.
+     * Station constructor; coordinates are from the 64x36 grid and converted to pixels.
      * @param x Assign the station's x-coordinate.
      * @param y Assign the station's y-coordinate.
      * @param type Assign the station's type.
      */
     public Station(int x, int y, Shape type) {
-        this.x = x;
-        this.y = y;
+        this.size = Main.mainFrame.getWidth() / 64.0;
+        this.x = x * (Main.mainFrame.getWidth() / 64.0);
+        this.y = y * (Main.mainFrame.getHeight() / 36.0);
         this.type = type;
+    }
+
+    /**
+     * Get the station's size.
+     * @return The station's current size.
+     */
+    public double getSize() {
+        return this.size;
+    }
+
+    /**
+     * Set the station's size.
+     * @param size The station's new size.
+     */
+    public void setSize(double size) {
+        this.size = size;
     }
 
     /**
      * Get the station's x-coordinate.
      * @return The station's current x-coordinate.
      */
-    public int getX() {
+    public double getX() {
         return this.x;
     }
 
@@ -40,7 +61,7 @@ public class Station {
      * Set the station's x-coordinate.
      * @param x The station's new x-coordinate.
      */
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
@@ -48,7 +69,7 @@ public class Station {
      * Get the station's y-coordinate.
      * @return The station's current y-coordinate.
      */
-    public int getY() {
+    public double getY() {
         return this.y;
     }
 
@@ -56,7 +77,7 @@ public class Station {
      * Set the station's y-coordinate.
      * @param y The station's new y-coordinate.
      */
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -74,5 +95,39 @@ public class Station {
      */
     public void setType(Shape type) {
         this.type = type;
+    }
+
+    /**
+     * Draw the station.
+     */
+    public void draw() {
+        Main.g2D.setColor(Color.WHITE);
+        switch (this.type) {
+            case CIRCLE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case TRIANGLE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case SQUARE -> Main.g2D.fillRect((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case STAR -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case PENTAGON -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case GEM -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case CROSS -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case WEDGE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case DIAMOND -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case OVAL -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+        }
+
+        Main.g2D.setColor(Color.BLACK);
+        Main.g2D.setStroke(new BasicStroke(3));
+        switch (this.type) {
+            case CIRCLE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case TRIANGLE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case SQUARE -> Main.g2D.drawRect((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case STAR -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case PENTAGON -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case GEM -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case CROSS -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case WEDGE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case DIAMOND -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case OVAL -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+        }
     }
 }

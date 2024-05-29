@@ -7,6 +7,8 @@
 
 package main;
 
+import enums.Shape;
+import objects.Station;
 import utilities.ImageUtilities;
 
 import javax.swing.*;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Main everything - this is where it all begins.
@@ -34,11 +37,11 @@ public class Main {
     }
 
     // the window
-    JFrame mainFrame = new JFrame();
+    public static JFrame mainFrame = new JFrame();
 
     // graphics!
-    static Graphics2D g2D;
-    static GraphicsPanel graphicsPanel = new GraphicsPanel();
+    public static Graphics2D g2D;
+    static GraphicsPanel graphicsPanel;
 
     // timer - for animation, etc.
     static int ticks = 0;
@@ -54,16 +57,19 @@ public class Main {
      * Constructor - where the main magic happens.
      */
     Main() {
-        // title, icon, graphics
+        // title, icon
         mainFrame.setTitle("SmallSubways");
         // we need an icon: mainFrame.setIconImage(new ImageIcon("").getImage());
-        mainFrame.add(graphicsPanel);
 
         // defaults and decorations, then show the window
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setUndecorated(true);
         mainFrame.setVisible(true);
+
+        // graphics, added last to get the correct size
+        graphicsPanel = new GraphicsPanel();
+        mainFrame.add(graphicsPanel);
 
         // begin!
         timer.start();
@@ -76,15 +82,21 @@ public class Main {
 
         // variables
         int opacity = 0;
+        ArrayList<Station> stations = new ArrayList<Station>();
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
+        BufferedImage background = ImageUtilities.importImage("src\\images\\levels\\victoria.png");
 
         /**
          * GraphicsPanel constructor.
          */
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
+
+            for (Shape shape : Shape.values()) {
+                stations.add(new Station((int) (Math.random() * 64), (int) (Math.random() * 36), shape));
+            }
         }
 
         /**
@@ -102,15 +114,24 @@ public class Main {
                 if (opacity < 1000) opacity += 10;
 
                 g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
-                g2D.drawImage(studioTitleScreen, 0, 0, this.getWidth(), this.getHeight(), null);
+                ImageUtilities.drawImageFullScreen(studioTitleScreen);
             }
 
             // fade out...
-            if (ticks >= 350 && ticks < 700) {
+            if (ticks >= 350 && ticks < 500) {
                 if (opacity > 0) opacity -= 10;
 
                 g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
-                g2D.drawImage(studioTitleScreen, 0, 0, this.getWidth(), this.getHeight(), null);
+                ImageUtilities.drawImageFullScreen(studioTitleScreen);
+            }
+
+            // TEST: draw background & stations
+            if (ticks >= 500) {
+                ImageUtilities.drawImageFullScreen(background);
+
+                for (Station station : stations) {
+                    station.draw();
+                }
             }
         }
 
