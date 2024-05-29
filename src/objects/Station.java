@@ -101,33 +101,38 @@ public class Station {
      * Draw the station.
      */
     public void draw() {
+        int iX = (int) this.x;
+        int iY = (int) this.y;
+        int iSize = (int) this.size;
+        
         Main.g2D.setColor(Color.WHITE);
         switch (this.type) {
-            case CIRCLE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case TRIANGLE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case SQUARE -> Main.g2D.fillRect((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case STAR -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case PENTAGON -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case GEM -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case CROSS -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case WEDGE -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case DIAMOND -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case OVAL -> Main.g2D.fillOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case TRIANGLE -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize, iY + iSize / 8, iY + iSize}, 3);
+            case SQUARE -> Main.g2D.fillRect(iX, iY, iSize, iSize);
+            case STAR -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
+            case PENTAGON -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case GEM -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case CROSS -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case WEDGE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case DIAMOND -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case OVAL -> Main.g2D.fillOval(iX, iY, iSize, iSize);
         }
 
         Main.g2D.setColor(Color.BLACK);
         Main.g2D.setStroke(new BasicStroke(3));
         switch (this.type) {
-            case CIRCLE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case TRIANGLE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case SQUARE -> Main.g2D.drawRect((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case STAR -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case PENTAGON -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case GEM -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case CROSS -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case WEDGE -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case DIAMOND -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
-            case OVAL -> Main.g2D.drawOval((int) this.x, (int) this.y, (int) this.size, (int) this.size);
+            case CIRCLE -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case TRIANGLE -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize, iY + iSize / 8, iY + iSize}, 3);
+            case SQUARE -> Main.g2D.drawRect(iX, iY, iSize, iSize);
+            case STAR -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
+            case PENTAGON -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case GEM -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case CROSS -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case WEDGE -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case DIAMOND -> Main.g2D.drawOval(iX, iY, iSize, iSize);
+            case OVAL -> Main.g2D.drawOval(iX, iY, iSize, iSize);
         }
     }
+    
 }

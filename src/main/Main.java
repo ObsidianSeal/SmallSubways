@@ -44,7 +44,7 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // timer - for animation, etc.
-    static int ticks = 0;
+    static int ticks = 500;
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
