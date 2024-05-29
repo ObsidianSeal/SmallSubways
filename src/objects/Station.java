@@ -1,6 +1,6 @@
 /*
  * TITLE: Station
- * AUTHOR: Benjamin Gosselin
+ * AUTHOR: Benjamin Gosselin, Daniel Zhong
  * DATE: Tuesday, May 28th, 2024
  * DESCRIPTION: Object; represents a subway station.
  */
@@ -19,7 +19,9 @@ public class Station {
     private double size;
     private double x, y;
     private Shape type;
+    private boolean diagonal;
     private boolean selected;
+    private Color selectedColour;
 
     /**
      * Station constructor; coordinates are from the 64x36 grid and converted to pixels.
@@ -32,6 +34,24 @@ public class Station {
         this.x = x * (Main.mainFrame.getWidth() / 64.0);
         this.y = y * (Main.mainFrame.getHeight() / 36.0);
         this.type = type;
+        this.diagonal = false;
+        this.selected = false;
+    }
+
+    /**
+     * Station constructor with diagonal control; coordinates are from the 64x36 grid and converted to pixels.
+     * @param x Assign the station's x-coordinate.
+     * @param y Assign the station's y-coordinate.
+     * @param type Assign the station's type.
+     * @param diagonal Assign the station's line connection mode.
+     */
+    public Station(int x, int y, Shape type, boolean diagonal) {
+        this.size = Main.mainFrame.getWidth() / 64.0;
+        this.x = x * (Main.mainFrame.getWidth() / 64.0);
+        this.y = y * (Main.mainFrame.getHeight() / 36.0);
+        this.type = type;
+        this.diagonal = diagonal;
+        this.selected = false;
     }
 
     /**
@@ -99,11 +119,27 @@ public class Station {
     }
 
     /**
+     * Get whether the station is should be drawn to diagonally first.
+     * @return Whether the station is should be drawn to diagonally first or not.
+     */
+    public boolean isDiagonal() {
+        return this.diagonal;
+    }
+
+    /**
+     * Set whether the station is should be drawn to diagonally first.
+     * @param diagonal The diagonal state of the station.
+     */
+    public void setDiagonal(boolean diagonal) {
+        this.diagonal = diagonal;
+    }
+
+    /**
      * Get whether the station is selected.
      * @return Whether the station is selected or not.
      */
     public boolean isSelected() {
-        return selected;
+        return this.selected;
     }
 
     /**
@@ -112,6 +148,22 @@ public class Station {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    /**
+     * Get the colour of the station select highlight.
+     * @return The current station select colour.
+     */
+    public Color getSelectedColour() {
+        return this.selectedColour;
+    }
+
+    /**
+     * Set the colour of the station select highlight.
+     * @param selectedColour The new station select colour.
+     */
+    public void setSelectedColour(Color selectedColour) {
+        this.selectedColour = selectedColour;
     }
 
     /**
@@ -152,10 +204,12 @@ public class Station {
         }
     }
 
-    public void drawSelected() {
-        Main.g2D.setColor(Color.red);
+    /**
+     * Show that the station is selected, currently only one shape and colour.
+     */
+    public void highlight() {
+        Main.g2D.setColor(this.selectedColour);
         Main.g2D.fillOval((int) this.x - 10, (int) this.y - 10, (int) this.size + 20, (int) this.size + 20);
-        draw();
     }
 
 }

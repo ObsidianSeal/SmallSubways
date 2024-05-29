@@ -1,6 +1,6 @@
 /*
  * TITLE: Main - SmallSubways
- * AUTHOR: Benjamin Gosselin
+ * AUTHOR: Benjamin Gosselin, Daniel Zhong
  * DATE: Monday, May 27th, 2024
  * DESCRIPTION: The main class for our SmallSubways game.
  */
@@ -8,6 +8,8 @@
 package main;
 
 import enums.Shape;
+import objects.Colour;
+import objects.MetroLine;
 import objects.Station;
 import utilities.ImageUtilities;
 
@@ -42,10 +44,8 @@ public class Main {
     public static Graphics2D g2D;
     static GraphicsPanel graphicsPanel;
 
-    // booleans
-    public static boolean clicked;
-
     // objects & object arrays :D
+    public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
     public static ArrayList<Station> stations = new ArrayList<Station>();
 
     // timer - for animation, etc.
@@ -74,10 +74,15 @@ public class Main {
 
         // graphics, added last to get the correct size
         graphicsPanel = new GraphicsPanel();
-        graphicsPanel.addMouseListener(new MouseListener());
         mainFrame.add(graphicsPanel);
 
+        // event listeners
+        graphicsPanel.addMouseListener(new MouseListener());
+        graphicsPanel.addMouseMotionListener(new MouseMotionListener());
+        graphicsPanel.addKeyListener(new KeyboardListener());
+
         // begin!
+        graphicsPanel.requestFocus();
         timer.start();
     }
 
@@ -102,6 +107,8 @@ public class Main {
             for (Shape shape : Shape.values()) {
                 stations.add(new Station((int) (Math.random() * 64), (int) (Math.random() * 36), shape));
             }
+
+            lines.add(new MetroLine(new ArrayList<Station>(), Colour.PASTEL_BLUE_VIOLET));
         }
 
         /**
@@ -134,40 +141,64 @@ public class Main {
             if (ticks >= 500) {
                 ImageUtilities.drawImageFullScreen(background);
 
+                for (MetroLine line : lines) {
+                    line.draw();
+                }
+
                 for (Station station : stations) {
-                    if (station.isSelected()) {
-                        station.drawSelected();
-                    } else {
-                        station.draw();
-                    }
+                    if (station.isSelected()) station.highlight();
+                    station.draw();
                 }
             }
         }
     }
 
-    private static class KeyboardListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-    }
-
+    /**
+     * Listener for mouse events.
+     */
     private static class MouseListener extends MouseAdapter {
+
+        /**
+         * Event handler for when a mouse button is clicked.
+         * @param e The event to be processed.
+         */
         @Override
         public void mousePressed(MouseEvent e) {
-            clicked = true;
-            for (Station s : stations) {
-                // System.out.println(e.getX() + " " + e.getY());
-                // System.out.println(s.getX() + " " + s.getY());
-                if (Math.abs(s.getX() - e.getX()) < 30 &&
-                Math.abs(s.getY() - e.getY()) < 30) {
-                    s.setSelected(true);
+            // DEBUG: station selecting
+            for (Station station : stations) {
+                if (Math.abs(station.getX() - e.getX()) < 30 && Math.abs(station.getY() - e.getY()) < 30) {
+                    Main.lines.getFirst().addStation(station);
+                    station.setSelected(true);
                 }
             }
         }
+
     }
 
+    /**
+     * Listener for mouse movement events.
+     */
     private static class MouseMotionListener extends MouseMotionAdapter {
+        // unused, for now
+    }
+
+    /**
+     * Listener for keyboard events.
+     */
+    private static class KeyboardListener extends KeyAdapter {
+
+        /**
+         * Event handler for when a key is pressed down.
+         * @param e The event to be processed.
+         */
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println(e.getKeyCode()); // DEBUG
+
+            switch (e.getKeyCode()) {
+                case (KeyEvent.VK_ESCAPE) -> System.exit(0);
+            }
+        }
 
     }
 
