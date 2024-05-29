@@ -24,31 +24,43 @@ public class Station {
     private Color selectedColour;
 
     /**
-     * Station constructor; coordinates are from the 64x36 grid and converted to pixels.
+     * Random station generator.
+     */
+    public Station() {
+        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.x = (int) (Math.random() * 80) * (Main.mainFrame.getWidth() / 80.0);
+        this.y = (int) (Math.random() * 45) * (Main.mainFrame.getHeight() / 45.0);
+        this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
+        this.diagonal = false;
+        this.selected = false;
+    }
+
+    /**
+     * Station constructor; coordinates are from the 80x45 grid and converted to pixels.
      * @param x Assign the station's x-coordinate.
      * @param y Assign the station's y-coordinate.
      * @param type Assign the station's type.
      */
     public Station(int x, int y, Shape type) {
-        this.size = Main.mainFrame.getWidth() / 64.0;
-        this.x = x * (Main.mainFrame.getWidth() / 64.0);
-        this.y = y * (Main.mainFrame.getHeight() / 36.0);
+        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
         this.diagonal = false;
         this.selected = false;
     }
 
     /**
-     * Station constructor with diagonal control; coordinates are from the 64x36 grid and converted to pixels.
+     * Station constructor with diagonal control; coordinates are from the 80x45 grid and converted to pixels.
      * @param x Assign the station's x-coordinate.
      * @param y Assign the station's y-coordinate.
      * @param type Assign the station's type.
      * @param diagonal Assign the station's line connection mode.
      */
     public Station(int x, int y, Shape type, boolean diagonal) {
-        this.size = Main.mainFrame.getWidth() / 64.0;
-        this.x = x * (Main.mainFrame.getWidth() / 64.0);
-        this.y = y * (Main.mainFrame.getHeight() / 36.0);
+        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
         this.diagonal = diagonal;
         this.selected = false;
@@ -177,7 +189,7 @@ public class Station {
         Main.g2D.setColor(Color.WHITE);
         switch (this.type) {
             case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
-            case TRIANGLE -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize, iY + iSize / 8, iY + iSize}, 3);
+            case TRIANGLE -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
             case SQUARE -> Main.g2D.fillRect(iX, iY, iSize, iSize);
             case STAR -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
             case PENTAGON -> Main.g2D.fillOval(iX, iY, iSize, iSize);
@@ -189,10 +201,10 @@ public class Station {
         }
 
         Main.g2D.setColor(Color.BLACK);
-        Main.g2D.setStroke(new BasicStroke(3));
+        Main.g2D.setStroke(new BasicStroke(5));
         switch (this.type) {
             case CIRCLE -> Main.g2D.drawOval(iX, iY, iSize, iSize);
-            case TRIANGLE -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize, iY + iSize / 8, iY + iSize}, 3);
+            case TRIANGLE -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
             case SQUARE -> Main.g2D.drawRect(iX, iY, iSize, iSize);
             case STAR -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
             case PENTAGON -> Main.g2D.drawOval(iX, iY, iSize, iSize);

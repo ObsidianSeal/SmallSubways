@@ -39,12 +39,32 @@ public class ImageUtilities {
 
     /**
      * Draw an image fullscreen, likely for a background.
-     * @param g2D The Graphics2D object, to draw the image.
-     * @param panel The JPanel object, to get 100% of the width and height.
      * @param image The BufferedImage to draw fullscreen.
      */
     public static void drawImageFullScreen(BufferedImage image) {
         Main.g2D.drawImage(image, 0, 0, Main.mainFrame.getWidth(), Main.mainFrame.getHeight(), null);
+    }
+
+    /**
+     * Draw an image; actual size.
+     * @param image The BufferedImage to draw.
+     * @param x Top left x-coordinate.
+     * @param y Top left y-coordinate.
+     */
+    public static void drawImage(BufferedImage image, int x, int y) {
+        Main.g2D.drawImage(image, x, y, null);
+    }
+
+    /**
+     * Draw an image; can be resized.
+     * @param image The BufferedImage to draw.
+     * @param x Top left x-coordinate.
+     * @param y Top left y-coordinate.
+     * @param width Desired width.
+     * @param height Desired height.
+     */
+    public static void drawImage(BufferedImage image, int x, int y, int width, int height) {
+        Main.g2D.drawImage(image, x, y, width, height, null);
     }
 
 }

@@ -7,9 +7,9 @@
 
 package main;
 
-import enums.Shape;
 import objects.Colour;
 import objects.MetroLine;
+import objects.MetroMap;
 import objects.Station;
 import utilities.ImageUtilities;
 
@@ -49,7 +49,7 @@ public class Main {
     public static ArrayList<Station> stations = new ArrayList<Station>();
 
     // timer - for animation, etc.
-    static int ticks = 500;
+    static int ticks = 0;
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -64,7 +64,7 @@ public class Main {
     Main() {
         // title, icon
         mainFrame.setTitle("SmallSubways");
-        // we need an icon: mainFrame.setIconImage(new ImageIcon("").getImage());
+        mainFrame.setIconImage(new ImageIcon("src\\images\\icons\\app.png").getImage());
 
         // defaults and decorations, then show the window
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,11 +92,12 @@ public class Main {
     private static class GraphicsPanel extends JPanel {
 
         // variables
+        boolean studioTitleScreenSeen = false;
         int opacity = 0;
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
-        BufferedImage background = ImageUtilities.importImage("src\\images\\levels\\waterloo.png");
+        BufferedImage background = MetroMap.mapEloraAndFergus;
 
         /**
          * GraphicsPanel constructor.
@@ -104,11 +105,14 @@ public class Main {
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
 
-            for (Shape shape : Shape.values()) {
-                stations.add(new Station((int) (Math.random() * 64), (int) (Math.random() * 36), shape));
-            }
+//            for (Shape shape : Shape.values()) {
+//                stations.add(new Station((int) (Math.random() * 64), (int) (Math.random() * 36), shape));
+//            }
 
             lines.add(new MetroLine(new ArrayList<Station>(), Colour.PASTEL_BLUE_VIOLET));
+            stations.add(new Station());
+            stations.add(new Station());
+            stations.add(new Station());
         }
 
         /**
@@ -121,30 +125,36 @@ public class Main {
             g2D = (Graphics2D) g;
             g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // fade in...
-            if (ticks >= 50 && ticks < 350) {
-                if (opacity < 1000) opacity += 10;
+            if (!studioTitleScreenSeen) {
+                // fade in...
+                if (ticks >= 50 && ticks < 150) {
+                    if (opacity < 1000) opacity += 10;
+                }
+
+                // fade out...
+                if (ticks >= 300) {
+                    if (opacity > 0) opacity -= 10;
+                }
 
                 g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
                 ImageUtilities.drawImageFullScreen(studioTitleScreen);
-            }
 
-            // fade out...
-            if (ticks >= 350 && ticks < 500) {
-                if (opacity > 0) opacity -= 10;
-
-                g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
-                ImageUtilities.drawImageFullScreen(studioTitleScreen);
-            }
-
-            // TEST: draw background & stations
-            if (ticks >= 500) {
+                if (ticks == 450) {
+                    studioTitleScreenSeen = true;
+                    ticks = 0;
+                }
+            } else {
+                // level background
                 ImageUtilities.drawImageFullScreen(background);
 
+                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+
+                // lines
                 for (MetroLine line : lines) {
                     line.draw();
                 }
 
+                // stations
                 for (Station station : stations) {
                     if (station.isSelected()) station.highlight();
                     station.draw();
@@ -169,6 +179,8 @@ public class Main {
                 if (Math.abs(station.getX() - e.getX()) < 30 && Math.abs(station.getY() - e.getY()) < 30) {
                     Main.lines.getFirst().addStation(station);
                     station.setSelected(true);
+                } else {
+                    station.setSelected(false);
                 }
             }
         }

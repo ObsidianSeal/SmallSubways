@@ -29,7 +29,7 @@ public class MetroLine {
         this.colour = colour;
 
         for (Station station : this.stations) {
-            station.setSelectedColour(this.colour);
+            station.setSelectedColour(this.colour); // temporary?
         }
     }
 
@@ -55,7 +55,7 @@ public class MetroLine {
      * @return The new number of stations on the line.
      */
     public int addStation(Station station) {
-        station.setSelectedColour(this.colour);
+        station.setSelectedColour(this.colour); // temporary?
         this.stations.add(station);
         return this.stations.size();
     }
