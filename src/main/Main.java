@@ -7,10 +7,13 @@
 
 package main;
 
+import utilities.ImageUtilities;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 /**
  * Main everything - this is where it all begins.
@@ -38,9 +41,11 @@ public class Main {
     static GraphicsPanel graphicsPanel = new GraphicsPanel();
 
     // timer - for animation, etc.
+    static int ticks = 0;
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            ticks++;
             graphicsPanel.repaint();
         }
     });
@@ -69,6 +74,19 @@ public class Main {
      */
     private static class GraphicsPanel extends JPanel {
 
+        // variables
+        int opacity = 0;
+
+        // images
+        BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
+
+        /**
+         * GraphicsPanel constructor.
+         */
+        GraphicsPanel() {
+            this.setBackground(Color.BLACK);
+        }
+
         /**
          * This is where the drawing occurs.
          * @param g The graphics object - for drawing things.
@@ -79,7 +97,21 @@ public class Main {
             g2D = (Graphics2D) g;
             g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // draw stuff
+            // fade in...
+            if (ticks >= 50 && ticks < 350) {
+                if (opacity < 1000) opacity += 10;
+
+                g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
+                g2D.drawImage(studioTitleScreen, 0, 0, this.getWidth(), this.getHeight(), null);
+            }
+
+            // fade out...
+            if (ticks >= 350 && ticks < 700) {
+                if (opacity > 0) opacity -= 10;
+
+                g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
+                g2D.drawImage(studioTitleScreen, 0, 0, this.getWidth(), this.getHeight(), null);
+            }
         }
 
     }
