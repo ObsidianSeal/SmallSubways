@@ -98,7 +98,7 @@ public class Main {
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
-        BufferedImage background = MetroMap.mapEloraAndFergus;
+        BufferedImage background = MetroMap.OTTAWA;
 
         /**
          * GraphicsPanel constructor.
