@@ -36,6 +36,20 @@ public class Station {
     }
 
     /**
+     * Station constructor with random type only; coordinates are from the 80x45 grid and converted to pixels.
+     * @param x Assign the station's x-coordinate.
+     * @param y Assign the station's y-coordinate.
+     */
+    public Station(int x, int y) {
+        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.y = y * (Main.mainFrame.getHeight() / 45.0);
+        this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
+        this.diagonal = false;
+        this.selected = false;
+    }
+
+    /**
      * Station constructor with random coordinates only; coordinates are from the 80x45 grid and converted to pixels.
      * @param type Assign the station's type.
      */

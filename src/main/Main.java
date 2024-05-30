@@ -49,6 +49,9 @@ public class Main {
     public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
     public static ArrayList<Station> stations = new ArrayList<Station>();
 
+    // variables
+    static boolean shiftHeld = false;
+
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
@@ -111,24 +114,34 @@ public class Main {
 //            }
 
             lines.add(new MetroLine(new ArrayList<Station>(), Colour.PASTEL_BLUE_VIOLET));
-//            stations.add(new Station());
-//            stations.add(new Station());
-//            stations.add(new Station());
+            stations.add(new Station());
+            stations.add(new Station());
+            stations.add(new Station());
 
-            stations.add(new Station(5, 10, Shape.CIRCLE));
-            stations.add(new Station(5, 15, Shape.TRIANGLE));
-            stations.add(new Station(5, 25, Shape.TRIANGLE));
-            stations.add(new Station(5, 30, Shape.SQUARE));
-            stations.add(new Station(15, 10, Shape.STAR));
-            stations.add(new Station(25, 10, Shape.STAR));
-            stations.add(new Station(20, 20, Shape.PENTAGON));
-            stations.add(new Station(15, 30, Shape.GEM));
-            stations.add(new Station(25, 30, Shape.GEM));
-            stations.add(new Station(35, 10, Shape.CROSS));
-            stations.add(new Station(35, 15, Shape.WEDGE));
-            stations.add(new Station(35, 25, Shape.WEDGE));
-            stations.add(new Station(35, 30, Shape.DIAMOND));
-            stations.add(new Station(50, 40, Shape.OVAL));
+            stations.add(new Station(5, 5, Shape.GEM));
+            stations.add(new Station(5, 10, Shape.GEM));
+            stations.add(new Station(5, 15, Shape.GEM));
+            stations.add(new Station(10, 5, Shape.GEM));
+            stations.add(new Station(10, 10, Shape.GEM));
+            stations.add(new Station(10, 15, Shape.GEM));
+            stations.add(new Station(15, 5, Shape.GEM));
+            stations.add(new Station(15, 10, Shape.GEM));
+            stations.add(new Station(15, 15, Shape.GEM));
+
+//            stations.add(new Station(5, 10, Shape.CIRCLE));
+//            stations.add(new Station(5, 15, Shape.TRIANGLE));
+//            stations.add(new Station(5, 25, Shape.TRIANGLE));
+//            stations.add(new Station(5, 30, Shape.SQUARE));
+//            stations.add(new Station(15, 10, Shape.STAR));
+//            stations.add(new Station(25, 10, Shape.STAR));
+//            stations.add(new Station(20, 20, Shape.PENTAGON));
+//            stations.add(new Station(15, 30, Shape.GEM));
+//            stations.add(new Station(25, 30, Shape.GEM));
+//            stations.add(new Station(35, 10, Shape.CROSS));
+//            stations.add(new Station(35, 15, Shape.WEDGE));
+//            stations.add(new Station(35, 25, Shape.WEDGE));
+//            stations.add(new Station(35, 30, Shape.DIAMOND));
+//            stations.add(new Station(50, 40, Shape.OVAL));
         }
 
         /**
@@ -163,7 +176,7 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
-//                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 
                 // lines
                 for (MetroLine line : lines) {
@@ -190,13 +203,17 @@ public class Main {
          */
         @Override
         public void mousePressed(MouseEvent e) {
-            // DEBUG: station selecting
-            for (Station station : stations) {
-                if (Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f)) {
-                    Main.lines.getFirst().addStation(station);
-                    station.setSelected(true);
-                } else {
-                    station.setSelected(false);
+            // left click
+            if (e.getButton() == 1) {
+                // DEBUG: station selecting
+                for (Station station : stations) {
+                    if (Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f)) {
+                        station.setDiagonal(shiftHeld);
+                        Main.lines.getFirst().addStation(station);
+                        station.setSelected(true);
+                    } else {
+                        station.setSelected(false);
+                    }
                 }
             }
         }
@@ -221,10 +238,20 @@ public class Main {
          */
         @Override
         public void keyPressed(KeyEvent e) {
-            System.out.println(e.getKeyCode()); // DEBUG
-
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
+                case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
+            }
+        }
+
+        /**
+         * Event handler for when a key is released.
+         * @param e The event to be processed.
+         */
+        @Override
+        public void keyReleased(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case (KeyEvent.VK_SHIFT) -> shiftHeld = false;
             }
         }
 

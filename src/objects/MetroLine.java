@@ -8,8 +8,10 @@
 package objects;
 
 import main.Main;
+import utilities.OtherUtilities;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 /**
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 public class MetroLine {
     private ArrayList<Station> stations;
     private Color colour;
+    private int curveOffset;
 
     /**
      * MetroLine constructor.
@@ -27,6 +30,7 @@ public class MetroLine {
     public MetroLine(ArrayList<Station> stations, Color colour) {
         this.stations = stations;
         this.colour = colour;
+        this.curveOffset = Main.mainFrame.getWidth() / 192;
 
         for (Station station : this.stations) {
             station.setSelectedColour(this.colour); // temporary?
@@ -92,7 +96,7 @@ public class MetroLine {
             int xDiff2 = Math.abs(toX - fromX);
             int yDiff2 = Math.abs(toY - fromY);
             boolean xLonger = xDiff2 >= yDiff2;
-            int newX1, newY1, newX2, newY2;
+            int newX1, newY1, newX, newY, newX2, newY2;
 
             if (!diagonal) {
                 if (xDiff >= 0) {
@@ -101,35 +105,127 @@ public class MetroLine {
                         // RIGHT-DOWN
                         if (xLonger) {
                             // RIGHT
-                            newX1 = fromX + (xDiff2 - yDiff2) - 10;
-                            newY1 = fromY;
+                            newX = fromX + (xDiff2 - yDiff2);
+                            newY = fromY;
 
-                            newX2 = fromX + (xDiff2 - yDiff2) + 10;
-                            newY2 = fromY + 10;
+                            newX1 = (int) (newX - (curveOffset * Math.sqrt(2)));
+                            newY1 = newY;
                         } else {
                             // DOWN
-                            newX1 = fromX;
-                            newY1 = fromY + (yDiff2 - xDiff2) - 10;
+                            newX = fromX;
+                            newY = fromY + (yDiff2 - xDiff2);
 
-                            newX2 = fromX + 10;
-                            newY2 = fromY + (yDiff2 - xDiff2) + 10;
+                            newX1 = newX;
+                            newY1 = (int) (newY - (curveOffset * Math.sqrt(2)));
+                        }
+                        newX2 = newX + curveOffset;
+                        newY2 = newY + curveOffset;
+                    } else {
+                        // RIGHT-UP
+                        if (xLonger) {
+                            // RIGHT
+                            newX = fromX + (xDiff2 - yDiff2);
+                            newY = fromY;
+
+                            newX1 = (int) (newX - (curveOffset * Math.sqrt(2)));
+                            newY1 = newY;
+                        } else {
+                            // UP
+                            newX = fromX;
+                            newY = fromY - (yDiff2 - xDiff2);
+
+                            newX1 = newX;
+                            newY1 = (int) (newY + (curveOffset * Math.sqrt(2)));
+                        }
+                        newX2 = newX + curveOffset;
+                        newY2 = newY - curveOffset;
+                    }
+                } else {
+                    // LEFT
+                    if (yDiff >= 0) {
+                        // LEFT-DOWN
+                        if (xLonger) {
+                            // LEFT
+                            newX = fromX - (xDiff2 - yDiff2);
+                            newY = fromY;
+
+                            newX1 = (int) (newX + (curveOffset * Math.sqrt(2)));
+                            newY1 = newY;
+                        } else {
+                            // DOWN
+                            newX = fromX;
+                            newY = fromY + (yDiff2 - xDiff2);
+
+                            newX1 = newX;
+                            newY1 = (int) (newY - (curveOffset * Math.sqrt(2)));
+                        }
+                        newX2 = newX - curveOffset;
+                        newY2 = newY + curveOffset;
+                    } else {
+                        // LEFT-UP
+                        if (xLonger) {
+                            // LEFT
+                            newX = fromX - (xDiff2 - yDiff2);
+                            newY = fromY;
+
+                            newX1 = (int) (newX + (curveOffset * Math.sqrt(2)));
+                            newY1 = newY;
+                        } else {
+                            // UP
+                            newX = fromX;
+                            newY = fromY - (yDiff2 - xDiff2);
+
+                            newX1 = newX;
+                            newY1 = (int) (newY + (curveOffset * Math.sqrt(2)));
+                        }
+                        newX2 = newX - curveOffset;
+                        newY2 = newY - curveOffset;
+                    }
+                }
+            } else {
+                int distance = Math.min(xDiff2, yDiff2);
+
+                if (xDiff >= 0) {
+                    newX = fromX + distance;
+                    newX1 = fromX + (distance - curveOffset);
+                } else {
+                    newX = fromX - distance;
+                    newX1 = fromX - (distance - curveOffset);
+                }
+
+                if (yDiff >= 0) {
+                    newY = fromY + distance;
+                    newY1 = fromY + (distance - curveOffset);
+                } else {
+                    newY = fromY - distance;
+                    newY1 = fromY - (distance - curveOffset);
+                }
+
+//                OtherUtilities.debugPrint(xDiff, yDiff, xLonger);
+
+                if (xDiff >= 0) {
+                    // RIGHT
+                    if (yDiff >= 0) {
+                        // RIGHT-DOWN
+                        if (xLonger) {
+                            // RIGHT
+                            newX2 = (int) (newX + curveOffset * Math.sqrt(2));
+                            newY2 = newY;
+                        } else {
+                            // DOWN
+                            newX2 = newX;
+                            newY2 = (int) (newY + curveOffset * Math.sqrt(2));
                         }
                     } else {
                         // RIGHT-UP
                         if (xLonger) {
                             // RIGHT
-                            newX1 = fromX + (xDiff2 - yDiff2) - 10;
-                            newY1 = fromY;
-
-                            newX2 = fromX + (xDiff2 - yDiff2) + 10;
-                            newY2 = fromY - 10;
+                            newX2 = (int) (newX + curveOffset * Math.sqrt(2));
+                            newY2 = newY;
                         } else {
                             // UP
-                            newX1 = fromX;
-                            newY1 = fromY - (yDiff2 - xDiff2) + 10;
-
-                            newX2 = fromX + 10;
-                            newY2 = fromY - (yDiff2 - xDiff2) - 10;
+                            newX2 = newX;
+                            newY2 = (int) (newY - curveOffset * Math.sqrt(2));
                         }
                     }
                 } else {
@@ -138,60 +234,47 @@ public class MetroLine {
                         // LEFT-DOWN
                         if (xLonger) {
                             // LEFT
-                            newX1 = fromX - (xDiff2 - yDiff2) + 10;
-                            newY1 = fromY;
-
-                            newX2 = fromX - (xDiff2 - yDiff2) - 10;
-                            newY2 = fromY + 10;
+                            newX2 = (int) (newX - curveOffset * Math.sqrt(2));
+                            newY2 = newY;
                         } else {
                             // DOWN
-                            newX1 = fromX;
-                            newY1 = fromY + (yDiff2 - xDiff2) - 10;
-
-                            newX2 = fromX - 10;
-                            newY2 = fromY + (yDiff2 - xDiff2) + 10;
+                            newX2 = newX;
+                            newY2 = (int) (newY + curveOffset * Math.sqrt(2));
                         }
                     } else {
                         // LEFT-UP
                         if (xLonger) {
                             // LEFT
-                            newX1 = fromX - (xDiff2 - yDiff2) + 10;
-                            newY1 = fromY;
-
-                            newX2 = fromX - (xDiff2 - yDiff2) - 10;
-                            newY2 = fromY - 10;
+                            newX2 = (int) (newX - curveOffset * Math.sqrt(2));
+                            newY2 = newY;
                         } else {
                             // UP
-                            newX1 = fromX;
-                            newY1 = fromY - (yDiff2 - xDiff2) + 10;
-
-                            newX2 = fromX - 10;
-                            newY2 = fromY - (yDiff2 - xDiff2) - 10;
+                            newX2 = newX;
+                            newY2 = (int) (newY - curveOffset * Math.sqrt(2));
                         }
                     }
                 }
-            } else {
-                int distance = Math.min(xDiff2, yDiff2);
-
-                if (xDiff >= 0) newX1 = fromX + distance;
-                else newX1 = fromX - distance;
-
-                if (yDiff >= 0) newY1 = fromY + distance;
-                else newY1 = fromY - distance;
-
-                if (xDiff >= 0) newX2 = fromX + distance;
-                else newX2 = fromX - distance;
-
-                if (yDiff >= 0) newY2 = fromY + distance;
-                else newY2 = fromY - distance;
             }
 
             int lineOffset = (int) (stations.getFirst().getSize() / 2);
 
+            GeneralPath curve = new GeneralPath();
+            curve.moveTo(newX1 + lineOffset, newY1 + lineOffset);
+            curve.curveTo(newX1 + lineOffset, newY1 + lineOffset, newX + lineOffset, newY + lineOffset, newX2 + lineOffset, newY2 + lineOffset);
+
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            Main.g2D.setColor(new Color(this.colour.getRed(), this.colour.getGreen(), this.colour.getBlue(), 150));
-            Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX1 + lineOffset, newY1 + lineOffset);
-            Main.g2D.drawLine(newX2 + lineOffset, newY2 + lineOffset, toX + lineOffset, toY + lineOffset);
+            Main.g2D.setColor(this.colour);
+
+            OtherUtilities.debugPrint(newX, toX, newY, toY);
+
+            if (newX == fromX && newY == fromY || newX == toX && newY == toY) {
+                Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX + lineOffset, newY + lineOffset);
+                Main.g2D.drawLine(newX + lineOffset, newY + lineOffset, toX + lineOffset, toY + lineOffset);
+            } else {
+                Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX1 + lineOffset, newY1 + lineOffset);
+                Main.g2D.draw(curve);
+                Main.g2D.drawLine(newX2 + lineOffset, newY2 + lineOffset, toX + lineOffset, toY + lineOffset);
+            }
         }
     }
 
