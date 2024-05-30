@@ -7,6 +7,7 @@
 
 package main;
 
+import enums.Shape;
 import objects.Colour;
 import objects.MetroLine;
 import objects.MetroMap;
@@ -49,7 +50,7 @@ public class Main {
     public static ArrayList<Station> stations = new ArrayList<Station>();
 
     // timer - for animation, etc.
-    static int ticks = 0;
+    static int ticks = 450; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -110,9 +111,20 @@ public class Main {
 //            }
 
             lines.add(new MetroLine(new ArrayList<Station>(), Colour.PASTEL_BLUE_VIOLET));
-            stations.add(new Station());
-            stations.add(new Station());
-            stations.add(new Station());
+//            stations.add(new Station());
+//            stations.add(new Station());
+//            stations.add(new Station());
+
+            stations.add(new Station(Shape.CIRCLE));
+            stations.add(new Station(Shape.TRIANGLE));
+            stations.add(new Station(Shape.SQUARE));
+            stations.add(new Station(Shape.STAR));
+            stations.add(new Station(Shape.PENTAGON));
+            stations.add(new Station(Shape.GEM));
+            stations.add(new Station(Shape.CROSS));
+            stations.add(new Station(Shape.WEDGE));
+            stations.add(new Station(Shape.DIAMOND));
+            stations.add(new Station(Shape.OVAL));
         }
 
         /**
@@ -147,7 +159,7 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
-                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 
                 // lines
                 for (MetroLine line : lines) {
