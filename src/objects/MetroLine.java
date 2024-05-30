@@ -150,7 +150,7 @@ public class MetroLine {
 
             int lineOffset = (int) (stations.getFirst().getSize() / 2);
 
-            Main.g2D.setStroke(new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Main.g2D.setColor(this.colour);
             Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX + lineOffset, newY + lineOffset);
             Main.g2D.drawLine(newX + lineOffset, newY + lineOffset, toX + lineOffset, toY + lineOffset);

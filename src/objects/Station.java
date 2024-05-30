@@ -196,21 +196,19 @@ public class Station {
      */
     public void draw() {
         Main.g2D.setColor(Color.WHITE);
-        fillShape(1);
+        fillShape();
 
         Main.g2D.setColor(Color.BLACK);
-        Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 384f));
         drawShape(1);
     }
 
     /**
-     * Fill a shape's background. VERY BAD RESIZING!!!
-     * @param size The size of the shape.
+     * Fill a shape's background.
      */
-    private void fillShape(double size) {
-        int iX = (int) (this.x - ((size - 1) / 2.0 * this.size));
-        int iY = (int) (this.y - ((size - 1) / 2.0 * this.size));
-        int iSize = (int) (this.size * size);
+    private void fillShape() {
+        int iX = (int) (this.x);
+        int iY = (int) (this.y);
+        int iSize = (int) (this.size);
 
         switch (this.type) {
             case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
@@ -219,21 +217,23 @@ public class Station {
             case STAR -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
             case PENTAGON -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 4 / 5, iX + iSize / 5}, new int[] {iY + iSize * 2 / 5, iY + iSize / 40, iY + iSize * 2 / 5, iY + iSize * 39 / 40, iY + iSize * 39 / 40}, 5);
             case GEM -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize / 2}, new int[] {iY + iSize / 2, iY, iY + iSize / 2, iY + iSize}, 4);
-            case CROSS -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case WEDGE -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case DIAMOND -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case OVAL -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
+            case CROSS -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 3, iX + iSize / 3, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize, iX + iSize, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize / 3, iX + iSize / 3, iX}, new int[] {iY + iSize / 3, iY + iSize / 3, iY, iY, iY + iSize / 3, iY + iSize / 3, iY + iSize * 2 / 3, iY + iSize * 2 / 3, iY + iSize, iY + iSize, iY + iSize * 2 / 3, iY + iSize * 2 / 3}, 12);
+            case WEDGE -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 17 / 20, iX + iSize * 7 / 10, iX + iSize / 2, iX + iSize * 3 / 10, iX + iSize * 3 / 20}, new int[] {iY + iSize * 3 / 5, iY + iSize / 10, iY + iSize * 3 / 5, iY + iSize * 3 / 5, iY + iSize * 17 / 20, iY + iSize * 9 / 10, iY + iSize * 17 / 20, iY + iSize * 3 / 5}, 8);
+            case DIAMOND -> Main.g2D.fillPolygon(new int[] {iX + iSize / 2, iX, iX + iSize / 5, iX + iSize * 4 / 5, iX + iSize}, new int[] {iY + iSize * 17 / 20, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize * 3 / 20, iY + iSize * 7 / 20}, 5);
+            case OVAL -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 20, iX + iSize * 3 / 20, iX + iSize * 7 / 20, iX + iSize * 3 / 5, iX + iSize * 4 / 5, iX + iSize, iX + iSize * 19 / 20, iX + iSize * 17 / 20, iX + iSize * 13 / 20, iX + iSize * 2 / 5, iX + iSize / 5}, new int[] {iY + iSize, iY + iSize * 4 / 5, iY + iSize * 3 / 5, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize / 20, iY, iY + iSize / 5, iY + iSize * 2 / 5, iY + iSize * 13 / 20, iY + iSize * 17 / 20, iY + iSize * 19 / 20}, 12);
         }
     }
 
     /**
-     * Draw a shape's outline. VERY BAD RESIZING!!!
-     * @param size The size of the shape.
+     * Draw a shape's outline.
+     * @param strokeSize The stroke size multiplier.
      */
-    private void drawShape(double size) {
-        int iX = (int) (this.x - ((size - 1) / 2.0 * this.size));
-        int iY = (int) (this.y - ((size - 1) / 2.0 * this.size));
-        int iSize = (int) (this.size * size);
+    private void drawShape(float strokeSize) {
+        int iX = (int) (this.x);
+        int iY = (int) (this.y);
+        int iSize = (int) (this.size);
+
+        Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 384f * strokeSize));
 
         switch (this.type) {
             case CIRCLE -> Main.g2D.drawOval(iX, iY, iSize, iSize);
@@ -242,10 +242,10 @@ public class Station {
             case STAR -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 13 / 16, iX + iSize / 2, iX + iSize * 3 / 16, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize / 16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 9 / 16, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 9 / 16}, 10);
             case PENTAGON -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 4 / 5, iX + iSize / 5}, new int[] {iY + iSize * 2 / 5, iY + iSize / 40, iY + iSize * 2 / 5, iY + iSize * 39 / 40, iY + iSize * 39 / 40}, 5);
             case GEM -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize / 2}, new int[] {iY + iSize / 2, iY, iY + iSize / 2, iY + iSize}, 4);
-            case CROSS -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case WEDGE -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case DIAMOND -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
-            case OVAL -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);
+            case CROSS -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 3, iX + iSize / 3, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize, iX + iSize, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize / 3, iX + iSize / 3, iX}, new int[] {iY + iSize / 3, iY + iSize / 3, iY, iY, iY + iSize / 3, iY + iSize / 3, iY + iSize * 2 / 3, iY + iSize * 2 / 3, iY + iSize, iY + iSize, iY + iSize * 2 / 3, iY + iSize * 2 / 3}, 12);
+            case WEDGE -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 17 / 20, iX + iSize * 7 / 10, iX + iSize / 2, iX + iSize * 3 / 10, iX + iSize * 3 / 20}, new int[] {iY + iSize * 3 / 5, iY + iSize / 10, iY + iSize * 3 / 5, iY + iSize * 3 / 4, iY + iSize * 17 / 20, iY + iSize * 9 / 10, iY + iSize * 17 / 20, iY + iSize * 3 / 4}, 8);
+            case DIAMOND -> Main.g2D.drawPolygon(new int[] {iX + iSize / 2, iX, iX + iSize / 5, iX + iSize * 4 / 5, iX + iSize}, new int[] {iY + iSize * 17 / 20, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize * 3 / 20, iY + iSize * 7 / 20}, 5);
+            case OVAL -> Main.g2D.drawPolygon(new int[] {iX, iX + iSize / 20, iX + iSize * 3 / 20, iX + iSize * 7 / 20, iX + iSize * 3 / 5, iX + iSize * 4 / 5, iX + iSize, iX + iSize * 19 / 20, iX + iSize * 17 / 20, iX + iSize * 13 / 20, iX + iSize * 2 / 5, iX + iSize / 5}, new int[] {iY + iSize, iY + iSize * 4 / 5, iY + iSize * 3 / 5, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize / 20, iY, iY + iSize / 5, iY + iSize * 2 / 5, iY + iSize * 13 / 20, iY + iSize * 17 / 20, iY + iSize * 19 / 20}, 12);
         }
     }
 
@@ -254,7 +254,7 @@ public class Station {
      */
     public void highlight() {
         Main.g2D.setColor(this.selectedColour);
-        fillShape(2);
+        drawShape(3);
     }
 
 }

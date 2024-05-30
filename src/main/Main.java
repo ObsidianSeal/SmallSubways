@@ -188,7 +188,7 @@ public class Main {
         public void mousePressed(MouseEvent e) {
             // DEBUG: station selecting
             for (Station station : stations) {
-                if (Math.abs(station.getX() - e.getX()) < 30 && Math.abs(station.getY() - e.getY()) < 30) {
+                if (Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f)) {
                     Main.lines.getFirst().addStation(station);
                     station.setSelected(true);
                 } else {
