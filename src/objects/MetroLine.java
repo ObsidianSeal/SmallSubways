@@ -92,7 +92,7 @@ public class MetroLine {
             int xDiff2 = Math.abs(toX - fromX);
             int yDiff2 = Math.abs(toY - fromY);
             boolean xLonger = xDiff2 >= yDiff2;
-            int newX, newY;
+            int newX1, newY1, newX2, newY2;
 
             if (!diagonal) {
                 if (xDiff >= 0) {
@@ -100,20 +100,36 @@ public class MetroLine {
                     if (yDiff >= 0) {
                         // RIGHT-DOWN
                         if (xLonger) {
-                            newX = fromX + (xDiff2 - yDiff2);
-                            newY = fromY;
+                            // RIGHT
+                            newX1 = fromX + (xDiff2 - yDiff2) - 10;
+                            newY1 = fromY;
+
+                            newX2 = fromX + (xDiff2 - yDiff2) + 10;
+                            newY2 = fromY + 10;
                         } else {
-                            newX = fromX;
-                            newY = fromY + (yDiff2 - xDiff2);
+                            // DOWN
+                            newX1 = fromX;
+                            newY1 = fromY + (yDiff2 - xDiff2) - 10;
+
+                            newX2 = fromX + 10;
+                            newY2 = fromY + (yDiff2 - xDiff2) + 10;
                         }
                     } else {
                         // RIGHT-UP
                         if (xLonger) {
-                            newX = fromX + (xDiff2 - yDiff2);
-                            newY = fromY;
+                            // RIGHT
+                            newX1 = fromX + (xDiff2 - yDiff2) - 10;
+                            newY1 = fromY;
+
+                            newX2 = fromX + (xDiff2 - yDiff2) + 10;
+                            newY2 = fromY - 10;
                         } else {
-                            newX = fromX;
-                            newY = fromY - (yDiff2 - xDiff2);
+                            // UP
+                            newX1 = fromX;
+                            newY1 = fromY - (yDiff2 - xDiff2) + 10;
+
+                            newX2 = fromX + 10;
+                            newY2 = fromY - (yDiff2 - xDiff2) - 10;
                         }
                     }
                 } else {
@@ -121,39 +137,61 @@ public class MetroLine {
                     if (yDiff >= 0) {
                         // LEFT-DOWN
                         if (xLonger) {
-                            newX = fromX - (xDiff2 - yDiff2);
-                            newY = fromY;
+                            // LEFT
+                            newX1 = fromX - (xDiff2 - yDiff2) + 10;
+                            newY1 = fromY;
+
+                            newX2 = fromX - (xDiff2 - yDiff2) - 10;
+                            newY2 = fromY + 10;
                         } else {
-                            newX = fromX;
-                            newY = fromY + (yDiff2 - xDiff2);
+                            // DOWN
+                            newX1 = fromX;
+                            newY1 = fromY + (yDiff2 - xDiff2) - 10;
+
+                            newX2 = fromX - 10;
+                            newY2 = fromY + (yDiff2 - xDiff2) + 10;
                         }
                     } else {
                         // LEFT-UP
                         if (xLonger) {
-                            newX = fromX - (xDiff2 - yDiff2);
-                            newY = fromY;
+                            // LEFT
+                            newX1 = fromX - (xDiff2 - yDiff2) + 10;
+                            newY1 = fromY;
+
+                            newX2 = fromX - (xDiff2 - yDiff2) - 10;
+                            newY2 = fromY - 10;
                         } else {
-                            newX = fromX;
-                            newY = fromY - (yDiff2 - xDiff2);
+                            // UP
+                            newX1 = fromX;
+                            newY1 = fromY - (yDiff2 - xDiff2) + 10;
+
+                            newX2 = fromX - 10;
+                            newY2 = fromY - (yDiff2 - xDiff2) - 10;
                         }
                     }
                 }
             } else {
                 int distance = Math.min(xDiff2, yDiff2);
 
-                if (xDiff >= 0) newX = fromX + distance;
-                else newX = fromX - distance;
+                if (xDiff >= 0) newX1 = fromX + distance;
+                else newX1 = fromX - distance;
 
-                if (yDiff >= 0) newY = fromY + distance;
-                else newY = fromY - distance;
+                if (yDiff >= 0) newY1 = fromY + distance;
+                else newY1 = fromY - distance;
+
+                if (xDiff >= 0) newX2 = fromX + distance;
+                else newX2 = fromX - distance;
+
+                if (yDiff >= 0) newY2 = fromY + distance;
+                else newY2 = fromY - distance;
             }
 
             int lineOffset = (int) (stations.getFirst().getSize() / 2);
 
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            Main.g2D.setColor(this.colour);
-            Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX + lineOffset, newY + lineOffset);
-            Main.g2D.drawLine(newX + lineOffset, newY + lineOffset, toX + lineOffset, toY + lineOffset);
+            Main.g2D.setColor(new Color(this.colour.getRed(), this.colour.getGreen(), this.colour.getBlue(), 150));
+            Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX1 + lineOffset, newY1 + lineOffset);
+            Main.g2D.drawLine(newX2 + lineOffset, newY2 + lineOffset, toX + lineOffset, toY + lineOffset);
         }
     }
 
