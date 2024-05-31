@@ -8,7 +8,6 @@
 package objects;
 
 import main.Main;
-import utilities.OtherUtilities;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -30,7 +29,7 @@ public class MetroLine {
     public MetroLine(ArrayList<Station> stations, Color colour) {
         this.stations = stations;
         this.colour = colour;
-        this.curveOffset = Main.mainFrame.getWidth() / 192;
+        this.curveOffset = Main.mainFrame.getWidth() / 384;
 
         for (Station station : this.stations) {
             station.setSelectedColour(this.colour); // temporary?
@@ -201,8 +200,6 @@ public class MetroLine {
                     newY1 = fromY - (distance - curveOffset);
                 }
 
-//                OtherUtilities.debugPrint(xDiff, yDiff, xLonger);
-
                 if (xDiff >= 0) {
                     // RIGHT
                     if (yDiff >= 0) {
@@ -264,8 +261,6 @@ public class MetroLine {
 
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Main.g2D.setColor(this.colour);
-
-            OtherUtilities.debugPrint(newX, toX, newY, toY);
 
             if (newX == fromX && newY == fromY || newX == toX && newY == toY) {
                 Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX + lineOffset, newY + lineOffset);

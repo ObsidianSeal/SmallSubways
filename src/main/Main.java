@@ -7,8 +7,6 @@
 
 package main;
 
-import enums.Shape;
-import objects.Colour;
 import objects.MetroLine;
 import objects.MetroMap;
 import objects.Station;
@@ -53,7 +51,7 @@ public class Main {
     static boolean shiftHeld = false;
 
     // timer - for animation, etc.
-    static int ticks = 450; // set to 450 to skip studio screen
+    static int ticks = 0; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -109,39 +107,10 @@ public class Main {
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
 
-//            for (Shape shape : Shape.values()) {
-//                stations.add(new Station((int) (Math.random() * 64), (int) (Math.random() * 36), shape));
-//            }
-
-            lines.add(new MetroLine(new ArrayList<Station>(), Colour.PASTEL_BLUE_VIOLET));
+            lines.add(new MetroLine(new ArrayList<Station>(), MetroMap.OTTAWA_COLOURS[0]));
             stations.add(new Station());
             stations.add(new Station());
             stations.add(new Station());
-
-//            stations.add(new Station(5, 5, Shape.GEM));
-//            stations.add(new Station(5, 10, Shape.GEM));
-//            stations.add(new Station(5, 15, Shape.GEM));
-//            stations.add(new Station(10, 5, Shape.GEM));
-//            stations.add(new Station(10, 10, Shape.GEM));
-//            stations.add(new Station(10, 15, Shape.GEM));
-//            stations.add(new Station(15, 5, Shape.GEM));
-//            stations.add(new Station(15, 10, Shape.GEM));
-//            stations.add(new Station(15, 15, Shape.GEM));
-
-            stations.add(new Station(5, 10, Shape.CIRCLE));
-            stations.add(new Station(5, 15, Shape.TRIANGLE));
-            stations.add(new Station(5, 25, Shape.TRIANGLE));
-            stations.add(new Station(5, 30, Shape.SQUARE));
-            stations.add(new Station(15, 10, Shape.STAR));
-            stations.add(new Station(25, 10, Shape.STAR));
-            stations.add(new Station(20, 20, Shape.PENTAGON));
-            stations.add(new Station(15, 30, Shape.GEM));
-            stations.add(new Station(25, 30, Shape.GEM));
-            stations.add(new Station(35, 10, Shape.CROSS));
-            stations.add(new Station(35, 15, Shape.WEDGE));
-            stations.add(new Station(35, 25, Shape.WEDGE));
-            stations.add(new Station(35, 30, Shape.DIAMOND));
-            stations.add(new Station(50, 40, Shape.OVAL));
         }
 
         /**
@@ -178,6 +147,11 @@ public class Main {
 
                 if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 
+                // DEBUG: show grid
+//                g2D.setColor(Colour.LIGHT_RED);
+//                for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
+//                for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
+
                 // lines
                 for (MetroLine line : lines) {
                     line.draw();
@@ -210,9 +184,6 @@ public class Main {
                     if (Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f)) {
                         station.setDiagonal(shiftHeld);
                         Main.lines.getFirst().addStation(station);
-                        station.setSelected(true);
-                    } else {
-                        station.setSelected(false);
                     }
                 }
             }
@@ -224,7 +195,18 @@ public class Main {
      * Listener for mouse movement events.
      */
     private static class MouseMotionListener extends MouseMotionAdapter {
-        // unused, for now
+
+        /**
+         * Event handler for when the mouse is moved.
+         * @param e The event to be processed.
+         */
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            for (Station station : stations) {
+                station.setSelected(Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f));
+            }
+        }
+
     }
 
     /**
