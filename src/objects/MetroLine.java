@@ -19,7 +19,9 @@ import java.util.ArrayList;
 public class MetroLine {
     private ArrayList<Station> stations;
     private Color colour;
-    private int curveOffset;
+    private final int CURVE_OFFSET;
+    private final int LINE_OFFSET;
+    private final int END_OFFSET;
 
     /**
      * MetroLine constructor.
@@ -29,7 +31,9 @@ public class MetroLine {
     public MetroLine(ArrayList<Station> stations, Color colour) {
         this.stations = stations;
         this.colour = colour;
-        this.curveOffset = Main.mainFrame.getWidth() / 384;
+        this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
+        this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
+        this.END_OFFSET = this.CURVE_OFFSET * 5;
 
         for (Station station : this.stations) {
             station.setSelectedColour(this.colour); // temporary?
@@ -41,7 +45,7 @@ public class MetroLine {
      * @return The current list of stations on the line.
      */
     public ArrayList<Station> getStations() {
-        return stations;
+        return this.stations;
     }
 
     /**
@@ -91,10 +95,28 @@ public class MetroLine {
     }
 
     /**
+     * The eight primary directions of the line from a given station.
+     */
+    private enum Direction {
+        UP,
+        DOWN,
+
+        LEFT_UP,
+        LEFT,
+        LEFT_DOWN,
+
+        RIGHT_UP,
+        RIGHT,
+        RIGHT_DOWN
+    }
+
+    /**
      * Draw the line as a coloured line, modified from TransitMapMaker.
      */
     public void draw() {
         for (int i = 1; i < this.stations.size(); i++) {
+            Direction firstDirection, secondDirection;
+
             int fromX = (int) this.stations.get(i - 1).getX();
             int fromY = (int) this.stations.get(i - 1).getY();
             int toX = (int) this.stations.get(i).getX();
@@ -115,40 +137,52 @@ public class MetroLine {
                         // RIGHT-DOWN
                         if (xLonger) {
                             // RIGHT
+                            firstDirection = Direction.RIGHT;
+                            secondDirection = Direction.RIGHT_DOWN;
+
                             newX = fromX + (xDiff2 - yDiff2);
                             newY = fromY;
 
-                            newX1 = (int) (newX - (curveOffset * Math.sqrt(2)));
+                            newX1 = (int) (newX - (CURVE_OFFSET * Math.sqrt(2)));
                             newY1 = newY;
                         } else {
                             // DOWN
+                            firstDirection = Direction.DOWN;
+                            secondDirection = Direction.RIGHT_DOWN;
+
                             newX = fromX;
                             newY = fromY + (yDiff2 - xDiff2);
 
                             newX1 = newX;
-                            newY1 = (int) (newY - (curveOffset * Math.sqrt(2)));
+                            newY1 = (int) (newY - (CURVE_OFFSET * Math.sqrt(2)));
                         }
-                        newX2 = newX + curveOffset;
-                        newY2 = newY + curveOffset;
+                        newX2 = newX + this.CURVE_OFFSET;
+                        newY2 = newY + this.CURVE_OFFSET;
                     } else {
                         // RIGHT-UP
                         if (xLonger) {
                             // RIGHT
+                            firstDirection = Direction.RIGHT;
+                            secondDirection = Direction.RIGHT_UP;
+
                             newX = fromX + (xDiff2 - yDiff2);
                             newY = fromY;
 
-                            newX1 = (int) (newX - (curveOffset * Math.sqrt(2)));
+                            newX1 = (int) (newX - (CURVE_OFFSET * Math.sqrt(2)));
                             newY1 = newY;
                         } else {
                             // UP
+                            firstDirection = Direction.UP;
+                            secondDirection = Direction.RIGHT_UP;
+
                             newX = fromX;
                             newY = fromY - (yDiff2 - xDiff2);
 
                             newX1 = newX;
-                            newY1 = (int) (newY + (curveOffset * Math.sqrt(2)));
+                            newY1 = (int) (newY + (CURVE_OFFSET * Math.sqrt(2)));
                         }
-                        newX2 = newX + curveOffset;
-                        newY2 = newY - curveOffset;
+                        newX2 = newX + this.CURVE_OFFSET;
+                        newY2 = newY - this.CURVE_OFFSET;
                     }
                 } else {
                     // LEFT
@@ -156,40 +190,52 @@ public class MetroLine {
                         // LEFT-DOWN
                         if (xLonger) {
                             // LEFT
+                            firstDirection = Direction.LEFT;
+                            secondDirection = Direction.LEFT_DOWN;
+
                             newX = fromX - (xDiff2 - yDiff2);
                             newY = fromY;
 
-                            newX1 = (int) (newX + (curveOffset * Math.sqrt(2)));
+                            newX1 = (int) (newX + (CURVE_OFFSET * Math.sqrt(2)));
                             newY1 = newY;
                         } else {
                             // DOWN
+                            firstDirection = Direction.DOWN;
+                            secondDirection = Direction.LEFT_DOWN;
+
                             newX = fromX;
                             newY = fromY + (yDiff2 - xDiff2);
 
                             newX1 = newX;
-                            newY1 = (int) (newY - (curveOffset * Math.sqrt(2)));
+                            newY1 = (int) (newY - (CURVE_OFFSET * Math.sqrt(2)));
                         }
-                        newX2 = newX - curveOffset;
-                        newY2 = newY + curveOffset;
+                        newX2 = newX - this.CURVE_OFFSET;
+                        newY2 = newY + this.CURVE_OFFSET;
                     } else {
                         // LEFT-UP
                         if (xLonger) {
                             // LEFT
+                            firstDirection = Direction.LEFT;
+                            secondDirection = Direction.LEFT_UP;
+
                             newX = fromX - (xDiff2 - yDiff2);
                             newY = fromY;
 
-                            newX1 = (int) (newX + (curveOffset * Math.sqrt(2)));
+                            newX1 = (int) (newX + (CURVE_OFFSET * Math.sqrt(2)));
                             newY1 = newY;
                         } else {
                             // UP
+                            firstDirection = Direction.UP;
+                            secondDirection = Direction.LEFT_UP;
+
                             newX = fromX;
                             newY = fromY - (yDiff2 - xDiff2);
 
                             newX1 = newX;
-                            newY1 = (int) (newY + (curveOffset * Math.sqrt(2)));
+                            newY1 = (int) (newY + (CURVE_OFFSET * Math.sqrt(2)));
                         }
-                        newX2 = newX - curveOffset;
-                        newY2 = newY - curveOffset;
+                        newX2 = newX - this.CURVE_OFFSET;
+                        newY2 = newY - this.CURVE_OFFSET;
                     }
                 }
             } else {
@@ -197,18 +243,18 @@ public class MetroLine {
 
                 if (xDiff >= 0) {
                     newX = fromX + distance;
-                    newX1 = fromX + (distance - curveOffset);
+                    newX1 = fromX + (distance - this.CURVE_OFFSET);
                 } else {
                     newX = fromX - distance;
-                    newX1 = fromX - (distance - curveOffset);
+                    newX1 = fromX - (distance - this.CURVE_OFFSET);
                 }
 
                 if (yDiff >= 0) {
                     newY = fromY + distance;
-                    newY1 = fromY + (distance - curveOffset);
+                    newY1 = fromY + (distance - this.CURVE_OFFSET);
                 } else {
                     newY = fromY - distance;
-                    newY1 = fromY - (distance - curveOffset);
+                    newY1 = fromY - (distance - this.CURVE_OFFSET);
                 }
 
                 if (xDiff >= 0) {
@@ -217,23 +263,35 @@ public class MetroLine {
                         // RIGHT-DOWN
                         if (xLonger) {
                             // RIGHT
-                            newX2 = (int) (newX + curveOffset * Math.sqrt(2));
+                            firstDirection = Direction.RIGHT_DOWN;
+                            secondDirection = Direction.RIGHT;
+
+                            newX2 = (int) (newX + this.CURVE_OFFSET * Math.sqrt(2));
                             newY2 = newY;
                         } else {
                             // DOWN
+                            firstDirection = Direction.RIGHT_DOWN;
+                            secondDirection = Direction.DOWN;
+
                             newX2 = newX;
-                            newY2 = (int) (newY + curveOffset * Math.sqrt(2));
+                            newY2 = (int) (newY + this.CURVE_OFFSET * Math.sqrt(2));
                         }
                     } else {
                         // RIGHT-UP
                         if (xLonger) {
                             // RIGHT
-                            newX2 = (int) (newX + curveOffset * Math.sqrt(2));
+                            firstDirection = Direction.RIGHT_UP;
+                            secondDirection = Direction.RIGHT;
+
+                            newX2 = (int) (newX + this.CURVE_OFFSET * Math.sqrt(2));
                             newY2 = newY;
                         } else {
                             // UP
+                            firstDirection = Direction.RIGHT_UP;
+                            secondDirection = Direction.UP;
+
                             newX2 = newX;
-                            newY2 = (int) (newY - curveOffset * Math.sqrt(2));
+                            newY2 = (int) (newY - this.CURVE_OFFSET * Math.sqrt(2));
                         }
                     }
                 } else {
@@ -242,45 +300,171 @@ public class MetroLine {
                         // LEFT-DOWN
                         if (xLonger) {
                             // LEFT
-                            newX2 = (int) (newX - curveOffset * Math.sqrt(2));
+                            firstDirection = Direction.LEFT_DOWN;
+                            secondDirection = Direction.LEFT;
+
+                            newX2 = (int) (newX - this.CURVE_OFFSET * Math.sqrt(2));
                             newY2 = newY;
                         } else {
                             // DOWN
+                            firstDirection = Direction.LEFT_DOWN;
+                            secondDirection = Direction.DOWN;
+
                             newX2 = newX;
-                            newY2 = (int) (newY + curveOffset * Math.sqrt(2));
+                            newY2 = (int) (newY + this.CURVE_OFFSET * Math.sqrt(2));
                         }
                     } else {
                         // LEFT-UP
                         if (xLonger) {
                             // LEFT
-                            newX2 = (int) (newX - curveOffset * Math.sqrt(2));
+                            firstDirection = Direction.LEFT_UP;
+                            secondDirection = Direction.LEFT;
+
+                            newX2 = (int) (newX - this.CURVE_OFFSET * Math.sqrt(2));
                             newY2 = newY;
                         } else {
                             // UP
+                            firstDirection = Direction.LEFT_UP;
+                            secondDirection = Direction.UP;
+
                             newX2 = newX;
-                            newY2 = (int) (newY - curveOffset * Math.sqrt(2));
+                            newY2 = (int) (newY - this.CURVE_OFFSET * Math.sqrt(2));
                         }
                     }
                 }
             }
 
-            int lineOffset = (int) (stations.getFirst().getSize() / 2);
+            fromX += this.LINE_OFFSET; fromY += this.LINE_OFFSET;
+            newX1 += this.LINE_OFFSET; newY1 += this.LINE_OFFSET;
+            newX += this.LINE_OFFSET; newY += this.LINE_OFFSET;
+            newX2 += this.LINE_OFFSET; newY2 += this.LINE_OFFSET;
+            toX += this.LINE_OFFSET; toY += this.LINE_OFFSET;
 
             GeneralPath curve = new GeneralPath();
-            curve.moveTo(newX1 + lineOffset, newY1 + lineOffset);
-            curve.curveTo(newX1 + lineOffset, newY1 + lineOffset, newX + lineOffset, newY + lineOffset, newX2 + lineOffset, newY2 + lineOffset);
+            curve.moveTo(newX1, newY1);
+            curve.curveTo(newX1, newY1, newX, newY, newX2, newY2);
 
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Main.g2D.setColor(this.colour);
 
             if (newX == fromX && newY == fromY || newX == toX && newY == toY) {
-                Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX + lineOffset, newY + lineOffset);
-                Main.g2D.drawLine(newX + lineOffset, newY + lineOffset, toX + lineOffset, toY + lineOffset);
+                Main.g2D.drawLine(fromX, fromY, newX, newY);
+                Main.g2D.drawLine(newX, newY, toX, toY);
             } else {
-                Main.g2D.drawLine(fromX + lineOffset, fromY + lineOffset, newX1 + lineOffset, newY1 + lineOffset);
+                Main.g2D.drawLine(fromX, fromY, newX1, newY1);
                 Main.g2D.draw(curve);
-                Main.g2D.drawLine(newX2 + lineOffset, newY2 + lineOffset, toX + lineOffset, toY + lineOffset);
+                Main.g2D.drawLine(newX2, newY2, toX, toY);
             }
+
+            Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
+
+            if (i == 1) {
+                switch (firstDirection) {
+                    case UP -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX, (int) (fromY + this.END_OFFSET * Math.sqrt(2)));
+                        Main.g2D.drawLine((int) (fromX - this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromY + this.END_OFFSET * Math.sqrt(2)), (int) (fromX + this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromY + this.END_OFFSET * Math.sqrt(2)));
+                    }
+                    case DOWN -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX, (int) (fromY - this.END_OFFSET * Math.sqrt(2)));
+                        Main.g2D.drawLine((int) (fromX - this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromY - this.END_OFFSET * Math.sqrt(2)), (int) (fromX + this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromY - this.END_OFFSET * Math.sqrt(2)));
+                    }
+
+                    case LEFT_UP -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX + this.END_OFFSET, fromY + this.END_OFFSET);
+                        Main.g2D.drawLine(fromX + this.END_OFFSET + this.CURVE_OFFSET, fromY + this.END_OFFSET - this.CURVE_OFFSET, fromX + this.END_OFFSET - this.CURVE_OFFSET, fromY + this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                    case LEFT -> {
+                        Main.g2D.drawLine(fromX, fromY, (int) (fromX + this.END_OFFSET * Math.sqrt(2)), fromY);
+                        Main.g2D.drawLine((int) (fromX + this.END_OFFSET * Math.sqrt(2)), (int) (fromY - this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromX + this.END_OFFSET * Math.sqrt(2)), (int) (fromY + this.CURVE_OFFSET * Math.sqrt(2)));
+                    }
+                    case LEFT_DOWN -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX + this.END_OFFSET, fromY - this.END_OFFSET);
+                        Main.g2D.drawLine(fromX + this.END_OFFSET - this.CURVE_OFFSET, fromY - this.END_OFFSET - this.CURVE_OFFSET, fromX + this.END_OFFSET + this.CURVE_OFFSET, fromY - this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+
+                    case RIGHT_UP -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX - this.END_OFFSET, fromY + this.END_OFFSET);
+                        Main.g2D.drawLine(fromX - this.END_OFFSET - this.CURVE_OFFSET, fromY + this.END_OFFSET - this.CURVE_OFFSET, fromX - this.END_OFFSET + this.CURVE_OFFSET, fromY + this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                    case RIGHT -> {
+                        Main.g2D.drawLine(fromX, fromY, (int) (fromX - this.END_OFFSET * Math.sqrt(2)), fromY);
+                        Main.g2D.drawLine((int) (fromX - this.END_OFFSET * Math.sqrt(2)), (int) (fromY - this.CURVE_OFFSET * Math.sqrt(2)), (int) (fromX - this.END_OFFSET * Math.sqrt(2)), (int) (fromY + this.CURVE_OFFSET * Math.sqrt(2)));
+                    }
+                    case RIGHT_DOWN -> {
+                        Main.g2D.drawLine(fromX, fromY, fromX - this.END_OFFSET, fromY - this.END_OFFSET);
+                        Main.g2D.drawLine(fromX - this.END_OFFSET + this.CURVE_OFFSET, fromY - this.END_OFFSET - this.CURVE_OFFSET, fromX - this.END_OFFSET - this.CURVE_OFFSET, fromY - this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                }
+            }
+
+            if (i == this.stations.size() - 1) {
+                switch (secondDirection) {
+                    case UP -> {
+                        Main.g2D.drawLine(toX, toY, toX, (int) (toY - this.END_OFFSET * Math.sqrt(2)));
+                        Main.g2D.drawLine((int) (toX - this.CURVE_OFFSET * Math.sqrt(2)), (int) (toY - this.END_OFFSET * Math.sqrt(2)), (int) (toX + this.CURVE_OFFSET * Math.sqrt(2)), (int) (toY - this.END_OFFSET * Math.sqrt(2)));
+                    }
+                    case DOWN -> {
+                        Main.g2D.drawLine(toX, toY, toX, (int) (toY + this.END_OFFSET * Math.sqrt(2)));
+                        Main.g2D.drawLine((int) (toX - this.CURVE_OFFSET * Math.sqrt(2)), (int) (toY + this.END_OFFSET * Math.sqrt(2)), (int) (toX + this.CURVE_OFFSET * Math.sqrt(2)), (int) (toY + this.END_OFFSET * Math.sqrt(2)));
+                    }
+
+                    case LEFT_UP -> {
+                        Main.g2D.drawLine(toX, toY, toX - this.END_OFFSET, toY - this.END_OFFSET);
+                        Main.g2D.drawLine(toX - this.END_OFFSET + this.CURVE_OFFSET, toY - this.END_OFFSET - this.CURVE_OFFSET, toX - this.END_OFFSET - this.CURVE_OFFSET, toY - this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                    case LEFT -> {
+                        Main.g2D.drawLine(toX, toY, (int) (toX - this.END_OFFSET * Math.sqrt(2)), toY);
+                        Main.g2D.drawLine((int) (toX - this.END_OFFSET * Math.sqrt(2)), (int) (toY - this.CURVE_OFFSET * Math.sqrt(2)), (int) (toX - this.END_OFFSET * Math.sqrt(2)), (int) (toY + this.CURVE_OFFSET * Math.sqrt(2)));
+                    }
+                    case LEFT_DOWN -> {
+                        Main.g2D.drawLine(toX, toY, toX - this.END_OFFSET, toY + this.END_OFFSET);
+                        Main.g2D.drawLine(toX - this.END_OFFSET - this.CURVE_OFFSET, toY + this.END_OFFSET - this.CURVE_OFFSET, toX - this.END_OFFSET + this.CURVE_OFFSET, toY + this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+
+                    case RIGHT_UP -> {
+                        Main.g2D.drawLine(toX, toY, toX + this.END_OFFSET, toY - this.END_OFFSET);
+                        Main.g2D.drawLine(toX + this.END_OFFSET - this.CURVE_OFFSET, toY - this.END_OFFSET - this.CURVE_OFFSET, toX + this.END_OFFSET + this.CURVE_OFFSET, toY - this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                    case RIGHT -> {
+                        Main.g2D.drawLine(toX, toY, (int) (toX + this.END_OFFSET * Math.sqrt(2)), toY);
+                        Main.g2D.drawLine((int) (toX + this.END_OFFSET * Math.sqrt(2)), (int) (toY - this.CURVE_OFFSET * Math.sqrt(2)), (int) (toX + this.END_OFFSET * Math.sqrt(2)), (int) (toY + this.CURVE_OFFSET * Math.sqrt(2)));
+                    }
+                    case RIGHT_DOWN -> {
+                        Main.g2D.drawLine(toX, toY, toX + this.END_OFFSET, toY + this.END_OFFSET);
+                        Main.g2D.drawLine(toX + this.END_OFFSET + this.CURVE_OFFSET, toY + this.END_OFFSET - this.CURVE_OFFSET, toX + this.END_OFFSET - this.CURVE_OFFSET, toY + this.END_OFFSET + this.CURVE_OFFSET);
+                    }
+                }
+            }
+
+            // DEBUG: show direction
+//            switch (firstDirection) {
+//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 20);
+//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 20);
+//
+//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 20);
+//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 20);
+//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 20);
+//
+//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 20);
+//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 20);
+//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 20);
+//
+//                case UNKNOWN -> Main.g2D.drawString("UNKNOWN", toX + 20, toY - 20);
+//            }
+//            switch (secondDirection) {
+//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 10);
+//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 10);
+//
+//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 10);
+//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 10);
+//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 10);
+//
+//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 10);
+//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 10);
+//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 10);
+//
+//                case UNKNOWN -> Main.g2D.drawString("UNKNOWN", toX + 20, toY - 10);
+//            }
         }
     }
 

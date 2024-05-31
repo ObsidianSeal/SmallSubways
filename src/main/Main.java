@@ -50,6 +50,7 @@ public class Main {
 
     // variables
     static boolean shiftHeld = false;
+    static boolean controlHeld = false;
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
@@ -150,9 +151,11 @@ public class Main {
                 if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 
                 // DEBUG: show grid
-                g2D.setColor(Colour.LIGHT_RED);
-                for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
-                for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
+                if (controlHeld) {
+                    g2D.setColor(Colour.LIGHT_RED);
+                    for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
+                    for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
+                }
 
                 // lines
                 for (MetroLine line : lines) {
@@ -229,6 +232,7 @@ public class Main {
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
+                case (KeyEvent.VK_CONTROL) -> controlHeld = true;
             }
         }
 
@@ -240,6 +244,7 @@ public class Main {
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = false;
+                case (KeyEvent.VK_CONTROL) -> controlHeld = false;
             }
         }
 
