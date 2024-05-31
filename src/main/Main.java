@@ -118,30 +118,30 @@ public class Main {
             stations.add(new Station());
             stations.add(new Station());
 
-            stations.add(new Station(5, 5, Shape.GEM));
-            stations.add(new Station(5, 10, Shape.GEM));
-            stations.add(new Station(5, 15, Shape.GEM));
-            stations.add(new Station(10, 5, Shape.GEM));
-            stations.add(new Station(10, 10, Shape.GEM));
-            stations.add(new Station(10, 15, Shape.GEM));
-            stations.add(new Station(15, 5, Shape.GEM));
-            stations.add(new Station(15, 10, Shape.GEM));
-            stations.add(new Station(15, 15, Shape.GEM));
+//            stations.add(new Station(5, 5, Shape.GEM));
+//            stations.add(new Station(5, 10, Shape.GEM));
+//            stations.add(new Station(5, 15, Shape.GEM));
+//            stations.add(new Station(10, 5, Shape.GEM));
+//            stations.add(new Station(10, 10, Shape.GEM));
+//            stations.add(new Station(10, 15, Shape.GEM));
+//            stations.add(new Station(15, 5, Shape.GEM));
+//            stations.add(new Station(15, 10, Shape.GEM));
+//            stations.add(new Station(15, 15, Shape.GEM));
 
-//            stations.add(new Station(5, 10, Shape.CIRCLE));
-//            stations.add(new Station(5, 15, Shape.TRIANGLE));
-//            stations.add(new Station(5, 25, Shape.TRIANGLE));
-//            stations.add(new Station(5, 30, Shape.SQUARE));
-//            stations.add(new Station(15, 10, Shape.STAR));
-//            stations.add(new Station(25, 10, Shape.STAR));
-//            stations.add(new Station(20, 20, Shape.PENTAGON));
-//            stations.add(new Station(15, 30, Shape.GEM));
-//            stations.add(new Station(25, 30, Shape.GEM));
-//            stations.add(new Station(35, 10, Shape.CROSS));
-//            stations.add(new Station(35, 15, Shape.WEDGE));
-//            stations.add(new Station(35, 25, Shape.WEDGE));
-//            stations.add(new Station(35, 30, Shape.DIAMOND));
-//            stations.add(new Station(50, 40, Shape.OVAL));
+            stations.add(new Station(5, 10, Shape.CIRCLE));
+            stations.add(new Station(5, 15, Shape.TRIANGLE));
+            stations.add(new Station(5, 25, Shape.TRIANGLE));
+            stations.add(new Station(5, 30, Shape.SQUARE));
+            stations.add(new Station(15, 10, Shape.STAR));
+            stations.add(new Station(25, 10, Shape.STAR));
+            stations.add(new Station(20, 20, Shape.PENTAGON));
+            stations.add(new Station(15, 30, Shape.GEM));
+            stations.add(new Station(25, 30, Shape.GEM));
+            stations.add(new Station(35, 10, Shape.CROSS));
+            stations.add(new Station(35, 15, Shape.WEDGE));
+            stations.add(new Station(35, 25, Shape.WEDGE));
+            stations.add(new Station(35, 30, Shape.DIAMOND));
+            stations.add(new Station(50, 40, Shape.OVAL));
         }
 
         /**
