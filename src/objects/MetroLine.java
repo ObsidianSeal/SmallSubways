@@ -54,12 +54,23 @@ public class MetroLine {
 
     /**
      * Add a station to the line.
-     * @param station The station to add to the line
+     * @param station The station to add.
      * @return The new number of stations on the line.
      */
     public int addStation(Station station) {
         station.setSelectedColour(this.colour); // temporary?
         this.stations.add(station);
+        return this.stations.size();
+    }
+
+    /**
+     * Remove a station from the line.
+     * @param station The station to remove.
+     * @return The new number of stations on the line.
+     */
+    public int removeStation(Station station) {
+        station.setSelectedColour(Color.WHITE);
+        this.stations.remove(station);
         return this.stations.size();
     }
 

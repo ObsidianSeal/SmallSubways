@@ -7,6 +7,7 @@
 
 package main;
 
+import objects.Colour;
 import objects.MetroLine;
 import objects.MetroMap;
 import objects.Station;
@@ -51,7 +52,7 @@ public class Main {
     static boolean shiftHeld = false;
 
     // timer - for animation, etc.
-    static int ticks = 0; // set to 450 to skip studio screen
+    static int ticks = 450; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -145,12 +146,13 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
-                if (ticks % 100 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 
                 // DEBUG: show grid
-//                g2D.setColor(Colour.LIGHT_RED);
-//                for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
-//                for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
+                g2D.setColor(Colour.LIGHT_RED);
+                for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
+                for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
 
                 // lines
                 for (MetroLine line : lines) {
@@ -179,11 +181,15 @@ public class Main {
         public void mousePressed(MouseEvent e) {
             // left click
             if (e.getButton() == 1) {
-                // DEBUG: station selecting
+                // add station to line
                 for (Station station : stations) {
-                    if (Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f)) {
-                        station.setDiagonal(shiftHeld);
-                        Main.lines.getFirst().addStation(station);
+                    if (Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f)) {
+                        if (!lines.getFirst().getStations().contains(station)) {
+                            station.setDiagonal(shiftHeld);
+                            lines.getFirst().addStation(station);
+                        } else {
+                            lines.getFirst().removeStation(station);
+                        }
                     }
                 }
             }
@@ -203,7 +209,7 @@ public class Main {
         @Override
         public void mouseMoved(MouseEvent e) {
             for (Station station : stations) {
-                station.setSelected(Math.abs(station.getX() - e.getX()) < (Main.mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (Main.mainFrame.getWidth() / 64f));
+                station.setSelected(Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f));
             }
         }
 
