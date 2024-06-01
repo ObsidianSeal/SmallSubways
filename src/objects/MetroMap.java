@@ -141,7 +141,7 @@ public class MetroMap {
                         Color.decode("#2C4251"),
                         Color.decode("#C1C1C1"),
                         Color.decode("#122B3A"),
-                        Color.decode("#6ECFF6"),
+                        Color.decode("#6CCFF6"),
                         Color.decode("#4A71A9"),
                 };
                 this.data = new double[][]{};
