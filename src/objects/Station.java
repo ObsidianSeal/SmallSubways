@@ -29,12 +29,13 @@ public class Station {
      */
     public Station() {
         this.size = Main.mainFrame.getWidth() / 80.0;
-        this.x = (int) (Math.random() * 80) * (Main.mainFrame.getWidth() / 80.0);
-        this.y = (int) (Math.random() * 45) * (Main.mainFrame.getHeight() / 45.0);
+        generateCoordinates();
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+
+        updateGridAvailability();
     }
 
     /**
@@ -50,6 +51,8 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+
+        updateGridAvailability();
     }
 
     /**
@@ -58,12 +61,13 @@ public class Station {
      */
     public Station(Shape type) {
         this.size = Main.mainFrame.getWidth() / 80.0;
-        this.x = (int) (Math.random() * 80) * (Main.mainFrame.getWidth() / 80.0);
-        this.y = (int) (Math.random() * 45) * (Main.mainFrame.getHeight() / 45.0);
+        generateCoordinates();
         this.type = type;
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+
+        updateGridAvailability();
     }
 
     /**
@@ -80,6 +84,8 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+
+        updateGridAvailability();
     }
 
     /**
@@ -97,6 +103,39 @@ public class Station {
         this.diagonal = diagonal;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+
+        updateGridAvailability();
+    }
+
+    /**
+     * Generate random coordinates for the station that are allowed by the grid.
+     */
+    private void generateCoordinates() {
+        int gridX, gridY;
+
+        do {
+            gridX = (int) (Math.random() * 80);
+            gridY = (int) (Math.random() * 45);
+        } while (Main.grid[gridY][gridX]);
+
+        this.x = (gridX) * (Main.mainFrame.getWidth() / 80.0);
+        this.y = (gridY) * (Main.mainFrame.getHeight() / 45.0);
+    }
+
+    /**
+     * Prevent future stations from spawning too close to existing ones.
+     */
+    private void updateGridAvailability() {
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
+                if (!(Math.abs(i) == 2 && Math.abs(j) == 2)) {
+                    int gridX = (int) (this.x / this.size) + j;
+                    int gridY = (int) (this.y / this.size) + i;
+
+                    if (gridX >= 0 && gridX < 80 && gridY >= 0 && gridY < 45) Main.grid[gridY][gridX] = true;
+                }
+            }
+        }
     }
 
     /**

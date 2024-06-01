@@ -7,6 +7,7 @@
 
 package main;
 
+import enums.Shape;
 import objects.Colour;
 import objects.MetroLine;
 import objects.MetroMap;
@@ -47,8 +48,11 @@ public class Main {
     // objects & object arrays :D
     public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
     public static ArrayList<Station> stations = new ArrayList<Station>();
+    public static boolean[][] grid = new boolean[45][80];
 
     // variables
+    static int mouseX;
+    static int mouseY;
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
 
@@ -109,7 +113,7 @@ public class Main {
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
 
-            lines.add(new MetroLine(new ArrayList<Station>(), MetroMap.OTTAWA_COLOURS[0]));
+            lines.add(new MetroLine(new ArrayList<Station>(), MetroMap.OTTAWA_COLOURS[(int) (Math.random() * 7)]));
             stations.add(new Station());
             stations.add(new Station());
             stations.add(new Station());
@@ -147,14 +151,31 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
+                // spawn stations, 200 station limit
+                if (stations.size() < 200) {
 //                if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+                    if (ticks % 15 == 0) {
+                        stations.add(new Station());
+                        System.out.println(stations.size());
+                    }
+                }
 
-                // DEBUG: show grid
+                // EDIT/DEBUG MODE!!
                 if (controlHeld) {
+                    // grid
                     g2D.setColor(Colour.LIGHT_RED);
                     for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
                     for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
+
+                    // disallowed squares
+                    for (int i = 0; i < 45; i++) {
+                        for (int j = 0; j < 80; j++) {
+                            if (grid[i][j]) {
+                                g2D.fillRect(j * (mainFrame.getWidth() / 80), i * (mainFrame.getHeight() / 45), mainFrame.getWidth() / 80, mainFrame.getHeight() / 45);
+                            }
+                        }
+                    }
                 }
 
                 // lines
@@ -184,7 +205,7 @@ public class Main {
         public void mousePressed(MouseEvent e) {
             // left click
             if (e.getButton() == 1) {
-                // add station to line
+                // add/remove station to/from line
                 for (Station station : stations) {
                     if (Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f)) {
                         if (!lines.getFirst().getStations().contains(station)) {
@@ -211,6 +232,10 @@ public class Main {
          */
         @Override
         public void mouseMoved(MouseEvent e) {
+            mouseX = e.getX();
+            mouseY = e.getY();
+
+            // station hover
             for (Station station : stations) {
                 station.setSelected(Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f));
             }
@@ -234,6 +259,14 @@ public class Main {
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
             }
+
+            // EDIT/DEBUG MODE!!
+            if (controlHeld) {
+                if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
+                    stations.add(new Station(mouseX / (mainFrame.getWidth() / 80), mouseY / (mainFrame.getHeight() / 45), Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+                }
+            }
+
         }
 
         /**

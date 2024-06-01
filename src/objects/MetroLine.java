@@ -114,15 +114,19 @@ public class MetroLine {
      * Draw the line as a coloured line, modified from TransitMapMaker.
      */
     public void draw() {
+        // for each station (starting from the second) connect it to previous with one or two line segments
         for (int i = 1; i < this.stations.size(); i++) {
+            // the two directions
             Direction firstDirection, secondDirection;
 
+            // current station's values
             int fromX = (int) this.stations.get(i - 1).getX();
             int fromY = (int) this.stations.get(i - 1).getY();
             int toX = (int) this.stations.get(i).getX();
             int toY = (int) this.stations.get(i).getY();
             boolean diagonal = this.stations.get(i).isDiagonal();
 
+            // calculations
             int xDiff = toX - fromX;
             int yDiff = toY - fromY;
             int xDiff2 = Math.abs(toX - fromX);
@@ -130,6 +134,7 @@ public class MetroLine {
             boolean xLonger = xDiff2 >= yDiff2;
             int newX1, newY1, newX, newY, newX2, newY2;
 
+            // determine directions and where the two line segments should meet
             if (!diagonal) {
                 if (xDiff >= 0) {
                     // RIGHT
@@ -334,20 +339,54 @@ public class MetroLine {
                 }
             }
 
+            // DEBUG: show directions
+//            switch (firstDirection) {
+//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 20);
+//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 20);
+//
+//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 20);
+//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 20);
+//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 20);
+//
+//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 20);
+//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 20);
+//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 20);
+//            }
+//            switch (secondDirection) {
+//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 10);
+//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 10);
+//
+//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 10);
+//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 10);
+//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 10);
+//
+//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 10);
+//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 10);
+//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 10);
+//            }
+
+            // make sure line segments are drawn from the centre of the stations
             fromX += this.LINE_OFFSET; fromY += this.LINE_OFFSET;
             newX1 += this.LINE_OFFSET; newY1 += this.LINE_OFFSET;
             newX += this.LINE_OFFSET; newY += this.LINE_OFFSET;
             newX2 += this.LINE_OFFSET; newY2 += this.LINE_OFFSET;
             toX += this.LINE_OFFSET; toY += this.LINE_OFFSET;
 
+            // make the joining curve
             GeneralPath curve = new GeneralPath();
             curve.moveTo(newX1, newY1);
             curve.curveTo(newX1, newY1, newX, newY, newX2, newY2);
 
+            // set up graphics for line segment drawing
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Main.g2D.setColor(this.colour);
 
+            // don't draw the curve if there's only one line segment to draw
             if (newX == fromX && newY == fromY || newX == toX && newY == toY) {
+                // if there's only one segment, directions have to be shifted so line ends are the right direction
+                if (newX == toX && newY == toY) secondDirection = firstDirection;
+                else firstDirection = secondDirection;
+
                 Main.g2D.drawLine(fromX, fromY, newX, newY);
                 Main.g2D.drawLine(newX, newY, toX, toY);
             } else {
@@ -356,8 +395,10 @@ public class MetroLine {
                 Main.g2D.drawLine(newX2, newY2, toX, toY);
             }
 
+            // line ends have a square-ended stroke
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 
+            // first station
             if (i == 1) {
                 switch (firstDirection) {
                     case UP -> {
@@ -397,6 +438,7 @@ public class MetroLine {
                 }
             }
 
+            // last station
             if (i == this.stations.size() - 1) {
                 switch (secondDirection) {
                     case UP -> {
@@ -435,36 +477,6 @@ public class MetroLine {
                     }
                 }
             }
-
-            // DEBUG: show direction
-//            switch (firstDirection) {
-//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 20);
-//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 20);
-//
-//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 20);
-//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 20);
-//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 20);
-//
-//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 20);
-//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 20);
-//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 20);
-//
-//                case UNKNOWN -> Main.g2D.drawString("UNKNOWN", toX + 20, toY - 20);
-//            }
-//            switch (secondDirection) {
-//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 10);
-//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 10);
-//
-//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 10);
-//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 10);
-//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 10);
-//
-//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 10);
-//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 10);
-//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 10);
-//
-//                case UNKNOWN -> Main.g2D.drawString("UNKNOWN", toX + 20, toY - 10);
-//            }
         }
     }
 
