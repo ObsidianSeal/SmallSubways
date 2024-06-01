@@ -48,21 +48,29 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // the map!
-    public static MetroMap map = new MetroMap(Map.LONDON);
+    public static MetroMap map = new MetroMap(Map.WATERLOO);
+
+    // grid square type constants
+    public static final double MARGIN = -2.0;
+    public static final double TAKEN = -1.0;
+    public static final double WATER = 0.0;
+    public static final double COUNTRY = 0.5;
+    public static final double CITY = 1.0;
 
     // objects & object arrays :D
     public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
     public static ArrayList<Station> stations = new ArrayList<Station>();
-    public static boolean[][] grid = new boolean[45][80];
+    public static double[][] grid = new double[45][80];
 
     // variables
+    public static double gridSize;
     static int mouseX;
     static int mouseY;
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
 
     // timer - for animation, etc.
-    static int ticks = 450; // set to 450 to skip studio screen
+    static int ticks = 0; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -117,7 +125,9 @@ public class Main {
          */
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
+            gridSize = mainFrame.getWidth() / 80.0;
 
+            MapUtilities.initializeGrid();
             MapUtilities.disallowEdge();
             MapUtilities.disallowWater();
 
@@ -168,19 +178,22 @@ public class Main {
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
-                    // grid
-                    g2D.setColor(Colour.LIGHT_RED);
-                    for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * stations.getFirst().getSize()), 0, (int) (i * stations.getFirst().getSize()), getHeight());
-                    for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * stations.getFirst().getSize()), getWidth(), (int) (i * stations.getFirst().getSize()));
-
-                    // disallowed squares
+                    // grid square types
                     for (int i = 0; i < 45; i++) {
                         for (int j = 0; j < 80; j++) {
-                            if (grid[i][j]) {
-                                g2D.fillRect(j * (mainFrame.getWidth() / 80), i * (mainFrame.getHeight() / 45), mainFrame.getWidth() / 80, mainFrame.getHeight() / 45);
-                            }
+                            if (grid[i][j] == WATER) g2D.setColor(Colour.LIGHT_BLUE);
+                            if (grid[i][j] == COUNTRY) g2D.setColor(Colour.LIGHT_YELLOW_GREEN);
+                            if (grid[i][j] == TAKEN) g2D.setColor(Colour.LIGHT_RED);
+                            if (grid[i][j] == MARGIN) g2D.setColor(Colour.LIGHT_YELLOW);
+
+                            if (grid[i][j] != CITY) g2D.fillRect((int) (j * (gridSize)), i * (mainFrame.getHeight() / 45), (int) gridSize, mainFrame.getHeight() / 45);
                         }
                     }
+
+                    // grid
+                    g2D.setColor(Colour.LIGHT_VIOLET_MAGENTA);
+                    for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * gridSize), 0, (int) (i * gridSize), getHeight());
+                    for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * gridSize), getWidth(), (int) (i * gridSize));
                 }
 
                 // lines
@@ -268,7 +281,7 @@ public class Main {
             // EDIT/DEBUG MODE!!
             if (controlHeld) {
                 if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-                    stations.add(new Station(mouseX / (mainFrame.getWidth() / 80), mouseY / (mainFrame.getHeight() / 45), Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+                    stations.add(new Station((int) (mouseX / (gridSize)), mouseY / (mainFrame.getHeight() / 45), Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
                 }
             }
 

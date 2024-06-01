@@ -28,7 +28,7 @@ public class Station {
      * Random station generator.
      */
     public Station() {
-        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.size = Main.gridSize;
         generateCoordinates();
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
         this.diagonal = false;
@@ -44,8 +44,8 @@ public class Station {
      * @param y Assign the station's y-coordinate.
      */
     public Station(int x, int y) {
-        this.size = Main.mainFrame.getWidth() / 80.0;
-        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.size = Main.gridSize;
+        this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
         this.diagonal = false;
@@ -60,7 +60,7 @@ public class Station {
      * @param type Assign the station's type.
      */
     public Station(Shape type) {
-        this.size = Main.mainFrame.getWidth() / 80.0;
+        this.size = Main.gridSize;
         generateCoordinates();
         this.type = type;
         this.diagonal = false;
@@ -77,8 +77,8 @@ public class Station {
      * @param type Assign the station's type.
      */
     public Station(int x, int y, Shape type) {
-        this.size = Main.mainFrame.getWidth() / 80.0;
-        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.size = Main.gridSize;
+        this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
         this.diagonal = false;
@@ -96,8 +96,8 @@ public class Station {
      * @param diagonal Assign the station's line connection mode.
      */
     public Station(int x, int y, Shape type, boolean diagonal) {
-        this.size = Main.mainFrame.getWidth() / 80.0;
-        this.x = x * (Main.mainFrame.getWidth() / 80.0);
+        this.size = Main.gridSize;
+        this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
         this.diagonal = diagonal;
@@ -116,9 +116,9 @@ public class Station {
         do {
             gridX = (int) (Math.random() * 80);
             gridY = (int) (Math.random() * 45);
-        } while (Main.grid[gridY][gridX]);
+        } while (Main.grid[gridY][gridX] <= Main.WATER);
 
-        this.x = (gridX) * (Main.mainFrame.getWidth() / 80.0);
+        this.x = (gridX) * (Main.gridSize);
         this.y = (gridY) * (Main.mainFrame.getHeight() / 45.0);
     }
 
@@ -132,7 +132,7 @@ public class Station {
                     int gridX = (int) (this.x / this.size) + j;
                     int gridY = (int) (this.y / this.size) + i;
 
-                    if (gridX >= 0 && gridX < 80 && gridY >= 0 && gridY < 45) Main.grid[gridY][gridX] = true;
+                    if (gridX >= 0 && gridX < 80 && gridY >= 0 && gridY < 45) Main.grid[gridY][gridX] = Main.TAKEN;
                 }
             }
         }
