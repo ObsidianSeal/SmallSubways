@@ -7,12 +7,14 @@
 
 package main;
 
+import enums.Map;
 import enums.Shape;
 import objects.Colour;
 import objects.MetroLine;
 import objects.MetroMap;
 import objects.Station;
 import utilities.ImageUtilities;
+import utilities.MapUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +46,9 @@ public class Main {
     // graphics!
     public static Graphics2D g2D;
     static GraphicsPanel graphicsPanel;
+
+    // the map!
+    public static MetroMap map = new MetroMap(Map.LONDON);
 
     // objects & object arrays :D
     public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
@@ -105,7 +110,7 @@ public class Main {
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
-        BufferedImage background = MetroMap.OTTAWA;
+        BufferedImage background = map.getMap();
 
         /**
          * GraphicsPanel constructor.
@@ -113,7 +118,10 @@ public class Main {
         GraphicsPanel() {
             this.setBackground(Color.BLACK);
 
-            lines.add(new MetroLine(new ArrayList<Station>(), MetroMap.OTTAWA_COLOURS[(int) (Math.random() * 7)]));
+            MapUtilities.disallowEdge();
+            MapUtilities.disallowWater();
+
+            lines.add(new MetroLine(new ArrayList<Station>(), map.getColours()[(int) (Math.random() * 7)]));
             stations.add(new Station());
             stations.add(new Station());
             stations.add(new Station());
@@ -151,14 +159,11 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
-                // spawn stations, 200 station limit
-                if (stations.size() < 200) {
-//                if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-                    if (ticks % 15 == 0) {
-                        stations.add(new Station());
-                        System.out.println(stations.size());
-                    }
+                // spawn stations, 150 station limit
+                if (stations.size() < 150) {
+//                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
                 // EDIT/DEBUG MODE!!
