@@ -116,7 +116,7 @@ public class Station {
         do {
             gridX = (int) (Math.random() * 80);
             gridY = (int) (Math.random() * 45);
-        } while (Main.grid[gridY][gridX] <= Main.WATER);
+        } while ((Main.grid[gridY][gridX] != Main.COUNTRY && Main.grid[gridY][gridX] <= Main.WATER) || (Main.grid[gridY][gridX] == Main.COUNTRY && (int) (Math.random() * 10) != 0));
 
         this.x = (gridX) * (Main.gridSize);
         this.y = (gridY) * (Main.mainFrame.getHeight() / 45.0);

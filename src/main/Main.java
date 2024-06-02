@@ -114,7 +114,8 @@ public class Main {
 
         // variables
         boolean studioTitleScreenSeen = false;
-        int opacity = 0;
+        double studioTitleScreenScale = 1;
+        int studioTitleScreenOpacity = 0;
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
@@ -150,16 +151,19 @@ public class Main {
             if (!studioTitleScreenSeen) {
                 // fade in...
                 if (ticks >= 50 && ticks < 150) {
-                    if (opacity < 1000) opacity += 10;
+                    if (studioTitleScreenOpacity < 1000) studioTitleScreenOpacity += 10;
                 }
 
                 // fade out...
                 if (ticks >= 300) {
-                    if (opacity > 0) opacity -= 10;
+                    if (studioTitleScreenOpacity > 0) studioTitleScreenOpacity -= 10;
                 }
 
-                g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity / 1000f));
+                g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, studioTitleScreenOpacity / 1000f));
                 ImageUtilities.drawImageFullScreen(studioTitleScreen);
+
+//                studioTitleScreenScale += 0.0005;
+//                g2D.drawImage(studioTitleScreen, (int) ((Main.mainFrame.getWidth() * studioTitleScreenScale - Main.mainFrame.getWidth()) / -2.0), (int) ((Main.mainFrame.getHeight() * studioTitleScreenScale - Main.mainFrame.getHeight()) / -2.0), (int) (Main.mainFrame.getWidth() * studioTitleScreenScale), (int) (Main.mainFrame.getHeight() * studioTitleScreenScale), null);
 
                 if (ticks == 450) {
                     studioTitleScreenSeen = true;
@@ -172,8 +176,8 @@ public class Main {
                 // spawn stations, 150 station limit
                 if (stations.size() < 150) {
 //                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-                    if (ticks % 15 == 0) stations.add(new Station());
+                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
                 // EDIT/DEBUG MODE!!
