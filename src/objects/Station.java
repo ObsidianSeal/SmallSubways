@@ -2,7 +2,7 @@
  * TITLE: Station
  * AUTHOR: Benjamin Gosselin, Daniel Zhong
  * DATE: Tuesday, May 28th, 2024
- * DESCRIPTION: Object; represents a subway station.
+ * DESCRIPTION: Subway station; 10 different shapes.
  */
 
 package objects;
@@ -12,6 +12,7 @@ import main.Main;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 
 /**
  * The Station object; double values because of different screen sizes.
@@ -23,6 +24,7 @@ public class Station {
     private boolean diagonal;
     private boolean selected;
     private Color selectedColour;
+    private ArrayList<Passenger> passengers;
 
     /**
      * Random station generator.
@@ -34,6 +36,7 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+        this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
     }
@@ -51,6 +54,7 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+        this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
     }
@@ -66,6 +70,7 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+        this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
     }
@@ -84,6 +89,7 @@ public class Station {
         this.diagonal = false;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+        this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
     }
@@ -103,6 +109,7 @@ public class Station {
         this.diagonal = diagonal;
         this.selected = false;
         this.selectedColour = Color.WHITE;
+        this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
     }
@@ -255,7 +262,7 @@ public class Station {
      */
     public void draw() {
         Main.g2D.setColor(Color.WHITE);
-        fillShape();
+        fillShape(0, 0, 1, this.type);
 
         Main.g2D.setColor(Color.BLACK);
         drawShape(1);
@@ -264,18 +271,18 @@ public class Station {
     /**
      * Fill a shape's background.
      */
-    private void fillShape() {
-        int iX = (int) (this.x);
-        int iY = (int) (this.y);
-        int iSize = (int) (this.size);
+    private void fillShape(double offsetX, double offsetY, double sizeMultiplier, Shape type) {
+        int iX = (int) (this.x + offsetX);
+        int iY = (int) (this.y + offsetY);
+        int iSize = (int) (this.size * sizeMultiplier);
 
         // Shape filling; very manual. If you make any changes here, make sure to also change the corresponding draw method.
-        switch (this.type) {
+        switch (type) {
             case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
-            case TRIANGLE ->  {iSize = (int) (this.size * 1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);}
-            case SQUARE -> {iSize = (int) (this.size * 0.9); iX += iSize/20; iY += iSize/20; Main.g2D.fillRect(iX, iY, iSize, iSize);}
-            case STAR -> {iSize = (int) (this.size*1.3); iX -= iSize*3/20; iY -= iSize*3/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 25 / 32, iX + iSize / 2, iX + iSize * 7 / 32, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize/16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 19 / 32, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 19 / 32}, 10);}
-            case PENTAGON -> {iSize = (int) (this.size*1.1); iX -= iSize/20; iY -= iSize/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 4 / 5, iX + iSize / 5}, new int[] {iY + iSize * 2 / 5, iY + iSize / 40, iY + iSize * 2 / 5, iY + iSize * 39 / 40, iY + iSize * 39 / 40}, 5);}
+            case TRIANGLE ->  {iSize = (int) (this.size * sizeMultiplier * 1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);}
+            case SQUARE -> {iSize = (int) (this.size * sizeMultiplier * 0.9); iX += iSize/20; iY += iSize/20; Main.g2D.fillRect(iX, iY, iSize, iSize);}
+            case STAR -> {iSize = (int) (this.size * sizeMultiplier*1.3); iX -= iSize*3/20; iY -= iSize*3/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 25 / 32, iX + iSize / 2, iX + iSize * 7 / 32, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize/16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 19 / 32, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 19 / 32}, 10);}
+            case PENTAGON -> {iSize = (int) (this.size * sizeMultiplier*1.1); iX -= iSize/20; iY -= iSize/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 4 / 5, iX + iSize / 5}, new int[] {iY + iSize * 2 / 5, iY + iSize / 40, iY + iSize * 2 / 5, iY + iSize * 39 / 40, iY + iSize * 39 / 40}, 5);}
             case GEM -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize / 2}, new int[] {iY + iSize / 2, iY, iY + iSize / 2, iY + iSize}, 4);
             case CROSS -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 3, iX + iSize / 3, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize, iX + iSize, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize / 3, iX + iSize / 3, iX}, new int[] {iY + iSize / 3, iY + iSize / 3, iY, iY, iY + iSize / 3, iY + iSize / 3, iY + iSize * 2 / 3, iY + iSize * 2 / 3, iY + iSize, iY + iSize, iY + iSize * 2 / 3, iY + iSize * 2 / 3}, 12);
             case WEDGE ->  {
@@ -287,7 +294,7 @@ public class Station {
                 shape.closePath();
                 Main.g2D.fill(shape);
             }
-            case DIAMOND -> {iSize = (int) (this.size*1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX + iSize / 2, iX, iX + iSize / 5, iX + iSize * 4 / 5, iX + iSize}, new int[] {iY + iSize * 17 / 20, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize * 3 / 20, iY + iSize * 7 / 20}, 5);}
+            case DIAMOND -> {iSize = (int) (this.size * sizeMultiplier*1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX + iSize / 2, iX, iX + iSize / 5, iX + iSize * 4 / 5, iX + iSize}, new int[] {iY + iSize * 17 / 20, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize * 3 / 20, iY + iSize * 7 / 20}, 5);}
             case OVAL -> {
                 GeneralPath shape = new GeneralPath();
                 shape.moveTo(iX, iY + iSize);
@@ -351,6 +358,28 @@ public class Station {
     public void highlight() {
         Main.g2D.setColor(this.selectedColour);
         drawShape(3);
+    }
+
+    /**
+     * Get the list of passengers.
+     * @return The current list of passengers.
+     */
+    public ArrayList<Passenger> getPassengers() {
+        return this.passengers;
+    }
+
+    /**
+     * Draw the waiting passengers.
+     */
+    public void drawPassengers() {
+        double offsetX = this.size * 1.5;
+        double offsetY = 0;
+
+        for (Passenger passenger : this.passengers) {
+            Main.g2D.setColor(Color.WHITE);
+            fillShape(offsetX, offsetY, 0.6, passenger.getType());
+            offsetX += this.size;
+        }
     }
 
 }

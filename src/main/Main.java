@@ -9,10 +9,7 @@ package main;
 
 import enums.Map;
 import enums.Shape;
-import objects.Colour;
-import objects.MetroLine;
-import objects.MetroMap;
-import objects.Station;
+import objects.*;
 import utilities.ImageUtilities;
 import utilities.MapUtilities;
 
@@ -48,7 +45,7 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // the map!
-    public static MetroMap map = new MetroMap(Map.WATERLOO);
+    public static MetroMap map = new MetroMap(Map.LONDON);
 
     // grid square type constants
     public static final double MARGIN = -2.0;
@@ -70,7 +67,7 @@ public class Main {
     static boolean controlHeld = false;
 
     // timer - for animation, etc.
-    static int ticks = 0; // set to 450 to skip studio screen
+    static int ticks = 450; // set to 450 to skip studio screen
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -95,7 +92,7 @@ public class Main {
 
         // graphics, added last to get the correct size
         graphicsPanel = new GraphicsPanel();
-        mainFrame.add(graphicsPanel);
+        mainFrame.add(graphicsPanel); // TODO: force 16:9
 
         // event listeners
         graphicsPanel.addMouseListener(new MouseListener());
@@ -180,6 +177,11 @@ public class Main {
 //                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
+                // spawn passengers
+                for (Station station : stations) {
+                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+                }
+
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
                     // grid square types
@@ -209,6 +211,11 @@ public class Main {
                 for (Station station : stations) {
                     if (station.isSelected()) station.highlight();
                     station.draw();
+                }
+
+                // passengers
+                for (Station station : stations) {
+                    station.drawPassengers();
                 }
             }
         }
