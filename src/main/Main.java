@@ -45,7 +45,7 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // the map!
-    public static MetroMap map = new MetroMap(Map.LONDON);
+    public static MetroMap map = new MetroMap(Map.VICTORIA);
 
     // grid square type constants
     public static final double MARGIN = -2.0;
@@ -92,7 +92,7 @@ public class Main {
 
         // graphics, added last to get the correct size
         graphicsPanel = new GraphicsPanel();
-        mainFrame.add(graphicsPanel); // TODO: force 16:9
+        mainFrame.add(graphicsPanel);
 
         // event listeners
         graphicsPanel.addMouseListener(new MouseListener());
@@ -207,15 +207,15 @@ public class Main {
                     line.draw();
                 }
 
+                // passengers
+                for (Station station : stations) {
+                    station.drawPassengers();
+                }
+
                 // stations
                 for (Station station : stations) {
                     if (station.isSelected()) station.highlight();
                     station.draw();
-                }
-
-                // passengers
-                for (Station station : stations) {
-                    station.drawPassengers();
                 }
             }
         }

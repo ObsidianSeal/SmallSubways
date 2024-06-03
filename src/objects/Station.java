@@ -133,9 +133,9 @@ public class Station {
      * Prevent future stations from spawning too close to existing ones.
      */
     private void updateGridAvailability() {
-        for (int i = -2; i <= 2; i++) {
-            for (int j = -2; j <= 2; j++) {
-                if (!(Math.abs(i) == 2 && Math.abs(j) == 2)) {
+        for (int i = -3; i <= 3; i++) {
+            for (int j = -3; j <= 3; j++) {
+                if (!(Math.abs(i) == 3 && Math.abs(j) == 3 || Math.abs(i) == 3 && Math.abs(j) == 2 || Math.abs(i) == 2 && Math.abs(j) == 3)) {
                     int gridX = (int) (this.x / this.size) + j;
                     int gridY = (int) (this.y / this.size) + i;
 
@@ -372,13 +372,29 @@ public class Station {
      * Draw the waiting passengers.
      */
     public void drawPassengers() {
-        double offsetX = this.size * 1.5;
-        double offsetY = 0;
+        double offsetX = this.size * 1.5, offsetY = 0; // distance from top left of station
+        int total = 0, row = 0; // total passengers overall and in a row
+        int opacity = 255; // opacity begins at 100%
 
         for (Passenger passenger : this.passengers) {
-            Main.g2D.setColor(Color.WHITE);
+            if (total >= 5 && opacity >= 30) opacity -= 15; // opacity begins decreasing at the 7th passenger
+
+            // set colour with opacity, draw shape (same as station but smaller)
+            Main.g2D.setColor(new Color(0, 0, 0, opacity));
             fillShape(offsetX, offsetY, 0.6, passenger.getType());
-            offsetX += this.size;
+
+            // update offsets & counts
+            if (row >= 3) {
+                offsetY += this.size * 0.75;
+
+                offsetX = this.size * 1.5;
+                row = 0;
+            } else {
+                offsetX += this.size * 0.75;
+                row++;
+            }
+
+            total++;
         }
     }
 
