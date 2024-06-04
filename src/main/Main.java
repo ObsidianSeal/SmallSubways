@@ -172,14 +172,16 @@ public class Main {
 
                 // spawn stations, 150 station limit
                 if (stations.size() < 150) {
-//                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 //                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
                 // spawn passengers
                 for (Station station : stations) {
-                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                    if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
                 }
 
                 // EDIT/DEBUG MODE!!

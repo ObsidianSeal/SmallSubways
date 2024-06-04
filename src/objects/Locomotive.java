@@ -1,8 +1,8 @@
 /*
  * TITLE: Locomotive
- * AUTHOR:
+ * AUTHOR: Rami Hijazi
  * DATE: Tuesday, May 28th, 2024
- * DESCRIPTION:
+ * DESCRIPTION: ?
  */
 
 package objects;

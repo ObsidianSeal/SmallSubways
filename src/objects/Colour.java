@@ -13,6 +13,26 @@ import java.awt.*;
  * Colours for easy grabbing.
  */
 public class Colour {
+    // "Grayscale" from Photoshop
+    public final static Color GREY_10 = Color.decode("#ebebeb");
+    public final static Color GREY_15 = Color.decode("#e1e1e1");
+    public final static Color GREY_20 = Color.decode("#d7d7d7");
+    public final static Color GREY_25 = Color.decode("#cccccc");
+    public final static Color GREY_30 = Color.decode("#c2c2c2");
+    public final static Color GREY_35 = Color.decode("#b7b7b7");
+    public final static Color GREY_40 = Color.decode("#acacac");
+    public final static Color GREY_45 = Color.decode("#a1a1a1");
+    public final static Color GREY_50 = Color.decode("#959595");
+    public final static Color GREY_55 = Color.decode("#898989");
+    public final static Color GREY_60 = Color.decode("#7d7d7d");
+    public final static Color GREY_65 = Color.decode("#707070");
+    public final static Color GREY_70 = Color.decode("#636363");
+    public final static Color GREY_75 = Color.decode("#555555");
+    public final static Color GREY_80 = Color.decode("#464646");
+    public final static Color GREY_85 = Color.decode("#363636");
+    public final static Color GREY_90 = Color.decode("#252525");
+    public final static Color GREY_95 = Color.decode("#111111");
+
     // "Pastel" from Photoshop
     public final static Color PASTEL_RED = Color.decode("#f69679");
     public final static Color PASTEL_RED_ORANGE = Color.decode("#f9ad81");
@@ -48,4 +68,9 @@ public class Colour {
     public final static Color LIGHT_VIOLET_MAGENTA = Color.decode("#a864a8");
     public final static Color LIGHT_MAGENTA = Color.decode("#f06eaa");
     public final static Color LIGHT_MAGENTA_RED = Color.decode("#f26d7d");
+
+    public static Color atOpacity(Color colour, int opacity) {
+        return (new Color(colour.getRed(), colour.getGreen(), colour.getBlue(), opacity));
+    }
+
 }
