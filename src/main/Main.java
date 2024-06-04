@@ -45,7 +45,7 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // the map!
-    public static MetroMap map = new MetroMap(Map.OTTAWA);
+    public static MetroMap map = new MetroMap(Map.STRATFORD);
 
     // grid square type constants
     public static final double MARGIN = -2.0;
@@ -124,14 +124,17 @@ public class Main {
          * GraphicsPanel constructor.
          */
         GraphicsPanel() {
+            // important initialization
             this.setBackground(Color.BLACK);
             gridSize = mainFrame.getWidth() / 80.0;
 
-            MapUtilities.initializeGrid();
+            // set up grid squares
+            MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
             MapUtilities.disallowEdge();
             MapUtilities.disallowMenuAreas();
             MapUtilities.disallowWater();
 
+            // add initial lines
             lines.add(new MetroLine(map.getColours()[0]));
             lines.add(new MetroLine(map.getColours()[1]));
             lines.add(new MetroLine(map.getColours()[2]));
@@ -140,6 +143,7 @@ public class Main {
 //            lines.add(new MetroLine(map.getColours()[5]));
 //            lines.add(new MetroLine(map.getColours()[6]));
 
+            // add initial stations
             stations.add(new Station());
             stations.add(new Station());
             stations.add(new Station());
