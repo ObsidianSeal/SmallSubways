@@ -41,6 +41,17 @@ public class MapUtilities {
     }
 
     /**
+     * Prevent stations from spawning below menus.
+     */
+    public static void disallowMenuAreas() {
+        for (int i = 38; i < 45; i++) {
+            for (int j = 47; j < 80; j++) {
+                Main.grid[i][j] = Main.MARGIN;
+            }
+        }
+    }
+
+    /**
      * Prevent stations from spawning on water.
      */
     public static void disallowWater() {

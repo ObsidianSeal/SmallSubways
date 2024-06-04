@@ -45,7 +45,7 @@ public class Main {
     static GraphicsPanel graphicsPanel;
 
     // the map!
-    public static MetroMap map = new MetroMap(Map.VICTORIA);
+    public static MetroMap map = new MetroMap(Map.OTTAWA);
 
     // grid square type constants
     public static final double MARGIN = -2.0;
@@ -53,6 +53,7 @@ public class Main {
     public static final double WATER = 0.0;
     public static final double COUNTRY = 0.5;
     public static final double CITY = 1.0;
+    public static int openCount = 80 * 45;
 
     // objects & object arrays :D
     public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
@@ -65,6 +66,7 @@ public class Main {
     static int mouseY;
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
+    static int currentLine;
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
@@ -127,9 +129,17 @@ public class Main {
 
             MapUtilities.initializeGrid();
             MapUtilities.disallowEdge();
+            MapUtilities.disallowMenuAreas();
             MapUtilities.disallowWater();
 
-            lines.add(new MetroLine(new ArrayList<Station>(), map.getColours()[(int) (Math.random() * 7)]));
+            lines.add(new MetroLine(map.getColours()[0]));
+            lines.add(new MetroLine(map.getColours()[1]));
+            lines.add(new MetroLine(map.getColours()[2]));
+//            lines.add(new MetroLine(map.getColours()[3]));
+//            lines.add(new MetroLine(map.getColours()[4]));
+//            lines.add(new MetroLine(map.getColours()[5]));
+//            lines.add(new MetroLine(map.getColours()[6]));
+
             stations.add(new Station());
             stations.add(new Station());
             stations.add(new Station());
@@ -170,19 +180,18 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(background);
 
-                // spawn stations, 150 station limit
-                if (stations.size() < 150) {
+                // spawn stations until no more can be spawned
+                if (openCount > 1) {
                     if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 //                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 //                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
                 // spawn passengers
-                for (Station station : stations) {
-                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                    if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-                }
+//                if (ticks % 150 == 0) System.out.println((int) (Math.random() * 15) == 0);
+                if (ticks % 75 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
@@ -219,6 +228,22 @@ public class Main {
                     if (station.isSelected()) station.highlight();
                     station.draw();
                 }
+
+                // line selection menu
+                for (int i = 6; i >= 0; i--) {
+                    int size;
+
+                    if (lines.size() > 6 - i) {
+                        Main.g2D.setColor(lines.get(6 - i).getColour());
+                        size = (int) (gridSize * 2.5);
+                        if (6 - i == currentLine) size = (int) (gridSize * 3);
+                    } else {
+                        Main.g2D.setColor(Colour.GREY_25);
+                        size = (int) (gridSize * 1.5);
+                    }
+
+                    Main.g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 3 - i * gridSize * 4 - size / 2), (int) (mainFrame.getHeight() - gridSize * 3 - size / 2), size, size);
+                }
             }
         }
     }
@@ -239,11 +264,11 @@ public class Main {
                 // add/remove station to/from line
                 for (Station station : stations) {
                     if (Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f)) {
-                        if (!lines.getFirst().getStations().contains(station)) {
+                        if (!lines.get(currentLine).getStations().contains(station)) {
                             station.setDiagonal(shiftHeld);
-                            lines.getFirst().addStation(station);
+                            lines.get(currentLine).addStation(station);
                         } else {
-                            lines.getFirst().removeStation(station);
+                            lines.get(currentLine).removeStation(station);
                         }
                     }
                 }
@@ -289,6 +314,15 @@ public class Main {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
+
+                // temporary line selection
+                case (KeyEvent.VK_1) -> currentLine = 0;
+                case (KeyEvent.VK_2) -> currentLine = 1;
+                case (KeyEvent.VK_3) -> currentLine = 2;
+                case (KeyEvent.VK_4) -> currentLine = 3;
+                case (KeyEvent.VK_5) -> currentLine = 4;
+                case (KeyEvent.VK_6) -> currentLine = 5;
+                case (KeyEvent.VK_7) -> currentLine = 6;
             }
 
             // EDIT/DEBUG MODE!!

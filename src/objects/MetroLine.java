@@ -24,6 +24,22 @@ public class MetroLine {
     private final int END_OFFSET;
 
     /**
+     * MetroLine constructor, empty stations list.
+     * @param colour The colour of the line (for drawing).
+     */
+    public MetroLine(Color colour) {
+        this.stations = new ArrayList<Station>();
+        this.colour = colour;
+        this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
+        this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
+        this.END_OFFSET = this.CURVE_OFFSET * 5;
+
+        for (Station station : this.stations) {
+            station.setSelectedColour(this.colour); // temporary?
+        }
+    }
+
+    /**
      * MetroLine constructor.
      * @param stations List of stations on the line.
      * @param colour The colour of the line (for drawing).

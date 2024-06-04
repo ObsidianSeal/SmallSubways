@@ -127,6 +127,14 @@ public class Station {
 
         this.x = (gridX) * (Main.gridSize);
         this.y = (gridY) * (Main.mainFrame.getHeight() / 45.0);
+
+        int openCount = 0;
+        for (int i = 0; i < 45; i++) {
+            for (int j = 0; j < 80; j++) {
+                if (Main.grid[i][j] > Main.WATER) openCount++;
+            }
+        }
+        Main.openCount = openCount;
     }
 
     /**
