@@ -67,6 +67,7 @@ public class Main {
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
     static int currentLine;
+    static int circleHover = -1;
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
@@ -206,7 +207,7 @@ public class Main {
                             if (grid[i][j] == TAKEN) g2D.setColor(Colour.LIGHT_RED);
                             if (grid[i][j] == MARGIN) g2D.setColor(Colour.LIGHT_YELLOW);
 
-                            if (grid[i][j] != CITY) g2D.fillRect((int) (j * (gridSize)), i * (mainFrame.getHeight() / 45), (int) gridSize, mainFrame.getHeight() / 45);
+                            if (grid[i][j] != CITY) g2D.fillRect((int) (j * (gridSize)), (int) (i * gridSize), (int) gridSize, mainFrame.getHeight() / 45);
                         }
                     }
 
@@ -228,7 +229,10 @@ public class Main {
 
                 // stations
                 for (Station station : stations) {
-                    if (station.isSelected()) station.highlight(lines[currentLine].getColour());
+                    if (station.isSelected()) {
+                        if (circleHover >= 0) station.highlight(lines[circleHover].getColour());
+                        else station.highlight(lines[currentLine].getColour());
+                    }
                     station.draw();
                 }
 
@@ -282,6 +286,18 @@ public class Main {
                         }
                     }
                 }
+
+                // line selection
+                for (int i = 0; i < 7; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        for (int k = 0; k < 2; k++) {
+                            if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
+                                if (lines[i] != null) currentLine = i;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -301,12 +317,38 @@ public class Main {
             mouseX = e.getX();
             mouseY = e.getY();
 
-            gridX = (int) (mouseX / (gridSize));
-            gridY = (int) (mouseY / (mainFrame.getHeight() / 45d));
+            gridX = (int) (mouseX / gridSize);
+            gridY = (int) (mouseY / gridSize);
 
-            // station hover
-            for (Station station : stations) {
-                station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
+            // hover
+            if (gridX >= 54 && gridY >= 38) {
+                // line circle hover
+                circleHover = -1;
+                for (int i = 0; i < 7; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        for (int k = 0; k < 2; k++) {
+                            if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
+                                if (lines[i] != null) circleHover = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (Station station : stations) {
+                    station.setSelected(false);
+                }
+                for (int i = 0; i < 7; i++) {
+                    if (i == circleHover) {
+                        for (Station station : lines[i].getStations()) {
+                            station.setSelected(true);
+                        }
+                    }
+                }
+            } else {
+                // station hover
+                for (Station station : stations) {
+                    station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
+                }
             }
         }
 
@@ -332,7 +374,6 @@ public class Main {
             // line selection
             if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_7) {
                 if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) currentLine = e.getKeyCode() - KeyEvent.VK_1;
-                System.out.println(currentLine);
             }
 
             // EDIT/DEBUG MODE!!

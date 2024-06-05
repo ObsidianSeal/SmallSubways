@@ -48,7 +48,7 @@ public class Station {
     public Station(int x, int y) {
         this.size = Main.gridSize;
         this.x = x * (Main.gridSize);
-        this.y = y * (Main.mainFrame.getHeight() / 45.0);
+        this.y = y * Main.gridSize;
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
         this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
@@ -81,7 +81,7 @@ public class Station {
     public Station(int x, int y, Shape type) {
         this.size = Main.gridSize;
         this.x = x * (Main.gridSize);
-        this.y = y * (Main.mainFrame.getHeight() / 45.0);
+        this.y = y * Main.gridSize;
         this.type = type;
         this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
@@ -100,7 +100,7 @@ public class Station {
     public Station(int x, int y, Shape type, boolean diagonal) {
         this.size = Main.gridSize;
         this.x = x * (Main.gridSize);
-        this.y = y * (Main.mainFrame.getHeight() / 45.0);
+        this.y = y * Main.gridSize;
         this.type = type;
         this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
@@ -121,7 +121,7 @@ public class Station {
         } while ((Main.grid[gridY][gridX] != Main.COUNTRY && Main.grid[gridY][gridX] <= Main.WATER) || (Main.grid[gridY][gridX] == Main.COUNTRY && (int) (Math.random() * 10) != 0));
 
         this.x = (gridX) * (Main.gridSize);
-        this.y = (gridY) * (Main.mainFrame.getHeight() / 45.0);
+        this.y = (gridY) * Main.gridSize;
 
         int openCount = 0;
         for (int i = 0; i < 45; i++) {
