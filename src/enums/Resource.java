@@ -14,6 +14,5 @@ public enum Resource {
     LOCOMOTIVE,
     CARRIAGE,
     INTERCHANGE,
-    LINE,
     TUNNEL
 }

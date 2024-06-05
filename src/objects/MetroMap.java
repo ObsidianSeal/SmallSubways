@@ -43,6 +43,8 @@ public class MetroMap {
                         Color.decode("#283618"),
                         Color.decode("#4B7A98"),
                         Color.decode("#070230"),
+                        // locked line
+                        Colour.GREY_10,
                 };
                 this.data = new double[][]{};
             }
@@ -63,6 +65,8 @@ public class MetroMap {
                         Color.decode("#678D58"),
                         Color.decode("#74D3AE"),
                         Color.decode("#1F392F"),
+                        // locked line
+                        Colour.GREY_20,
                 };
                 this.data = new double[][]{};
             }
@@ -83,6 +87,8 @@ public class MetroMap {
                         Color.decode("#F49C95"),
                         Color.decode("#00AFB9"),
                         Color.decode("#0081A7"),
+                        // locked line
+                        Colour.GREY_50,
                 };
                 this.data = new double[][]{};
             }
@@ -103,6 +109,8 @@ public class MetroMap {
                         Color.decode("#D0A98F"),
                         Color.decode("#7476D3"),
                         Color.decode("#1B0961"),
+                        // locked line
+                        Colour.GREY_40,
                 };
                 this.data = new double[][]{};
             }
@@ -123,6 +131,8 @@ public class MetroMap {
                         Color.decode("#AF94DD"),
                         Color.decode("#F794CA"),
                         Color.decode("#772D6F"),
+                        // locked line
+                        Colour.GREY_20,
                 };
                 this.data = new double[][]{};
             }
@@ -143,6 +153,8 @@ public class MetroMap {
                         Color.decode("#122B3A"),
                         Color.decode("#6CCFF6"),
                         Color.decode("#4A71A9"),
+                        // locked line
+                        Colour.GREY_30,
                 };
                 this.data = new double[][]{};
             }

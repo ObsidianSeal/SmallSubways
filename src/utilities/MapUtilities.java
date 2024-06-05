@@ -45,7 +45,7 @@ public class MapUtilities {
      */
     public static void disallowMenuAreas() {
         for (int i = 38; i < 45; i++) {
-            for (int j = 47; j < 80; j++) {
+            for (int j = 54; j < 80; j++) {
                 Main.grid[i][j] = Main.MARGIN;
             }
         }

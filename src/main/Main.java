@@ -56,14 +56,14 @@ public class Main {
     public static int openCount = 80 * 45;
 
     // objects & object arrays :D
-    public static ArrayList<MetroLine> lines = new ArrayList<MetroLine>();
+    public static MetroLine[] lines = {null, null, null, null, null, null, null};
     public static ArrayList<Station> stations = new ArrayList<Station>();
     public static double[][] grid = new double[45][80];
 
     // variables
     public static double gridSize;
-    static int mouseX;
-    static int mouseY;
+    static int mouseX, mouseY;
+    static int gridX, gridY;
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
     static int currentLine;
@@ -110,7 +110,6 @@ public class Main {
      * Inner class for drawing.
      */
     private static class GraphicsPanel extends JPanel {
-
         // variables
         boolean studioTitleScreenSeen = false;
         double studioTitleScreenScale = 1;
@@ -130,18 +129,18 @@ public class Main {
 
             // set up grid squares
             MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
+            MapUtilities.disallowWater();
             MapUtilities.disallowEdge();
             MapUtilities.disallowMenuAreas();
-            MapUtilities.disallowWater();
 
             // add initial lines
-            lines.add(new MetroLine(map.getColours()[0]));
-            lines.add(new MetroLine(map.getColours()[1]));
-            lines.add(new MetroLine(map.getColours()[2]));
-//            lines.add(new MetroLine(map.getColours()[3]));
-//            lines.add(new MetroLine(map.getColours()[4]));
-//            lines.add(new MetroLine(map.getColours()[5]));
-//            lines.add(new MetroLine(map.getColours()[6]));
+            lines[0] = new MetroLine(map.getColours()[0]);
+            lines[1] = new MetroLine(map.getColours()[1]);
+            lines[2] = new MetroLine(map.getColours()[2]);
+//            lines[3] = new MetroLine(map.getColours()[3]);
+//            lines[4] = new MetroLine(map.getColours()[4]);
+//            lines[5] = new MetroLine(map.getColours()[5]);
+//            lines[6] = new MetroLine(map.getColours()[6]);
 
             // add initial stations
             stations.add(new Station());
@@ -219,7 +218,7 @@ public class Main {
 
                 // lines
                 for (MetroLine line : lines) {
-                    line.draw();
+                    if (line != null) line.draw();
                 }
 
                 // passengers
@@ -229,27 +228,34 @@ public class Main {
 
                 // stations
                 for (Station station : stations) {
-                    if (station.isSelected()) station.highlight();
+                    if (station.isSelected()) station.highlight(lines[currentLine].getColour());
                     station.draw();
                 }
 
                 // line selection menu
-                for (int i = 6; i >= 0; i--) {
-                    int size;
+                for (int i = 0; i < 7; i++) {
+                    double size;
 
-                    if (lines.size() > 6 - i) {
-                        Main.g2D.setColor(lines.get(6 - i).getColour());
-                        size = (int) (gridSize * 2.5);
-                        if (6 - i == currentLine) size = (int) (gridSize * 3);
+                    if (lines[i] != null) {
+                        g2D.setColor(lines[i].getColour());
+
+                        if (i == currentLine) {
+                            if (!lines[i].getStations().isEmpty()) size = (int) (gridSize * 2.5);
+                            else size = (int) (gridSize * 1.6);
+                        } else {
+                            if (!lines[i].getStations().isEmpty()) size = (int) (gridSize * 2.1);
+                            else size = (int) (gridSize * 1.3);
+                        }
                     } else {
-                        Main.g2D.setColor(Colour.GREY_25);
-                        size = (int) (gridSize * 1.5);
+                        g2D.setColor(map.getColours()[12]);
+                        size = (int) (gridSize * 1.3);
                     }
 
-                    Main.g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 3 - i * gridSize * 4 - size / 2), (int) (mainFrame.getHeight() - gridSize * 3 - size / 2), size, size);
+                    g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 3 - (6 - i) * gridSize * 3 - size / 2), (int) (mainFrame.getHeight() - gridSize * 3 - size / 2), (int) size, (int) size);
                 }
             }
         }
+
     }
 
     /**
@@ -267,12 +273,12 @@ public class Main {
             if (e.getButton() == 1) {
                 // add/remove station to/from line
                 for (Station station : stations) {
-                    if (Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f)) {
-                        if (!lines.get(currentLine).getStations().contains(station)) {
-                            station.setDiagonal(shiftHeld);
-                            lines.get(currentLine).addStation(station);
+                    if (station.getGridX() == gridX && station.getGridY() == gridY) {
+                        if (!lines[currentLine].getStations().contains(station)) {
+                            station.setDiagonal(lines[currentLine], shiftHeld);
+                            lines[currentLine].addStation(station);
                         } else {
-                            lines.get(currentLine).removeStation(station);
+                            lines[currentLine].removeStation(station);
                         }
                     }
                 }
@@ -295,9 +301,12 @@ public class Main {
             mouseX = e.getX();
             mouseY = e.getY();
 
+            gridX = (int) (mouseX / (gridSize));
+            gridY = (int) (mouseY / (mainFrame.getHeight() / 45d));
+
             // station hover
             for (Station station : stations) {
-                station.setSelected(Math.abs(station.getX() - e.getX()) < (mainFrame.getWidth() / 64f) && Math.abs(station.getY() - e.getY()) < (mainFrame.getWidth() / 64f));
+                station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
             }
         }
 
@@ -318,21 +327,18 @@ public class Main {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
+            }
 
-                // temporary line selection
-                case (KeyEvent.VK_1) -> currentLine = 0;
-                case (KeyEvent.VK_2) -> currentLine = 1;
-                case (KeyEvent.VK_3) -> currentLine = 2;
-                case (KeyEvent.VK_4) -> currentLine = 3;
-                case (KeyEvent.VK_5) -> currentLine = 4;
-                case (KeyEvent.VK_6) -> currentLine = 5;
-                case (KeyEvent.VK_7) -> currentLine = 6;
+            // line selection
+            if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_7) {
+                if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) currentLine = e.getKeyCode() - KeyEvent.VK_1;
+                System.out.println(currentLine);
             }
 
             // EDIT/DEBUG MODE!!
             if (controlHeld) {
                 if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-                    stations.add(new Station((int) (mouseX / (gridSize)), mouseY / (mainFrame.getHeight() / 45), Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+                    stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
                 }
             }
 

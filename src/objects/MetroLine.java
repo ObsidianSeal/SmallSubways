@@ -33,10 +33,6 @@ public class MetroLine {
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
         this.END_OFFSET = this.CURVE_OFFSET * 5;
-
-        for (Station station : this.stations) {
-            station.setSelectedColour(this.colour); // temporary?
-        }
     }
 
     /**
@@ -50,10 +46,6 @@ public class MetroLine {
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
         this.END_OFFSET = this.CURVE_OFFSET * 5;
-
-        for (Station station : this.stations) {
-            station.setSelectedColour(this.colour); // temporary?
-        }
     }
 
     /**
@@ -78,7 +70,6 @@ public class MetroLine {
      * @return The new number of stations on the line.
      */
     public int addStation(Station station) {
-        station.setSelectedColour(this.colour); // temporary?
         this.stations.add(station);
         return this.stations.size();
     }
@@ -89,7 +80,6 @@ public class MetroLine {
      * @return The new number of stations on the line.
      */
     public int removeStation(Station station) {
-        station.setSelectedColour(Color.WHITE);
         this.stations.remove(station);
         return this.stations.size();
     }
@@ -140,7 +130,7 @@ public class MetroLine {
             int fromY = (int) this.stations.get(i - 1).getY();
             int toX = (int) this.stations.get(i).getX();
             int toY = (int) this.stations.get(i).getY();
-            boolean diagonal = this.stations.get(i).isDiagonal();
+            boolean diagonal = this.stations.get(i).isDiagonal(this);
 
             // calculations
             int xDiff = toX - fromX;

@@ -13,6 +13,7 @@ import main.Main;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The Station object; double values because of different screen sizes.
@@ -21,9 +22,8 @@ public class Station {
     private double size;
     private double x, y;
     private Shape type;
-    private boolean diagonal;
+    private HashMap<MetroLine, Boolean> diagonal;
     private boolean selected;
-    private Color selectedColour;
     private ArrayList<Passenger> passengers;
 
     /**
@@ -33,9 +33,8 @@ public class Station {
         this.size = Main.gridSize;
         generateCoordinates();
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
-        this.diagonal = false;
+        this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
-        this.selectedColour = Color.WHITE;
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
@@ -51,9 +50,8 @@ public class Station {
         this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
-        this.diagonal = false;
+        this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
-        this.selectedColour = Color.WHITE;
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
@@ -67,9 +65,8 @@ public class Station {
         this.size = Main.gridSize;
         generateCoordinates();
         this.type = type;
-        this.diagonal = false;
+        this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
-        this.selectedColour = Color.WHITE;
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
@@ -86,9 +83,8 @@ public class Station {
         this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
-        this.diagonal = false;
+        this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
-        this.selectedColour = Color.WHITE;
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
@@ -106,9 +102,8 @@ public class Station {
         this.x = x * (Main.gridSize);
         this.y = y * (Main.mainFrame.getHeight() / 45.0);
         this.type = type;
-        this.diagonal = diagonal;
+        this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
-        this.selectedColour = Color.WHITE;
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
@@ -221,16 +216,16 @@ public class Station {
      * Get whether the station is should be drawn to diagonally first.
      * @return Whether the station is should be drawn to diagonally first or not.
      */
-    public boolean isDiagonal() {
-        return this.diagonal;
+    public boolean isDiagonal(MetroLine line) {
+        return this.diagonal.get(line);
     }
 
     /**
      * Set whether the station is should be drawn to diagonally first.
      * @param diagonal The diagonal state of the station.
      */
-    public void setDiagonal(boolean diagonal) {
-        this.diagonal = diagonal;
+    public void setDiagonal(MetroLine line, boolean diagonal) {
+        this.diagonal.put(line, diagonal);
     }
 
     /**
@@ -247,22 +242,6 @@ public class Station {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    /**
-     * Get the colour of the station select highlight.
-     * @return The current station select colour.
-     */
-    public Color getSelectedColour() {
-        return this.selectedColour;
-    }
-
-    /**
-     * Set the colour of the station select highlight.
-     * @param selectedColour The new station select colour.
-     */
-    public void setSelectedColour(Color selectedColour) {
-        this.selectedColour = selectedColour;
     }
 
     /**
@@ -363,8 +342,8 @@ public class Station {
     /**
      * Show that the station is selected, currently only one shape and colour.
      */
-    public void highlight() {
-        Main.g2D.setColor(this.selectedColour);
+    public void highlight(Color colour) {
+        Main.g2D.setColor(colour);
         drawShape(3);
     }
 
@@ -404,6 +383,22 @@ public class Station {
 
             total++;
         }
+    }
+
+    /**
+     * Get the grid x-coordinate of the station.
+     * @return The station's x-coordinate on the grid.
+     */
+    public int getGridX() {
+        return (int) (this.x / Main.gridSize);
+    }
+
+    /**
+     * Get the grid y-coordinate of the station.
+     * @return The station's y-coordinate on the grid.
+     */
+    public int getGridY() {
+        return (int) (this.y / Main.gridSize);
     }
 
 }
