@@ -67,6 +67,7 @@ public class Main {
     static int gridX, gridY;
     static boolean shiftHeld = false;
     static boolean controlHeld = false;
+    static boolean altHeld = false;
     static int currentLine;
     static int circleHover = -1;
 
@@ -309,7 +310,8 @@ public class Main {
                     if (station.getGridX() == gridX && station.getGridY() == gridY) {
                         if (!lines[currentLine].getStations().contains(station)) {
                             station.setDiagonal(lines[currentLine], shiftHeld);
-                            lines[currentLine].addStation(station);
+                            if (altHeld) lines[currentLine].getStations().addFirst(station);
+                            else lines[currentLine].addStation(station);
                         } else {
                             lines[currentLine].removeStation(station);
                         }
@@ -398,6 +400,7 @@ public class Main {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
+                case (KeyEvent.VK_ALT) -> altHeld = true;
             }
 
             // line selection
@@ -423,6 +426,7 @@ public class Main {
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_SHIFT) -> shiftHeld = false;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = false;
+                case (KeyEvent.VK_ALT) -> altHeld = false;
             }
         }
 
