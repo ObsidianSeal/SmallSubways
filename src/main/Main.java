@@ -16,6 +16,7 @@ import utilities.MapUtilities;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -284,9 +285,28 @@ public class Main {
                     }
                     ImageUtilities.drawImage(icon, xPosition, yPosition, (int) size, (int) size);
 
-                    g2D.setColor(Color.BLACK); g2D.setFont(robotoMono24);
+                    g2D.setColor(map.getColours()[12]); g2D.setFont(robotoMono24);
                     g2D.drawString(String.valueOf(resources[i]), (int) (xPosition + size), (int) (yPosition + gridSize / 4));
                 }
+
+                // clock
+                g2D.setColor(Color.BLACK);
+                g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 5), (int) (gridSize * 2), (int) (gridSize * 3), (int) (gridSize * 3));
+                g2D.setColor(Color.WHITE);
+                for (int i = 0; i < 12; i++) {
+                    if (i % 3 == 0) {
+                        g2D.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.85) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 0.85) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
+                    } else {
+                        g2D.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.9) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 0.9) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
+                    }
+                }
+                g2D.setStroke(new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                GeneralPath clockHand = new GeneralPath();
+                clockHand.moveTo(mainFrame.getWidth() - gridSize * 3.5, gridSize * 3.5);
+                clockHand.lineTo(mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.7) * Math.cos(Math.toRadians(ticks)), gridSize * 3.5 + (gridSize * 0.7) * Math.sin(Math.toRadians(ticks)));
+                g2D.draw(clockHand);
             }
         }
 
