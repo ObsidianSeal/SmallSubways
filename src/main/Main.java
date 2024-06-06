@@ -58,6 +58,7 @@ public class Main {
     // objects & object arrays :D
     public static MetroLine[] lines = {null, null, null, null, null, null, null};
     public static ArrayList<Station> stations = new ArrayList<Station>();
+    public static int[] resources = new int[4];
     public static double[][] grid = new double[45][80];
 
     // variables
@@ -78,6 +79,9 @@ public class Main {
             graphicsPanel.repaint();
         }
     });
+
+    // fonts
+    static Font robotoMono24 = new Font("Roboto Mono", Font.PLAIN, 24);
 
     /**
      * Constructor - where the main magic happens.
@@ -113,12 +117,17 @@ public class Main {
     private static class GraphicsPanel extends JPanel {
         // variables
         boolean studioTitleScreenSeen = false;
-        double studioTitleScreenScale = 1;
         int studioTitleScreenOpacity = 0;
 
         // images
         BufferedImage studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
         BufferedImage background = map.getMap();
+        BufferedImage lineIcon = ImageUtilities.importImage("src\\images\\icons\\line.png");
+        BufferedImage tunnelIcon = ImageUtilities.importImage("src\\images\\icons\\tunnel.png");
+        BufferedImage bridgeIcon = ImageUtilities.importImage("src\\images\\icons\\bridge.png");
+        BufferedImage locomotiveIcon = ImageUtilities.importImage("src\\images\\icons\\locomotive.png");
+        BufferedImage carriageIcon = ImageUtilities.importImage("src\\images\\icons\\carriage.png");
+        BufferedImage interchangeIcon = ImageUtilities.importImage("src\\images\\icons\\interchange.png");
 
         /**
          * GraphicsPanel constructor.
@@ -158,6 +167,7 @@ public class Main {
             super.paintComponent(g);
             g2D = (Graphics2D) g;
             g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR); // smooth images; quality & speed tradeoff
 
             if (!studioTitleScreenSeen) {
                 // fade in...
@@ -172,9 +182,6 @@ public class Main {
 
                 g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, studioTitleScreenOpacity / 1000f));
                 ImageUtilities.drawImageFullScreen(studioTitleScreen);
-
-//                studioTitleScreenScale += 0.0005;
-//                g2D.drawImage(studioTitleScreen, (int) ((Main.mainFrame.getWidth() * studioTitleScreenScale - Main.mainFrame.getWidth()) / -2.0), (int) ((Main.mainFrame.getHeight() * studioTitleScreenScale - Main.mainFrame.getHeight()) / -2.0), (int) (Main.mainFrame.getWidth() * studioTitleScreenScale), (int) (Main.mainFrame.getHeight() * studioTitleScreenScale), null);
 
                 if (ticks == 450) {
                     studioTitleScreenSeen = true;
@@ -244,18 +251,40 @@ public class Main {
                         g2D.setColor(lines[i].getColour());
 
                         if (i == currentLine) {
-                            if (!lines[i].getStations().isEmpty()) size = (int) (gridSize * 2.5);
-                            else size = (int) (gridSize * 1.6);
+                            if (!lines[i].getStations().isEmpty()) size = gridSize * 2.5;
+                            else size = gridSize * 1.6;
                         } else {
-                            if (!lines[i].getStations().isEmpty()) size = (int) (gridSize * 2.1);
-                            else size = (int) (gridSize * 1.3);
+                            if (!lines[i].getStations().isEmpty()) size = gridSize * 2.1;
+                            else size = gridSize * 1.3;
                         }
                     } else {
                         g2D.setColor(map.getColours()[12]);
-                        size = (int) (gridSize * 1.3);
+                        size = gridSize * 1.3;
                     }
 
                     g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 3 - (6 - i) * gridSize * 3 - size / 2), (int) (mainFrame.getHeight() - gridSize * 3 - size / 2), (int) size, (int) size);
+                }
+
+                // resource icons
+                for (int i = 0; i < 4; i++) {
+                    double size = gridSize * 2.5;
+                    int xPosition = (int) (gridSize * 3 + i * gridSize * 4 - size / 2);
+                    int yPosition = (int) (mainFrame.getHeight() - gridSize * 3 - size / 2);
+                    BufferedImage icon = null;
+
+                    switch (i) {
+                        case 0 -> icon = locomotiveIcon;
+                        case 1 -> icon = carriageIcon;
+                        case 2 -> icon = interchangeIcon;
+                        case 3 -> {
+                            if (map.getWaterTravelType()) icon = tunnelIcon;
+                            else icon = bridgeIcon;
+                        }
+                    }
+                    ImageUtilities.drawImage(icon, xPosition, yPosition, (int) size, (int) size);
+
+                    g2D.setColor(Color.BLACK); g2D.setFont(robotoMono24);
+                    g2D.drawString(String.valueOf(resources[i]), (int) (xPosition + size), (int) (yPosition + gridSize / 4));
                 }
             }
         }

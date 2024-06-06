@@ -19,7 +19,7 @@ import java.awt.image.BufferedImage;
 public class MetroMap {
     private BufferedImage map;
     private Color[] colours;
-    private double[][] data;
+    private boolean waterTravelType;
 
     /**
      * Create a map instance.
@@ -46,7 +46,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_10,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = false;
             }
             case LONDON -> {
                 this.map = ImageUtilities.importImage("src\\images\\levels\\london.png");
@@ -68,7 +68,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_20,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = true;
             }
             case OTTAWA -> {
                 this.map = ImageUtilities.importImage("src\\images\\levels\\ottawa.png");
@@ -90,7 +90,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_50,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = true;
             }
             case STRATFORD -> {
                 this.map = ImageUtilities.importImage("src\\images\\levels\\stratford.png");
@@ -112,7 +112,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_40,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = false;
             }
             case VICTORIA -> {
                 this.map = ImageUtilities.importImage("src\\images\\levels\\victoria.png");
@@ -134,7 +134,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_20,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = false;
             }
             case WATERLOO -> {
                 this.map = ImageUtilities.importImage("src\\images\\levels\\waterloo.png");
@@ -156,7 +156,7 @@ public class MetroMap {
                         // locked line
                         Colour.GREY_30,
                 };
-                this.data = new double[][]{};
+                this.waterTravelType = true;
             }
         }
     }
@@ -178,11 +178,11 @@ public class MetroMap {
     }
 
     /**
-     * Get the level's data.
-     * @return The map's data.
+     * Get the level's water travel type.
+     * @return True if the map prefers tunnels, false if the map prefers bridges.
      */
-    public double[][] getData() {
-        return this.data;
+    public boolean getWaterTravelType() {
+        return this.waterTravelType;
     }
 
 }

@@ -16,5 +16,5 @@ public enum Map {
     OTTAWA,
     STRATFORD,
     VICTORIA,
-    WATERLOO,
+    WATERLOO
 }
