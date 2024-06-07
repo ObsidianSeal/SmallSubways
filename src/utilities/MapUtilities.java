@@ -10,6 +10,7 @@ package utilities;
 import main.Main;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Methods to help with maps.
@@ -70,12 +71,14 @@ public class MapUtilities {
      * Prevent stations from spawning on water.
      */
     public static void disallowWater() {
-        int mapHeight = Main.map.getMap().getHeight();
-        int mapWidth = Main.map.getMap().getWidth();
+        BufferedImage map = (BufferedImage) Main.map.getMap();
+
+        int mapHeight = map.getHeight();
+        int mapWidth = map.getWidth();
 
         for (int i = 0; i < mapHeight; i++) {
             for (int j = 0; j < mapWidth; j++) {
-                Color colour = new Color(Main.map.getMap().getRGB(j, i));
+                Color colour = new Color(map.getRGB(j, i));
 
                 if (colour.equals(Main.map.getColours()[10])) Main.grid[i / (mapHeight / 45)][j / (mapWidth / 80)] = Main.WATER;
                 if (colour.equals(Main.map.getColours()[8]) && Main.grid[i / (mapHeight / 45)][j / (mapWidth / 80)] == Main.COUNTRY) Main.grid[i / (mapHeight / 45)][j / (mapWidth / 80)] = Main.CITY;

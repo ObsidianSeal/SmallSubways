@@ -11,13 +11,12 @@ import enums.Map;
 import utilities.ImageUtilities;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
  * Object containing map-specific info and images.
  */
 public class MetroMap {
-    private BufferedImage map;
+    private Image map;
     private Color[] colours;
     private boolean waterTravelType;
 
@@ -165,7 +164,7 @@ public class MetroMap {
      * Get the level's background image.
      * @return The map's background BufferedImage.
      */
-    public BufferedImage getMap() {
+    public Image getMap() {
         return this.map;
     }
 
