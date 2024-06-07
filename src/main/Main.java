@@ -45,9 +45,6 @@ public class Main {
     public static Graphics2D g2D;
     static GraphicsPanel graphicsPanel;
 
-    // the map!
-    public static MetroMap map = new MetroMap(Map.STRATFORD);
-
     // grid square type constants
     public static final double MARGIN = -2.0;
     public static final double TAKEN = -1.0;
@@ -57,10 +54,10 @@ public class Main {
     public static int openCount = 80 * 45;
 
     // objects & object arrays :D
+    public static MetroMap map = new MetroMap(Map.OTTAWA);
     public static MetroLine[] lines = {null, null, null, null, null, null, null};
     public static ArrayList<Station> stations = new ArrayList<Station>();
-    public static int[] resources = new int[4];
-    public static double[][] grid = new double[45][80];
+    static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
 
     // variables
     public static double gridSize;
@@ -71,9 +68,13 @@ public class Main {
     static boolean altHeld = false;
     static int currentLine;
     static int circleHover = -1;
+    public static int[] resources = new int[4];
+    public static double[][] grid = new double[45][80];
+    static int points = 1234;
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
+    static double tickRate = 1; // tick speed multiplier
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -83,7 +84,7 @@ public class Main {
     });
 
     // fonts
-    static Font robotoMono24 = new Font("Roboto Mono", Font.PLAIN, 24);
+    static Font robotoMono24;
 
     /**
      * Constructor - where the main magic happens.
@@ -130,6 +131,7 @@ public class Main {
         BufferedImage locomotiveIcon = ImageUtilities.importImage("src\\images\\icons\\locomotive.png");
         BufferedImage carriageIcon = ImageUtilities.importImage("src\\images\\icons\\carriage.png");
         BufferedImage interchangeIcon = ImageUtilities.importImage("src\\images\\icons\\interchange.png");
+        BufferedImage person = ImageUtilities.importImage("src\\images\\icons\\person.png");
 
         /**
          * GraphicsPanel constructor.
@@ -138,6 +140,7 @@ public class Main {
             // important initialization
             this.setBackground(Color.BLACK);
             gridSize = mainFrame.getWidth() / 80.0;
+            robotoMono24 = new Font("Roboto Mono", Font.PLAIN, (int) gridSize);
 
             // set up grid squares
             MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
@@ -195,16 +198,15 @@ public class Main {
 
                 // spawn stations until no more can be spawned
                 if (openCount > 1) {
-                    if (ticks % 150 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (ticks % 15 == 0) stations.add(new Station());
+                    if ((ticks * tickRate) % 120 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if ((ticks * tickRate) % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if ((ticks * tickRate) % 15 == 0) stations.add(new Station());
                 }
 
                 // spawn passengers
-//                if (ticks % 150 == 0) System.out.println((int) (Math.random() * 15) == 0);
-                if (ticks % 75 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+                if ((ticks * tickRate) % 60 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if ((ticks * tickRate) % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if ((ticks * tickRate) % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
@@ -285,28 +287,39 @@ public class Main {
                     }
                     ImageUtilities.drawImage(icon, xPosition, yPosition, (int) size, (int) size);
 
-                    g2D.setColor(map.getColours()[12]); g2D.setFont(robotoMono24);
+                    g2D.setColor(Color.BLACK); g2D.setFont(robotoMono24);
                     g2D.drawString(String.valueOf(resources[i]), (int) (xPosition + size), (int) (yPosition + gridSize / 4));
                 }
 
-                // clock
-                g2D.setColor(Color.BLACK);
-                g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 5), (int) (gridSize * 2), (int) (gridSize * 3), (int) (gridSize * 3));
-                g2D.setColor(Color.WHITE);
+                // clock & day of week
+                if ((ticks * tickRate) % 2160 > 720) g2D.setColor(Color.BLACK);
+                else g2D.setColor(Color.WHITE);
+                g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 4.5), (int) (gridSize * 1.5), (int) (gridSize * 3), (int) (gridSize * 3));
+                if ((ticks * tickRate) % 2160 > 720) g2D.setColor(Color.WHITE);
+                else g2D.setColor(Color.BLACK);
                 for (int i = 0; i < 12; i++) {
                     if (i % 3 == 0) {
-                        g2D.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.85) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 0.85) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
+                        g2D.setStroke(new BasicStroke((float) (gridSize / 9.6), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3 + (gridSize * 0.85) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3 + (gridSize * 0.85) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
                     } else {
-                        g2D.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.9) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 0.9) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3.5 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
+                        g2D.setStroke(new BasicStroke((float) (gridSize / 16), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g2D.drawLine((int) (mainFrame.getWidth() - gridSize * 3 + (gridSize * 0.9) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3 + (gridSize * 0.9) * Math.sin(Math.toRadians(30 * i))), (int) (mainFrame.getWidth() - gridSize * 3 + (gridSize * 1.25) * Math.cos(Math.toRadians(30 * i))), (int) (gridSize * 3 + (gridSize * 1.25) * Math.sin(Math.toRadians(30 * i))));
                     }
                 }
-                g2D.setStroke(new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                g2D.setStroke(new BasicStroke((float) (gridSize / 6), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 GeneralPath clockHand = new GeneralPath();
-                clockHand.moveTo(mainFrame.getWidth() - gridSize * 3.5, gridSize * 3.5);
-                clockHand.lineTo(mainFrame.getWidth() - gridSize * 3.5 + (gridSize * 0.7) * Math.cos(Math.toRadians(ticks)), gridSize * 3.5 + (gridSize * 0.7) * Math.sin(Math.toRadians(ticks)));
+                clockHand.moveTo(mainFrame.getWidth() - gridSize * 3, gridSize * 3);
+                clockHand.lineTo(mainFrame.getWidth() - gridSize * 3 + (gridSize * 0.7) * Math.cos(Math.toRadians((ticks * tickRate) / 2.0 - 90)), gridSize * 3 + (gridSize * 0.7) * Math.sin(Math.toRadians((ticks * tickRate) / 2.0 - 90)));
                 g2D.draw(clockHand);
+                g2D.setColor(Color.BLACK);
+                g2D.drawString(days[((int) ((ticks * tickRate) / 2160)) % 7], (float) (mainFrame.getWidth() - gridSize * 7), (float) (gridSize * 3.5));
+                // trigger upgrades if days = 0
+
+                // points (includes person icon)
+                if (points > 0) {
+                    g2D.drawString(String.valueOf(points), (float) (mainFrame.getWidth() - gridSize * 11), (float) (gridSize * 3.5));
+                    ImageUtilities.drawImage(person, (int) (mainFrame.getWidth() - gridSize * 13.25), (int) (gridSize * 1.75), (int) (gridSize * 2.5), (int) (gridSize * 2.5));
+                }
             }
         }
 
