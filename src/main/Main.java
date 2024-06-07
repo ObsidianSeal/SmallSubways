@@ -11,6 +11,7 @@ import enums.Map;
 import enums.Screen;
 import enums.Shape;
 import objects.*;
+import utilities.FontUtilities;
 import utilities.ImageUtilities;
 import utilities.MapUtilities;
 
@@ -74,7 +75,7 @@ public class Main {
     static int points = 1234;
 
     // timer - for animation, etc.
-    static int ticks = 450; // set to 450 to skip studio screen
+    static int ticks = 0; // set to 450 to skip studio screen
     static int tickRate = 1; // tick speed multiplier
 //    static long pTime = System.nanoTime(); // for delay debugging
     Timer timer = new Timer(10, new ActionListener() {
@@ -153,14 +154,14 @@ public class Main {
             // important initialization
             this.setBackground(Color.BLACK);
             gridSize = mainFrame.getWidth() / 80.0;
-            robotoMono24 = new Font("Roboto Mono", Font.PLAIN, (int) gridSize);
-            robotoSerif48 = new Font("Roboto Serif", Font.PLAIN, (int) (gridSize * 2));
 
-            // set up grid squares
-            MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
-            MapUtilities.disallowWater();
-            MapUtilities.disallowEdge();
-            MapUtilities.disallowMenuAreas();
+            // fonts
+            robotoMono24 = FontUtilities.importFont("src\\fonts\\RobotoMono-Regular.ttf", (float) (gridSize));
+            robotoSerif48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Regular.ttf", (float) (gridSize * 2));
+
+            GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphicsEnvironment.registerFont(robotoMono24);
+            graphicsEnvironment.registerFont(robotoSerif48);
 
             // resize images
             studioTitleScreen = ImageUtilities.resizeFullScreen(studioTitleScreen);
@@ -176,6 +177,12 @@ public class Main {
             interchangeIcon = ImageUtilities.rezise(interchangeIcon, (int) (gridSize * 2.5), (int) (gridSize * 2.5));
 
             person = ImageUtilities.rezise(person, (int) (gridSize * 2.5), (int) (gridSize * 2.5));
+
+            // set up grid squares
+            MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
+            MapUtilities.disallowWater();
+            MapUtilities.disallowEdge();
+            MapUtilities.disallowMenuAreas();
 
             // add initial lines
             lines[0] = new MetroLine(map.getColours()[0]);
