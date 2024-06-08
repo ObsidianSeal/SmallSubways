@@ -20,6 +20,24 @@ public class MetroMap {
     private Color[] colours;
     private boolean waterTravelType;
 
+    public static String[] cities = {
+            "Elora-Fergus",
+            "London",
+            "Ottawa",
+            "Stratford",
+            "Victoria",
+            "Waterloo"
+    };
+
+    public static String[] countries = {
+            "CANADA",
+            "CANADA",
+            "CANADA",
+            "CANADA",
+            "CANADA",
+            "CANADA"
+    };
+
     /**
      * Create a map instance.
      */
@@ -43,7 +61,7 @@ public class MetroMap {
                         Color.decode("#4B7A98"),
                         Color.decode("#070230"),
                         // locked line
-                        Colour.GREY_10,
+                        Colour.GREY_10
                 };
                 this.waterTravelType = false;
             }
@@ -65,7 +83,7 @@ public class MetroMap {
                         Color.decode("#74D3AE"),
                         Color.decode("#1F392F"),
                         // locked line
-                        Colour.GREY_20,
+                        Colour.GREY_20
                 };
                 this.waterTravelType = true;
             }
@@ -87,7 +105,7 @@ public class MetroMap {
                         Color.decode("#00AFB9"),
                         Color.decode("#0081A7"),
                         // locked line
-                        Colour.GREY_50,
+                        Colour.GREY_50
                 };
                 this.waterTravelType = true;
             }
@@ -109,7 +127,7 @@ public class MetroMap {
                         Color.decode("#7476D3"),
                         Color.decode("#1B0961"),
                         // locked line
-                        Colour.GREY_40,
+                        Colour.GREY_40
                 };
                 this.waterTravelType = false;
             }
@@ -131,7 +149,7 @@ public class MetroMap {
                         Color.decode("#F794CA"),
                         Color.decode("#772D6F"),
                         // locked line
-                        Colour.GREY_20,
+                        Colour.GREY_20
                 };
                 this.waterTravelType = false;
             }
@@ -153,7 +171,7 @@ public class MetroMap {
                         Color.decode("#6CCFF6"),
                         Color.decode("#4A71A9"),
                         // locked line
-                        Colour.GREY_30,
+                        Colour.GREY_30
                 };
                 this.waterTravelType = true;
             }

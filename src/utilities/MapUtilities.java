@@ -45,6 +45,13 @@ public class MapUtilities {
      * Prevent stations from spawning below menus.
      */
     public static void disallowMenuAreas() {
+        // back arrow area
+        for (int i = 0; i < 6; i++) {
+            for (int j = 2; j < 12; j++) {
+                Main.grid[i][j] = Main.MARGIN;
+            }
+        }
+
         // clock & points area
         for (int i = 0; i < 6; i++) {
             for (int j = 64; j < 80; j++) {

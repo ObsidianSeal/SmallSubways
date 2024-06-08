@@ -55,7 +55,8 @@ public class Main {
     public static int openCount = 80 * 45;
 
     // objects & object arrays :D
-    public static MetroMap map = new MetroMap(Map.STRATFORD);
+    public static MetroMap map;
+    static Image mapImage;
     public static MetroLine[] lines = {null, null, null, null, null, null, null};
     public static ArrayList<Station> stations = new ArrayList<Station>();
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
@@ -72,7 +73,8 @@ public class Main {
     static int circleHover = -1;
     public static int[] resources = new int[4];
     public static double[][] grid = new double[45][80];
-    static int points = 1234;
+    static int points = 0;
+    static int levelSelectIndex = 0;
 
     // timer - for animation, etc.
     static int ticks = 0; // set to 450 to skip studio screen
@@ -94,8 +96,9 @@ public class Main {
     });
 
     // fonts
-    static Font robotoMono24;
-    static Font robotoSerif48;
+    static Font robotoMonoRegular24;
+    static Font robotoSerifMedium48;
+    static Font robotoSerifLight36;
 
     /**
      * Constructor - where the main magic happens.
@@ -126,6 +129,37 @@ public class Main {
     }
 
     /**
+     * After a map is chosen from level select, set up the necessary things.
+     * @param level The chosen map.
+     * @return The map's background.
+     */
+    private static Image mapSetup(Map level) {
+        map = new MetroMap(level);
+
+        // set up grid squares
+        MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
+        MapUtilities.disallowWater();
+        MapUtilities.disallowEdge();
+        MapUtilities.disallowMenuAreas();
+
+        // add initial lines
+        lines[0] = new MetroLine(map.getColours()[0]);
+        lines[1] = new MetroLine(map.getColours()[1]);
+        lines[2] = new MetroLine(map.getColours()[2]);
+//            lines[3] = new MetroLine(map.getColours()[3]);
+//            lines[4] = new MetroLine(map.getColours()[4]);
+//            lines[5] = new MetroLine(map.getColours()[5]);
+//            lines[6] = new MetroLine(map.getColours()[6]);
+
+        // add initial stations
+        stations.add(new Station());
+        stations.add(new Station());
+        stations.add(new Station());
+
+        return ImageUtilities.resizeFullScreen(map.getMap());
+    }
+
+    /**
      * Inner class for drawing.
      */
     private static class GraphicsPanel extends JPanel {
@@ -136,8 +170,6 @@ public class Main {
         Image studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
         Image mainMenu = ImageUtilities.importImage("src\\images\\other\\main-menu.png");
 
-        Image background = map.getMap();
-
         Image lineIcon = ImageUtilities.importImage("src\\images\\icons\\line.png");
         Image tunnelIcon = ImageUtilities.importImage("src\\images\\icons\\tunnel.png");
         Image bridgeIcon = ImageUtilities.importImage("src\\images\\icons\\bridge.png");
@@ -146,6 +178,15 @@ public class Main {
         Image interchangeIcon = ImageUtilities.importImage("src\\images\\icons\\interchange.png");
 
         Image person = ImageUtilities.importImage("src\\images\\icons\\person.png");
+
+        Image[] mapThumbnails = {
+                ImageUtilities.importImage("src\\images\\thumbnails\\elora-fergus.png"),
+                ImageUtilities.importImage("src\\images\\thumbnails\\london.png"),
+                ImageUtilities.importImage("src\\images\\thumbnails\\ottawa.png"),
+                ImageUtilities.importImage("src\\images\\thumbnails\\stratford.png"),
+                ImageUtilities.importImage("src\\images\\thumbnails\\victoria.png"),
+                ImageUtilities.importImage("src\\images\\thumbnails\\waterloo.png")
+        };
 
         /**
          * GraphicsPanel constructor.
@@ -156,18 +197,18 @@ public class Main {
             gridSize = mainFrame.getWidth() / 80.0;
 
             // fonts
-            robotoMono24 = FontUtilities.importFont("src\\fonts\\RobotoMono-Regular.ttf", (float) (gridSize));
-            robotoSerif48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Regular.ttf", (float) (gridSize * 2));
+            robotoMonoRegular24 = FontUtilities.importFont("src\\fonts\\RobotoMono-Regular.ttf", (float) (gridSize));
+            robotoSerifMedium48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Medium.ttf", (float) (gridSize * 2));
+            robotoSerifLight36 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Light.ttf", (float) (gridSize * 1.5));
 
             GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            graphicsEnvironment.registerFont(robotoMono24);
-            graphicsEnvironment.registerFont(robotoSerif48);
+            graphicsEnvironment.registerFont(robotoMonoRegular24);
+            graphicsEnvironment.registerFont(robotoSerifMedium48);
+            graphicsEnvironment.registerFont(robotoSerifLight36);
 
             // resize images
             studioTitleScreen = ImageUtilities.resizeFullScreen(studioTitleScreen);
             mainMenu = ImageUtilities.resizeFullScreen(mainMenu);
-
-            background = ImageUtilities.resizeFullScreen(background);
 
             lineIcon = ImageUtilities.rezise(lineIcon, (int) (gridSize * 2.5), (int) (gridSize * 2.5));
             tunnelIcon = ImageUtilities.rezise(tunnelIcon, (int) (gridSize * 2.5), (int) (gridSize * 2.5));
@@ -178,25 +219,9 @@ public class Main {
 
             person = ImageUtilities.rezise(person, (int) (gridSize * 2.5), (int) (gridSize * 2.5));
 
-            // set up grid squares
-            MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
-            MapUtilities.disallowWater();
-            MapUtilities.disallowEdge();
-            MapUtilities.disallowMenuAreas();
-
-            // add initial lines
-            lines[0] = new MetroLine(map.getColours()[0]);
-            lines[1] = new MetroLine(map.getColours()[1]);
-            lines[2] = new MetroLine(map.getColours()[2]);
-//            lines[3] = new MetroLine(map.getColours()[3]);
-//            lines[4] = new MetroLine(map.getColours()[4]);
-//            lines[5] = new MetroLine(map.getColours()[5]);
-//            lines[6] = new MetroLine(map.getColours()[6]);
-
-            // add initial stations
-            stations.add(new Station());
-            stations.add(new Station());
-            stations.add(new Station());
+            for (int i = 0; i < mapThumbnails.length; i++) {
+                mapThumbnails[i] = ImageUtilities.rezise(mapThumbnails[i], (int) (Main.gridSize * 16), (int) (Main.gridSize * 10));
+            }
         }
 
         /**
@@ -231,21 +256,42 @@ public class Main {
 
             if (screenState == Screen.MAIN_MENU) {
                 ImageUtilities.drawImageFullScreen(mainMenu);
-
-//                g2D.setColor(Colour.atOpacity(Colour.LIGHT_BLUE, 150));
-//                g2D.fillRect((int) (k * gridSize), (int) (j * gridSize), (int) gridSize, (int) gridSize);
             }
 
             if (screenState == Screen.LEVEL_SELECT) {
                 g2D.setColor(Colour.GREY_95);
                 g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-                g2D.setColor(Color.WHITE); g2D.setFont(robotoSerif48);
-                g2D.drawString("Coming soon to a Small Subways near you.", 100, 100);
+                g2D.setColor(Colour.GREY_30); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
 
-                g2D.setColor(Colour.GREY_90);
                 for (int i = 0; i < 3; i++) {
-                    g2D.fillRect((int) (gridSize * 8 + gridSize * 23 * i), (int) (gridSize * 8), (int) (gridSize * 18), (int) (gridSize * 29));
+                    g2D.setColor(Colour.GREY_90);
+                    g2D.fillRect((int) (gridSize * 11 + gridSize * 21 * i), (int) (gridSize * 10), (int) (gridSize * 16), (int) (gridSize * 25));
+                    ImageUtilities.drawImage(mapThumbnails[levelSelectIndex + i], (int) (gridSize * 11 + gridSize * 21 * i), (int) (gridSize * 10));
+
+                    g2D.setColor(Colour.GREY_50);
+                    g2D.drawLine((int) (gridSize * 21 + gridSize * 21 * i), (int) (gridSize * 32),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
+                    g2D.drawLine((int) (gridSize * 24 + gridSize * 21 * i), (int) (gridSize * 31),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
+                    g2D.drawLine((int) (gridSize * 24 + gridSize * 21 * i), (int) (gridSize * 33),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
+
+                    g2D.setColor(Color.WHITE);
+                    g2D.setFont(robotoSerifMedium48);
+                    g2D.drawString(MetroMap.cities[levelSelectIndex + i], (int) (gridSize * 12 + gridSize * 21 * i), (int) (gridSize * 23));
+                    g2D.setFont(robotoSerifLight36);
+                    g2D.drawString(MetroMap.countries[levelSelectIndex + i], (int) (gridSize * 12 + gridSize * 21 * i), (int) (gridSize * 25));
+                }
+
+                g2D.setColor(Colour.GREY_30);
+                if (levelSelectIndex > 0) {
+                    g2D.drawLine((int) (gridSize * 4.5), (int) (gridSize * 22.5),(int) (gridSize * 6.5), (int) (gridSize * 20.5));
+                    g2D.drawLine((int) (gridSize * 4.5), (int) (gridSize * 22.5),(int) (gridSize * 6.5), (int) (gridSize * 24.5));
+                }
+                if (levelSelectIndex < MetroMap.cities.length - 3) {
+                    g2D.drawLine((int) (gridSize * 73.5), (int) (gridSize * 20.5),(int) (gridSize * 75.5), (int) (gridSize * 22.5));
+                    g2D.drawLine((int) (gridSize * 73.5), (int) (gridSize * 24.5),(int) (gridSize * 75.5), (int) (gridSize * 22.5));
                 }
             }
 
@@ -253,13 +299,18 @@ public class Main {
                 g2D.setColor(Colour.GREY_95);
                 g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-                g2D.setColor(Color.WHITE); g2D.setFont(robotoSerif48);
-                g2D.drawString("Just kidding, there are no settings.", 100, 100);
+                g2D.setColor(Colour.GREY_30); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
+
+                g2D.setColor(Color.WHITE); g2D.setFont(robotoSerifLight36);
+                g2D.drawString("Just kidding, there are no settings.", (int) (gridSize * 5), (int) (gridSize * 8));
             }
 
             if (screenState == Screen.GAME) {
                 // level background
-                ImageUtilities.drawImageFullScreen(background);
+                ImageUtilities.drawImageFullScreen(mapImage);
 
                 // spawn stations until no more can be spawned
                 if (openCount > 1) {
@@ -286,11 +337,6 @@ public class Main {
                             if (grid[i][j] != CITY) g2D.fillRect((int) (j * (gridSize)), (int) (i * gridSize), (int) gridSize, mainFrame.getHeight() / 45);
                         }
                     }
-
-                    // grid
-                    g2D.setColor(Colour.LIGHT_VIOLET_MAGENTA);
-                    for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * gridSize), 0, (int) (i * gridSize), getHeight());
-                    for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * gridSize), getWidth(), (int) (i * gridSize));
                 }
 
                 // lines
@@ -352,7 +398,7 @@ public class Main {
                     }
                     ImageUtilities.drawImage(icon, xPosition, yPosition);
 
-                    g2D.setColor(Color.BLACK); g2D.setFont(robotoMono24);
+                    g2D.setColor(Color.BLACK); g2D.setFont(robotoMonoRegular24);
                     g2D.drawString(String.valueOf(resources[i]), (int) (xPosition + size), (int) (yPosition + gridSize / 4));
                 }
 
@@ -385,6 +431,19 @@ public class Main {
                     g2D.drawString(String.valueOf(points), (float) (mainFrame.getWidth() - gridSize * 11), (float) (gridSize * 3.5));
                     ImageUtilities.drawImage(person, (int) (mainFrame.getWidth() - gridSize * 13.25), (int) (gridSize * 1.75));
                 }
+
+                // back arrow
+                g2D.setColor(map.getColours()[12]); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
+            }
+
+            if (controlHeld) {
+                // grid
+                g2D.setStroke(new BasicStroke(1)); g2D.setColor(Colour.LIGHT_VIOLET_MAGENTA);
+                for (int i = 0; i < 80; i++) g2D.drawLine((int) (i * gridSize), 0, (int) (i * gridSize), getHeight());
+                for (int i = 0; i < 45; i++) g2D.drawLine(0, (int) (i * gridSize), getWidth(), (int) (i * gridSize));
             }
         }
 
@@ -401,25 +460,45 @@ public class Main {
          */
         @Override
         public void mousePressed(MouseEvent e) {
-            if (screenState == Screen.MAIN_MENU) {
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 19 + 8 * i; j < 25 + 8 * i; j++) {
-                        for (int k = 20; k < 60; k++) {
-                            if (gridX == k && gridY == j) {
-                                switch (i) {
-                                    case 0 -> screenState = Screen.LEVEL_SELECT;
-                                    case 1 -> screenState = Screen.SETTINGS;
-                                    case 2 -> System.exit(0);
+            // left click
+            if (e.getButton() == 1) {
+                if (screenState == Screen.MAIN_MENU) {
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 19 + 8 * i; j < 25 + 8 * i; j++) {
+                            for (int k = 20; k < 60; k++) {
+                                if (gridX == k && gridY == j) {
+                                    switch (i) {
+                                        case 0 -> screenState = Screen.LEVEL_SELECT;
+                                        case 1 -> screenState = Screen.SETTINGS;
+                                        case 2 -> System.exit(0);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
+                } else if (screenState == Screen.LEVEL_SELECT) {
+                    // back arrow
+                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
 
-            if (screenState == Screen.GAME) {
-                // left click
-                if (e.getButton() == 1) {
+                    // left and right arrows
+                    if (gridX >= 4 && gridX < 7 && gridY >= 20 && gridY < 25) if (levelSelectIndex > 0) levelSelectIndex--;
+                    if (gridX >= 73 && gridX < 76 && gridY >= 20 && gridY < 25) if (levelSelectIndex < MetroMap.cities.length - 3) levelSelectIndex++;
+
+                    // level boxes
+                    for (int i = 0; i < 3; i++) {
+                        if (gridX >= 11 + 21 * i && gridX < 11 + 21 * i + 16 && gridY >= 10 && gridY < 35) {
+                            mapImage = mapSetup(Map.values()[levelSelectIndex + i]);
+                            screenState = Screen.GAME;
+                            break;
+                        }
+                    }
+                } else if (screenState == Screen.SETTINGS) {
+                    // back arrow
+                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
+                } else if (screenState == Screen.GAME) {
+                    // back arrow
+                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
+
                     // add/remove station to/from line
                     for (Station station : stations) {
                         if (station.getGridX() == gridX && station.getGridY() == gridY) {
@@ -475,7 +554,6 @@ public class Main {
                     for (int i = 0; i < 7; i++) {
                         for (int j = 0; j < 2; j++) {
                             for (int k = 0; k < 2; k++) {
-                                // TODO: make the gridX and gridY for loops less awful
                                 if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
                                     if (lines[i] != null) circleHover = i;
                                     break;
@@ -522,20 +600,32 @@ public class Main {
                 case (KeyEvent.VK_ALT) -> altHeld = true;
             }
 
-            if (screenState == Screen.GAME) {
+            if (screenState == Screen.LEVEL_SELECT) {
+                // back arrow
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
+
+                // left and right arrows
+                if (e.getKeyCode() == KeyEvent.VK_LEFT && levelSelectIndex > 0) levelSelectIndex--;
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT && levelSelectIndex < MetroMap.cities.length - 3) levelSelectIndex++;
+            } else if (screenState == Screen.SETTINGS) {
+                // back arrow
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
+            } else if (screenState == Screen.GAME) {
+                // back arrow
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
+
                 // line selection
                 if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_7) {
                     if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) currentLine = e.getKeyCode() - KeyEvent.VK_1;
                 }
 
-                // EDIT/DEBUG MODE!!
+                // EDIT/DEBUG MODE!! TODO: remove when game is done (or at least stations don't need to be manually placed)
                 if (controlHeld) {
                     if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
                         stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
                     }
                 }
             }
-
         }
 
         /**
