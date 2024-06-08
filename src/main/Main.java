@@ -77,13 +77,17 @@ public class Main {
     static int levelSelectIndex = 0;
 
     // timer - for animation, etc.
-    static int ticks = 0; // set to 450 to skip studio screen
+    static int ticks = 450; // set to 450 to skip studio screen
     static int tickRate = 1; // tick speed multiplier
 //    static long pTime = System.nanoTime(); // for delay debugging
+    static Screen pScreen;
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
 //            long time1 = System.nanoTime();
+
+            if (screenState != pScreen) ticks = 0;
+            pScreen = screenState;
 
             graphicsPanel.repaint();
             ticks += tickRate;
@@ -248,10 +252,7 @@ public class Main {
                 g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, studioTitleScreenOpacity / 1000f));
                 ImageUtilities.drawImageFullScreen(studioTitleScreen);
 
-                if (ticks == 450) {
-                    screenState = Screen.MAIN_MENU;
-                    ticks = 0;
-                }
+                if (ticks == 450) screenState = Screen.MAIN_MENU;
             }
 
             if (screenState == Screen.MAIN_MENU) {
