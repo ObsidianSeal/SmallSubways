@@ -9,7 +9,6 @@ package main;
 
 import enums.Map;
 import enums.Screen;
-import enums.Shape;
 import objects.*;
 import utilities.FontUtilities;
 import utilities.ImageUtilities;
@@ -57,7 +56,7 @@ public class Main {
     // objects & object arrays :D
     public static MetroMap map;
     static Image mapImage;
-    public static MetroLine[] lines = {null, null, null, null, null, null, null};
+    public static MetroLine[] lines;
     public static ArrayList<Station> stations = new ArrayList<Station>();
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     public static Screen screenState = Screen.STUDIO_TITLE;
@@ -73,12 +72,13 @@ public class Main {
     static int circleHover = -1;
     public static int[] resources = new int[4];
     public static double[][] grid = new double[45][80];
-    static int points = 0;
-    static int levelSelectIndex = 0;
+    static int points;
+    static int levelSelectIndex;
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
     static int tickRate = 1; // tick speed multiplier
+    static int regularTickRate = tickRate;
 //    static long pTime = System.nanoTime(); // for delay debugging
     static Screen pScreen;
     Timer timer = new Timer(10, new ActionListener() {
@@ -139,6 +139,12 @@ public class Main {
      */
     private static Image mapSetup(Map level) {
         map = new MetroMap(level);
+
+        // reset level data
+        lines = new MetroLine[]{null, null, null, null, null, null, null};
+        stations.clear();
+        currentLine = 0;
+        points = 0;
 
         // set up grid squares
         MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
@@ -404,10 +410,10 @@ public class Main {
                 }
 
                 // clock & day of week
-                if (ticks % 2160 > 720) g2D.setColor(Color.BLACK);
+                if (ticks % 1440 > 720) g2D.setColor(Color.BLACK);
                 else g2D.setColor(Color.WHITE);
                 g2D.fillOval((int) (mainFrame.getWidth() - gridSize * 4.5), (int) (gridSize * 1.5), (int) (gridSize * 3), (int) (gridSize * 3));
-                if (ticks % 2160 > 720) g2D.setColor(Color.WHITE);
+                if (ticks % 1440 > 720) g2D.setColor(Color.WHITE);
                 else g2D.setColor(Color.BLACK);
                 for (int i = 0; i < 12; i++) {
                     if (i % 3 == 0) {
@@ -424,7 +430,7 @@ public class Main {
                 clockHand.lineTo(mainFrame.getWidth() - gridSize * 3 + (gridSize * 0.7) * Math.cos(Math.toRadians(ticks / 2.0 - 90)), gridSize * 3 + (gridSize * 0.7) * Math.sin(Math.toRadians(ticks / 2.0 - 90)));
                 g2D.draw(clockHand);
                 g2D.setColor(Color.BLACK);
-                g2D.drawString(days[((int) (ticks / 2160)) % 7], (float) (mainFrame.getWidth() - gridSize * 7), (float) (gridSize * 3.5));
+                g2D.drawString(days[((int) (ticks / 1440)) % 7], (float) (mainFrame.getWidth() - gridSize * 7), (float) (gridSize * 3.5));
                 // trigger upgrades if days = 0
 
                 // points (includes person icon)
@@ -498,7 +504,7 @@ public class Main {
                     if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
                 } else if (screenState == Screen.GAME) {
                     // back arrow
-                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
+                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.LEVEL_SELECT;
 
                     // add/remove station to/from line
                     for (Station station : stations) {
@@ -613,19 +619,37 @@ public class Main {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
             } else if (screenState == Screen.GAME) {
                 // back arrow
-                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.LEVEL_SELECT;
 
                 // line selection
                 if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_7) {
                     if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) currentLine = e.getKeyCode() - KeyEvent.VK_1;
                 }
 
-                // EDIT/DEBUG MODE!! TODO: remove when game is done (or at least stations don't need to be manually placed)
-                if (controlHeld) {
-                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
-                    }
+                // pause/unpause
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    if (tickRate != 0) tickRate = 0;
+                    else tickRate = regularTickRate;
                 }
+
+                // speed up
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    if (tickRate < 2) tickRate++;
+                    regularTickRate = tickRate;
+                }
+
+                // slow down
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    if (tickRate > 0) tickRate--;
+                    if (tickRate != 0) regularTickRate = tickRate;
+                }
+
+                // EDIT/DEBUG MODE!!
+//                if (controlHeld) {
+//                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
+//                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+//                    }
+//                }
             }
         }
 
