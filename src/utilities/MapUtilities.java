@@ -83,6 +83,7 @@ public class MapUtilities {
         int mapHeight = map.getHeight();
         int mapWidth = map.getWidth();
 
+        // go through every pixel and check its colour against WATER and COUNTRY
         for (int i = 0; i < mapHeight; i++) {
             for (int j = 0; j < mapWidth; j++) {
                 Color colour = new Color(map.getRGB(j, i));

@@ -20,6 +20,7 @@ public class MetroMap {
     private Color[] colours;
     private boolean waterTravelType;
 
+    // list of cities for level select
     public static String[] cities = {
             "Elora-Fergus",
             "London",
@@ -29,6 +30,7 @@ public class MetroMap {
             "Waterloo"
     };
 
+    // list of countries for level select
     public static String[] countries = {
             "CANADA",
             "CANADA",

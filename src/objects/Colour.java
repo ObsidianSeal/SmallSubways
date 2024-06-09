@@ -69,6 +69,12 @@ public class Colour {
     public final static Color LIGHT_MAGENTA = Color.decode("#f06eaa");
     public final static Color LIGHT_MAGENTA_RED = Color.decode("#f26d7d");
 
+    /**
+     * Get a colour at a different opacity.
+     * @param colour The colour.
+     * @param opacity The alpha value to set the opacity to, between 0 and 255.
+     * @return The new colour.
+     */
     public static Color atOpacity(Color colour, int opacity) {
         return (new Color(colour.getRed(), colour.getGreen(), colour.getBlue(), opacity));
     }

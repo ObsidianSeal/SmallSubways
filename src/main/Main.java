@@ -266,24 +266,30 @@ public class Main {
             }
 
             if (screenState == Screen.LEVEL_SELECT) {
+                // background
                 g2D.setColor(Colour.GREY_95);
                 g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+                // back arrow
                 g2D.setColor(Colour.GREY_30); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
 
+                // level boxes
                 for (int i = 0; i < 3; i++) {
+                    // box & map thumbnail
                     g2D.setColor(Colour.GREY_90);
                     g2D.fillRect((int) (gridSize * 11 + gridSize * 21 * i), (int) (gridSize * 10), (int) (gridSize * 16), (int) (gridSize * 25));
                     ImageUtilities.drawImage(mapThumbnails[levelSelectIndex + i], (int) (gridSize * 11 + gridSize * 21 * i), (int) (gridSize * 10));
 
+                    // arrow
                     g2D.setColor(Colour.GREY_50);
                     g2D.drawLine((int) (gridSize * 21 + gridSize * 21 * i), (int) (gridSize * 32),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
                     g2D.drawLine((int) (gridSize * 24 + gridSize * 21 * i), (int) (gridSize * 31),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
                     g2D.drawLine((int) (gridSize * 24 + gridSize * 21 * i), (int) (gridSize * 33),(int) (gridSize * 25 + gridSize * 21 * i), (int) (gridSize * 32));
 
+                    // text
                     g2D.setColor(Color.WHITE);
                     g2D.setFont(robotoSerifMedium48);
                     g2D.drawString(MetroMap.cities[levelSelectIndex + i], (int) (gridSize * 12 + gridSize * 21 * i), (int) (gridSize * 23));
@@ -291,6 +297,7 @@ public class Main {
                     g2D.drawString(MetroMap.countries[levelSelectIndex + i], (int) (gridSize * 12 + gridSize * 21 * i), (int) (gridSize * 25));
                 }
 
+                // left & right arrows
                 g2D.setColor(Colour.GREY_30);
                 if (levelSelectIndex > 0) {
                     g2D.drawLine((int) (gridSize * 4.5), (int) (gridSize * 22.5),(int) (gridSize * 6.5), (int) (gridSize * 20.5));
@@ -303,14 +310,17 @@ public class Main {
             }
 
             if (screenState == Screen.SETTINGS) {
+                // background
                 g2D.setColor(Colour.GREY_95);
                 g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+                // back arrow
                 g2D.setColor(Colour.GREY_30); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
 
+                // text
                 g2D.setColor(Color.WHITE); g2D.setFont(robotoSerifLight36);
                 g2D.drawString("Just kidding, there are no settings.", (int) (gridSize * 5), (int) (gridSize * 8));
             }
@@ -319,14 +329,14 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(mapImage);
 
-                // spawn stations until no more can be spawned
+                // spawn stations until no more can be spawned TODO: move to StationSpawner
                 if (openCount > 1) {
                     if (ticks % 120 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 //                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
 //                    if (ticks % 15 == 0) stations.add(new Station());
                 }
 
-                // spawn passengers
+                // spawn passengers TODO: move to PassengerSpawner
                 if (ticks % 60 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
 //                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
 //                if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
@@ -470,6 +480,7 @@ public class Main {
             // left click
             if (e.getButton() == 1) {
                 if (screenState == Screen.MAIN_MENU) {
+                    // menu boxes
                     for (int i = 0; i < 3; i++) {
                         for (int j = 19 + 8 * i; j < 25 + 8 * i; j++) {
                             for (int k = 20; k < 60; k++) {

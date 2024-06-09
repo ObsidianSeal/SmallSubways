@@ -404,7 +404,7 @@ public class MetroLine {
             // line ends have a square-ended stroke
             Main.g2D.setStroke(new BasicStroke(Main.mainFrame.getWidth() / 240f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER));
 
-            // first station
+            // first station line end
             if (i == 1) {
                 switch (firstDirection) {
                     case UP -> {
@@ -444,7 +444,7 @@ public class MetroLine {
                 }
             }
 
-            // last station
+            // last station line end
             if (i == this.stations.size() - 1) {
                 switch (secondDirection) {
                     case UP -> {

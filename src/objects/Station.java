@@ -116,26 +116,22 @@ public class Station {
         int gridX, gridY;
 
         do {
+            // generate random coordinates
             gridX = (int) (Math.random() * 80);
             gridY = (int) (Math.random() * 45);
+            // regenerate if the coordinate is illegal or if the coordinate is COUNTRY and unlucky (1 in 10 chance)
         } while ((Main.grid[gridY][gridX] != Main.COUNTRY && Main.grid[gridY][gridX] <= Main.WATER) || (Main.grid[gridY][gridX] == Main.COUNTRY && (int) (Math.random() * 10) != 0));
 
+        // convert to pixels
         this.x = (gridX) * (Main.gridSize);
         this.y = (gridY) * Main.gridSize;
-
-        int openCount = 0;
-        for (int i = 0; i < 45; i++) {
-            for (int j = 0; j < 80; j++) {
-                if (Main.grid[i][j] > Main.WATER) openCount++;
-            }
-        }
-        Main.openCount = openCount;
     }
 
     /**
      * Prevent future stations from spawning too close to existing ones.
      */
     private void updateGridAvailability() {
+        // buffer zone around stations
         for (int i = -3; i <= 3; i++) {
             for (int j = -3; j <= 3; j++) {
                 if (!(Math.abs(i) == 3 && Math.abs(j) == 3 || Math.abs(i) == 3 && Math.abs(j) == 2 || Math.abs(i) == 2 && Math.abs(j) == 3)) {
@@ -146,6 +142,15 @@ public class Station {
                 }
             }
         }
+
+        // update the number of available squares
+        int openCount = 0;
+        for (int i = 0; i < 45; i++) {
+            for (int j = 0; j < 80; j++) {
+                if (Main.grid[i][j] > Main.WATER) openCount++;
+            }
+        }
+        Main.openCount = openCount;
     }
 
     /**
@@ -302,10 +307,12 @@ public class Station {
         int iY = (int) (this.y);
         int iSize = (int) (this.size);
 
+        // stroke multiplier for hover
         int strokeSize;
         if (this.type == Shape.STAR) strokeSize = (int) (Main.mainFrame.getWidth() / 480f * strokeMultiplier);
         else strokeSize = (int) (Main.mainFrame.getWidth() / 384f * strokeMultiplier);
 
+        // different stroke for OVAL
         if (this.type == Shape.OVAL) Main.g2D.setStroke(new BasicStroke(strokeSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         else Main.g2D.setStroke(new BasicStroke(strokeSize));
 
