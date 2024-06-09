@@ -58,6 +58,7 @@ public class Main {
     static Image mapImage;
     public static MetroLine[] lines;
     public static ArrayList<Station> stations = new ArrayList<Station>();
+    static ArrayList<Train> trains = new ArrayList<Train>();
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     public static Screen screenState = Screen.STUDIO_TITLE;
 
@@ -143,6 +144,7 @@ public class Main {
         // reset level data
         lines = new MetroLine[]{null, null, null, null, null, null, null};
         stations.clear();
+        trains.clear();
         currentLine = 0;
         points = 0;
 
@@ -361,6 +363,12 @@ public class Main {
                     if (line != null) line.draw();
                 }
 
+                // trains
+                for (Train train : trains) {
+                    train.move();
+                    train.draw();
+                }
+
                 // passengers
                 for (Station station : stations) {
                     station.drawPassengers();
@@ -529,6 +537,8 @@ public class Main {
                             }
                         }
                     }
+
+//                    if (lines[currentLine].getStations().size() == 2) trains.add(new Locomotive(lines[currentLine]));
 
                     // line selection
                     for (int i = 0; i < 7; i++) {
