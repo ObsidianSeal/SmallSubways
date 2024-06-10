@@ -84,7 +84,7 @@ public abstract class Train {
             }
 
             // if it has been long enough, stop waiting
-            if (Main.ticks < this.waitTick + WAIT_TIME) return;
+            if (Main.ticks < this.waitTick + this.WAIT_TIME) return;
             else waiting = false;
 
             if (travelDirection) {
