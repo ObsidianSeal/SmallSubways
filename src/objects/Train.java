@@ -20,6 +20,8 @@ public abstract class Train {
     private Station fromStation, toStation;
     private boolean travelDirection;
     private double x1, y1, x2, y2;
+    private int waitTick;
+    private boolean waiting;
 
     public final double TRAIN_SIZE_DIAGONAL = Main.gridSize;
     public final double TRAIN_SIZE_STRAIGHT = (this.TRAIN_SIZE_DIAGONAL * Math.sqrt(2));
@@ -69,6 +71,20 @@ public abstract class Train {
 
         // reached destination station?
         if (Math.abs(this.x1 - fromX) >= Math.abs(toX - fromX) && Math.abs(this.y1 - fromY) >= Math.abs(toY - fromY)) {
+            // if just arrived, start waiting at this time
+            if (!waiting) {
+                this.waiting = true;
+                this.waitTick = Main.ticks;
+
+                // for now, you get points just by picking passengers up
+                Main.points += toStation.getPassengers().size();
+                toStation.getPassengers().clear();
+            }
+
+            // if it has been long enough, stop waiting
+            if (Main.ticks < this.waitTick + 300) return;
+            else waiting = false;
+
             if (travelDirection) {
                 // too far? switch direction
                 if (toStation == this.line.getStations().getLast()) {

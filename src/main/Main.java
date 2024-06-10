@@ -73,11 +73,11 @@ public class Main {
     static int circleHover = -1;
     public static int[] resources = new int[4];
     public static double[][] grid = new double[45][80];
-    static int points;
+    public static int points;
     static int levelSelectIndex;
 
     // timer - for animation, etc.
-    static int ticks = 450; // set to 450 to skip studio screen
+    public static int ticks = 0; // set to 450 to skip studio screen
     public static int tickRate = 1; // tick speed multiplier
     static int regularTickRate = tickRate;
 //    static long pTime = System.nanoTime(); // for delay debugging
@@ -536,12 +536,9 @@ public class Main {
                                 lines[currentLine].addStation(station, altHeld);
                             } else {
                                 if (lines[currentLine].getStations().size() <= 2) lines[currentLine].removeStation(station);
-                                else for (MetroLine line : lines) {
-                                    if (line != null) {
-                                        for (Train train : line.getTrains()) {
-                                            if (!(station == train.getFromStation() || station == train.getToStation())) lines[currentLine].removeStation(station);
-                                        }
-                                    }
+
+                                for (Train train : lines[currentLine].getTrains()) {
+                                    if (!(station == train.getFromStation() || station == train.getToStation())) lines[currentLine].removeStation(station);
                                 }
                             }
                         }
