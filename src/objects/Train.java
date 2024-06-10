@@ -29,6 +29,8 @@ public abstract class Train {
     public final double MOVE_DIAGONAL = 0.5;
     public final double MOVE_STRAIGHT = (this.MOVE_DIAGONAL * Math.sqrt(2));
 
+    public final int WAIT_TIME = 100;
+
     /**
      * Train constructor.
      * @param line The line that the train is to be on.
@@ -82,7 +84,7 @@ public abstract class Train {
             }
 
             // if it has been long enough, stop waiting
-            if (Main.ticks < this.waitTick + 300) return;
+            if (Main.ticks < this.waitTick + WAIT_TIME) return;
             else waiting = false;
 
             if (travelDirection) {
