@@ -7,6 +7,7 @@
 
 package objects;
 
+import enums.Direction;
 import main.Main;
 
 import java.awt.*;
@@ -18,10 +19,12 @@ import java.util.ArrayList;
  */
 public class MetroLine {
     private ArrayList<Station> stations;
+    private ArrayList<Train> trains;
     private Color colour;
-    private final int CURVE_OFFSET;
-    private final int LINE_OFFSET;
-    private final int END_OFFSET;
+
+    public final int CURVE_OFFSET;
+    public final int LINE_OFFSET;
+    public final int END_OFFSET;
 
     /**
      * MetroLine constructor, empty stations list.
@@ -29,6 +32,7 @@ public class MetroLine {
      */
     public MetroLine(Color colour) {
         this.stations = new ArrayList<Station>();
+        this.trains = new ArrayList<Train>();
         this.colour = colour;
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
@@ -42,6 +46,7 @@ public class MetroLine {
      */
     public MetroLine(ArrayList<Station> stations, Color colour) {
         this.stations = stations;
+        this.trains = new ArrayList<Train>();
         this.colour = colour;
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
@@ -67,21 +72,23 @@ public class MetroLine {
     /**
      * Add a station to the line.
      * @param station The station to add.
-     * @return The new number of stations on the line.
+     * @param end True if the station is to be added to the beginning of the line, false if the station is to be added to the end of the line.
      */
-    public int addStation(Station station) {
-        this.stations.add(station);
-        return this.stations.size();
+    public void addStation(Station station, boolean end) {
+        if (end) this.stations.addFirst(station);
+        else this.stations.add(station);
+
+        if (this.stations.size() == 2) this.trains.add(new Locomotive(this)); // if there is at least one line segment, get a train moving across it
     }
 
     /**
      * Remove a station from the line.
      * @param station The station to remove.
-     * @return The new number of stations on the line.
      */
-    public int removeStation(Station station) {
+    public void removeStation(Station station) {
         this.stations.remove(station);
-        return this.stations.size();
+
+        if (this.stations.size() < 2) this.trains.clear(); // too few stations for train travel
     }
 
     /**
@@ -101,19 +108,11 @@ public class MetroLine {
     }
 
     /**
-     * The eight primary directions of the line from a given station.
+     * Get the line's list of trains.
+     * @return The list of trains on the line.
      */
-    private enum Direction {
-        UP,
-        DOWN,
-
-        LEFT_UP,
-        LEFT,
-        LEFT_DOWN,
-
-        RIGHT_UP,
-        RIGHT,
-        RIGHT_DOWN
+    public ArrayList<Train> getTrains() {
+        return this.trains;
     }
 
     /**
@@ -125,7 +124,7 @@ public class MetroLine {
             // the two directions
             Direction firstDirection, secondDirection;
 
-            // current station's values
+            // current station values
             int fromX = (int) this.stations.get(i - 1).getX();
             int fromY = (int) this.stations.get(i - 1).getY();
             int toX = (int) this.stations.get(i).getX();

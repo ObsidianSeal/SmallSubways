@@ -9,6 +9,7 @@ package main;
 
 import enums.Map;
 import enums.Screen;
+import enums.Shape;
 import objects.*;
 import utilities.FontUtilities;
 import utilities.ImageUtilities;
@@ -58,7 +59,6 @@ public class Main {
     static Image mapImage;
     public static MetroLine[] lines;
     public static ArrayList<Station> stations = new ArrayList<Station>();
-    static ArrayList<Train> trains = new ArrayList<Train>();
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     public static Screen screenState = Screen.STUDIO_TITLE;
 
@@ -78,7 +78,7 @@ public class Main {
 
     // timer - for animation, etc.
     static int ticks = 450; // set to 450 to skip studio screen
-    static int tickRate = 1; // tick speed multiplier
+    public static int tickRate = 1; // tick speed multiplier
     static int regularTickRate = tickRate;
 //    static long pTime = System.nanoTime(); // for delay debugging
     static Screen pScreen;
@@ -101,9 +101,10 @@ public class Main {
     });
 
     // fonts
-    static Font robotoMonoRegular24;
-    static Font robotoSerifMedium48;
-    static Font robotoSerifLight36;
+    public static Font robotoMonoRegular24;
+    public static Font robotoSerifMedium48;
+    public static Font robotoSerifLight36;
+    public static Font robotoSerifLight16;
 
     /**
      * Constructor - where the main magic happens.
@@ -144,7 +145,6 @@ public class Main {
         // reset level data
         lines = new MetroLine[]{null, null, null, null, null, null, null};
         stations.clear();
-        trains.clear();
         currentLine = 0;
         points = 0;
 
@@ -210,13 +210,15 @@ public class Main {
 
             // fonts
             robotoMonoRegular24 = FontUtilities.importFont("src\\fonts\\RobotoMono-Regular.ttf", (float) (gridSize));
-            robotoSerifMedium48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Medium.ttf", (float) (gridSize * 2));
+            robotoSerifMedium48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Medium.ttf", (float) (gridSize * 2.0));
             robotoSerifLight36 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Light.ttf", (float) (gridSize * 1.5));
+            robotoSerifLight16 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Light.ttf", (float) (gridSize * 2.0 / 3.0));
 
             GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
             graphicsEnvironment.registerFont(robotoMonoRegular24);
             graphicsEnvironment.registerFont(robotoSerifMedium48);
             graphicsEnvironment.registerFont(robotoSerifLight36);
+            graphicsEnvironment.registerFont(robotoSerifLight16);
 
             // resize images
             studioTitleScreen = ImageUtilities.resizeFullScreen(studioTitleScreen);
@@ -331,17 +333,17 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(mapImage);
 
-                // spawn stations until no more can be spawned TODO: move to StationSpawner
+                // spawn stations until no more can be spawned TODO: move to StationSpawner, check that double time can't prevent spawning!!
                 if (openCount > 1) {
-                    if (ticks % 120 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (ticks % 15 == 0) stations.add(new Station());
+                    if (tickRate != 0 && ticks % 120 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if (tickRate != 0 && ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
+//                    if (tickRate != 0 && ticks % 15 == 0) stations.add(new Station());
                 }
 
                 // spawn passengers TODO: move to PassengerSpawner
-                if (ticks % 60 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+                if (tickRate != 0 && ticks % 60 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if (tickRate != 0 && ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+//                if (tickRate != 0 && ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
@@ -358,15 +360,16 @@ public class Main {
                     }
                 }
 
-                // lines
+                // lines & trains
                 for (MetroLine line : lines) {
-                    if (line != null) line.draw();
-                }
+                    if (line != null) {
+                        line.draw();
 
-                // trains
-                for (Train train : trains) {
-                    train.move();
-                    train.draw();
+                        for (Train train : line.getTrains()) {
+                            train.move();
+                            train.draw();
+                        }
+                    }
                 }
 
                 // passengers
@@ -449,7 +452,7 @@ public class Main {
                 g2D.draw(clockHand);
                 g2D.setColor(Color.BLACK);
                 g2D.drawString(days[((int) (ticks / 1440)) % 7], (float) (mainFrame.getWidth() - gridSize * 7), (float) (gridSize * 3.5));
-                // trigger upgrades if days = 0
+                // TODO: trigger upgrades if days = 0
 
                 // points (includes person icon)
                 if (points > 0) {
@@ -530,15 +533,19 @@ public class Main {
                         if (station.getGridX() == gridX && station.getGridY() == gridY) {
                             if (!lines[currentLine].getStations().contains(station)) {
                                 station.setDiagonal(lines[currentLine], shiftHeld);
-                                if (altHeld) lines[currentLine].getStations().addFirst(station);
-                                else lines[currentLine].addStation(station);
+                                lines[currentLine].addStation(station, altHeld);
                             } else {
-                                lines[currentLine].removeStation(station);
+                                if (lines[currentLine].getStations().size() <= 2) lines[currentLine].removeStation(station);
+                                else for (MetroLine line : lines) {
+                                    if (line != null) {
+                                        for (Train train : line.getTrains()) {
+                                            if (!(station == train.getFromStation() || station == train.getToStation())) lines[currentLine].removeStation(station);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
-//                    if (lines[currentLine].getStations().size() == 2) trains.add(new Locomotive(lines[currentLine]));
 
                     // line selection
                     for (int i = 0; i < 7; i++) {
@@ -666,11 +673,11 @@ public class Main {
                 }
 
                 // EDIT/DEBUG MODE!!
-//                if (controlHeld) {
-//                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-//                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
-//                    }
-//                }
+                if (controlHeld) {
+                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
+                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+                    }
+                }
             }
         }
 
