@@ -11,6 +11,8 @@ import enums.Map;
 import enums.Screen;
 import enums.Shape;
 import objects.*;
+import spawners.PassengerSpawner;
+import spawners.StationSpawner;
 import utilities.FontUtilities;
 import utilities.ImageUtilities;
 import utilities.MapUtilities;
@@ -19,6 +21,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -66,9 +71,9 @@ public class Main {
     public static double gridSize;
     static int mouseX, mouseY;
     static int gridX, gridY;
-    static boolean shiftHeld = false;
     static boolean controlHeld = false;
-    static boolean altHeld = false;
+    static boolean dHeld = false;
+    static boolean sHeld = false;
     static int currentLine;
     static int circleHover = -1;
     public static int[] resources = new int[4];
@@ -177,6 +182,7 @@ public class Main {
     private static class GraphicsPanel extends JPanel {
         // variables
         int studioTitleScreenOpacity = 0;
+        int lastWeekTick = 0;
 
         // images
         Image studioTitleScreen = ImageUtilities.importImage("images/other/barking-seal-design.png");
@@ -333,17 +339,9 @@ public class Main {
                 // level background
                 ImageUtilities.drawImageFullScreen(mapImage);
 
-                // spawn stations until no more can be spawned TODO: move to StationSpawner, check that double time can't prevent spawning!!
-                if (openCount > 1) {
-                    if (tickRate != 0 && ticks % 120 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (tickRate != 0 && ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.add(new Station());
-//                    if (tickRate != 0 && ticks % 15 == 0) stations.add(new Station());
-                }
-
-                // spawn passengers TODO: move to PassengerSpawner
-                if (tickRate != 0 && ticks % 60 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (tickRate != 0 && ticks % 15 == 0 && (int) (Math.random() * 15) == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
-//                if (tickRate != 0 && ticks % 15 == 0) stations.get((int) (Math.random() * stations.size())).getPassengers().add(new Passenger());
+                // spawning
+                StationSpawner.stationTick();
+                PassengerSpawner.passengerTick();
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
@@ -452,7 +450,18 @@ public class Main {
                 g2D.draw(clockHand);
                 g2D.setColor(Color.BLACK);
                 g2D.drawString(days[((int) (ticks / 1440)) % 7], (float) (mainFrame.getWidth() - gridSize * 7), (float) (gridSize * 3.5));
-                // TODO: trigger upgrades if days = 0
+
+                // end of week, upgrades!
+                if (ticks - lastWeekTick == 10080) {
+                    lastWeekTick = ticks;
+                    // find the first locked line and unlock it
+                    for (int i = 0; i < 7; i++) {
+                        if (lines[i] == null) {
+                            lines[i] = new MetroLine(map.getColours()[i]);
+                            break;
+                        }
+                    }
+                }
 
                 // points (includes person icon)
                 if (points > 0) {
@@ -505,6 +514,17 @@ public class Main {
                             }
                         }
                     }
+
+                    // pinniped.page
+                    if (gridX >= 4 && gridX < 14 && gridY >= 38 && gridY < 41) {
+                        try {
+                            Desktop.getDesktop().browse(new URI("https://pinniped.page/projects/small-subways"));
+                        } catch (URISyntaxException _) {
+                            JOptionPane.showMessageDialog(null, "Failed to open URI.", "ERROR: URISyntaxException", JOptionPane.ERROR_MESSAGE);
+                        } catch (IOException _) {
+                            JOptionPane.showMessageDialog(null, "Failed to open URI.", "ERROR: IOException", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 } else if (screenState == Screen.LEVEL_SELECT) {
                     // back arrow
                     if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
@@ -530,13 +550,20 @@ public class Main {
 
                     // add/remove station to/from line
                     for (Station station : stations) {
+                        // clicked on a station?
                         if (station.getGridX() == gridX && station.getGridY() == gridY) {
+                            // station is not already on the line
                             if (!lines[currentLine].getStations().contains(station)) {
-                                station.setDiagonal(lines[currentLine], shiftHeld);
-                                lines[currentLine].addStation(station, altHeld);
+                                // if adding to the beginning, set diagonal of FIRST station (which will become the NEXT station)
+                                if (sHeld && !lines[currentLine].getStations().isEmpty()) lines[currentLine].getStations().getFirst().setDiagonal(lines[currentLine], !dHeld);
+                                else station.setDiagonal(lines[currentLine], dHeld); // otherwise current station
+
+                                lines[currentLine].addStation(station, sHeld); // add the station
                             } else {
+                                // you can always remove stations if doing so would make the line invisible
                                 if (lines[currentLine].getStations().size() <= 2) lines[currentLine].removeStation(station);
 
+                                // make sure the station is not being used by a train!
                                 for (Train train : lines[currentLine].getTrains()) {
                                     if (!(station == train.getFromStation() || station == train.getToStation())) lines[currentLine].removeStation(station);
                                 }
@@ -551,6 +578,25 @@ public class Main {
                                 if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
                                     if (lines[i] != null) currentLine = i;
                                     break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // right click
+            if (e.getButton() == 3) {
+                if (screenState == Screen.GAME) {
+                    // change diagonal state
+                    for (Station station : stations) {
+                        // clicked on a station?
+                        if (station.getGridX() == gridX && station.getGridY() == gridY) {
+                            // station is on current line
+                            if (lines[currentLine].getStations().contains(station)) {
+                                // make sure segment is not in use...
+                                for (Train train : lines[currentLine].getTrains()) {
+                                    if (!(station == train.getFromStation() || station == train.getToStation())) station.setDiagonal(lines[currentLine], !station.isDiagonal(lines[currentLine]));
                                 }
                             }
                         }
@@ -627,12 +673,15 @@ public class Main {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_ESCAPE) -> System.exit(0);
-                case (KeyEvent.VK_SHIFT) -> shiftHeld = true;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
-                case (KeyEvent.VK_ALT) -> altHeld = true;
+                case (KeyEvent.VK_D) -> dHeld = true;
+                case (KeyEvent.VK_S) -> sHeld = true;
             }
 
-            if (screenState == Screen.LEVEL_SELECT) {
+            if (screenState == Screen.STUDIO_TITLE) {
+                // skip to menu
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) screenState = Screen.MAIN_MENU;
+            } else if (screenState == Screen.LEVEL_SELECT) {
                 // back arrow
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
 
@@ -685,9 +734,9 @@ public class Main {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case (KeyEvent.VK_SHIFT) -> shiftHeld = false;
                 case (KeyEvent.VK_CONTROL) -> controlHeld = false;
-                case (KeyEvent.VK_ALT) -> altHeld = false;
+                case (KeyEvent.VK_D) -> dHeld = false;
+                case (KeyEvent.VK_S) -> sHeld = false;
             }
         }
 

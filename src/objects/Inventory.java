@@ -8,7 +8,7 @@
 package objects;
 
 /**
- *
+ * unused
  */
 public class Inventory {
 
