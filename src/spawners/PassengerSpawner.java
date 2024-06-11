@@ -15,7 +15,7 @@ import objects.Passenger;
  */
 public class PassengerSpawner {
 
-    private static final int SPAWN_CHECK_INTERVAL = 60;
+    private static final int SPAWN_CHECK_INTERVAL = 10;
     private static final int SPAWN_CHANCE = 15;
     private static int previousSpawnCheckTick;
 

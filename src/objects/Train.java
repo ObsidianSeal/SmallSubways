@@ -12,6 +12,7 @@ import main.Main;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 
 /**
  * Train game, now with trains.
@@ -19,7 +20,8 @@ import java.awt.geom.GeneralPath;
 public abstract class Train {
     private MetroLine line;
     private Station fromStation, toStation;
-    private boolean travelDirection;
+    private ArrayList<Passenger> passengers;
+    private boolean isTravellingForward;
     private double x1, y1, x2, y2;
     private int waitTick;
     private boolean waiting;
@@ -39,12 +41,15 @@ public abstract class Train {
     Train(MetroLine line) {
         this.line = line;
 
+        // passengers
+        this.passengers = new ArrayList<Passenger>();
+
         // initial 'to' and 'from' stations
         this.fromStation = this.line.getStations().get(0);
         this.toStation = this.line.getStations().get(1);
 
         // begin forwards
-        this.travelDirection = true;
+        this.isTravellingForward = true;
 
         this.x1 = this.fromStation.getX();
         this.y1 = this.fromStation.getY();
@@ -57,7 +62,7 @@ public abstract class Train {
      * Move (and draw) the train. The main part is modified from MetroLine. This code is pretty awful, but I don't have time to improve it.
      */
     public void moveAndDraw() {
-//        Main.g2D.setColor(Color.BLACK); Main.g2D.setFont(Main.robotoSerifLight16);
+        Main.g2D.setColor(Color.BLACK); Main.g2D.setFont(Main.robotoSerifLight16);
 
         // the two directions
         Direction firstDirection, secondDirection;
@@ -69,7 +74,7 @@ public abstract class Train {
         int toY = (int) this.toStation.getY();
         boolean diagonal;
 
-        if (travelDirection) diagonal = this.toStation.isDiagonal(this.line); // forwards: get the 'diagonal' of the destination station
+        if (isTravellingForward) diagonal = this.toStation.isDiagonal(this.line); // forwards: get the 'diagonal' of the destination station
         else diagonal = !this.fromStation.isDiagonal(this.line); // reverse: get the opposite 'diagonal' of the origin station
 
         // reached destination station?
@@ -79,22 +84,52 @@ public abstract class Train {
                 this.waiting = true;
                 this.waitTick = Main.ticks;
 
-                // for now, you get points just by picking passengers up
-                Main.points += toStation.getPassengers().size();
-                toStation.getPassengers().clear();
+                ArrayList<Station> thisLineStations = this.line.getStations();
+
+                int indexOfStation = thisLineStations.indexOf(this.toStation);
+
+                for (int j = 0; j < toStation.getPassengers().size(); j++) {
+                    Passenger passenger = toStation.getPassengers().get(j);
+                    if (passenger.getType() == toStation.getType()) {
+                        this.passengers.remove(passenger);
+                        System.out.println("Dropped passenger of type " + passenger.getType());
+                        Main.points++;
+                    }
+                }
+
+                for (int j = 0; j < toStation.getPassengers().size(); j++) {
+                    Passenger passenger = toStation.getPassengers().get(j);
+                    if (this.isTravellingForward) {
+                        for (int i = indexOfStation; i < thisLineStations.size(); i++) {
+                            if (thisLineStations.get(i).getType() == passenger.getType() && passengers.size() < 6) {
+                                this.passengers.add(passenger);
+                                System.out.println("Picked up passenger of type " + passenger.getType());
+                                toStation.getPassengers().remove(passenger);
+                            }
+                        }
+                    } else {
+                        for (int i = indexOfStation; i >= 0; i--) {
+                            if (thisLineStations.get(i).getType() == passenger.getType() && passengers.size() < 6) {
+                                passengers.add(passenger);
+                                System.out.println("Picked up passenger of type " + passenger.getType());
+                                toStation.getPassengers().remove(passenger);
+                            }
+                        }
+                    }
+                }
             }
 
             // if it has been long enough, stop waiting
             if (Main.ticks >= this.waitTick + this.WAIT_TIME) waiting = false;
 
             if (!waiting) {
-                if (travelDirection) {
+                if (isTravellingForward) {
                     // too far? switch direction
                     if (toStation == this.line.getStations().getLast()) {
                         fromStation = toStation;
                         toStation = this.line.getStations().get(this.line.getStations().size() - 2);
 
-                        this.travelDirection = false;
+                        this.isTravellingForward = false;
                     } else {
                         fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) + 1);
                         toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) + 1);
@@ -105,7 +140,7 @@ public abstract class Train {
                         fromStation = toStation;
                         toStation = this.line.getStations().get(1);
 
-                        this.travelDirection = true;
+                        this.isTravellingForward = true;
                     } else {
                         fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) - 1);
                         toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) - 1);
@@ -119,7 +154,7 @@ public abstract class Train {
                 toY = (int) this.toStation.getY();
 
                 // update 'diagonal' (refer to the first use of this code for more information)
-                if (travelDirection) diagonal = this.toStation.isDiagonal(this.line);
+                if (isTravellingForward) diagonal = this.toStation.isDiagonal(this.line);
                 else diagonal = !this.fromStation.isDiagonal(this.line);
             }
         }
@@ -304,7 +339,7 @@ public abstract class Train {
         switch (moveDirection) {
             case UP -> {
                 if (!waiting) {
-                    if (this.travelDirection) {
+                    if (this.isTravellingForward) {
                         if (diagonal) this.x1 = toX;
                         else this.x1 = fromX;
                     } else {
@@ -322,7 +357,7 @@ public abstract class Train {
             }
             case DOWN -> {
                 if (!waiting) {
-                    if (this.travelDirection) {
+                    if (this.isTravellingForward) {
                         if (diagonal) this.x1 = toX;
                         else this.x1 = fromX;
                     } else {
@@ -354,7 +389,7 @@ public abstract class Train {
             case LEFT -> {
                 if (!waiting) {
                     this.x1 -= this.MOVE_STRAIGHT * Main.tickRate;
-                    if (this.travelDirection) {
+                    if (this.isTravellingForward) {
                         if (diagonal) this.y1 = toY;
                         else this.y1 = fromY;
                     } else {
@@ -396,7 +431,7 @@ public abstract class Train {
             case RIGHT -> {
                 if (!waiting) {
                     this.x1 += this.MOVE_STRAIGHT * Main.tickRate;
-                    if (this.travelDirection) {
+                    if (this.isTravellingForward) {
                         if (diagonal) this.y1 = toY;
                         else this.y1 = fromY;
                     } else {
