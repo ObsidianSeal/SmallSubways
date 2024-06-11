@@ -11,6 +11,7 @@ import enums.Direction;
 import main.Main;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 
 /**
  * Train game, now with trains.
@@ -53,9 +54,9 @@ public abstract class Train {
     }
 
     /**
-     * Move the train. MUCH OF THE CODE IS COPIED FROM MetroLine.
+     * Move (and draw) the train. The main part is modified from MetroLine. This code is pretty awful, but I don't have time to improve it.
      */
-    public void move() {
+    public void moveAndDraw() {
 //        Main.g2D.setColor(Color.BLACK); Main.g2D.setFont(Main.robotoSerifLight16);
 
         // the two directions
@@ -84,42 +85,43 @@ public abstract class Train {
             }
 
             // if it has been long enough, stop waiting
-            if (Main.ticks < this.waitTick + this.WAIT_TIME) return;
-            else waiting = false;
+            if (Main.ticks >= this.waitTick + this.WAIT_TIME) waiting = false;
 
-            if (travelDirection) {
-                // too far? switch direction
-                if (toStation == this.line.getStations().getLast()) {
-                    fromStation = toStation;
-                    toStation = this.line.getStations().get(this.line.getStations().size() - 2);
+            if (!waiting) {
+                if (travelDirection) {
+                    // too far? switch direction
+                    if (toStation == this.line.getStations().getLast()) {
+                        fromStation = toStation;
+                        toStation = this.line.getStations().get(this.line.getStations().size() - 2);
 
-                    this.travelDirection = false;
+                        this.travelDirection = false;
+                    } else {
+                        fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) + 1);
+                        toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) + 1);
+                    }
                 } else {
-                    fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) + 1);
-                    toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) + 1);
-                }
-            } else {
-                // too far? switch direction
-                if (toStation == this.line.getStations().getFirst()) {
-                    fromStation = toStation;
-                    toStation = this.line.getStations().get(1);
+                    // too far? switch direction
+                    if (toStation == this.line.getStations().getFirst()) {
+                        fromStation = toStation;
+                        toStation = this.line.getStations().get(1);
 
-                    this.travelDirection = true;
-                } else {
-                    fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) - 1);
-                    toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) - 1);
+                        this.travelDirection = true;
+                    } else {
+                        fromStation = this.line.getStations().get(this.line.getStations().indexOf(fromStation) - 1);
+                        toStation = this.line.getStations().get(this.line.getStations().indexOf(toStation) - 1);
+                    }
                 }
+
+                // update 'from' and 'to' variables
+                fromX = (int) this.fromStation.getX();
+                fromY = (int) this.fromStation.getY();
+                toX = (int) this.toStation.getX();
+                toY = (int) this.toStation.getY();
+
+                // update 'diagonal' (refer to the first use of this code for more information)
+                if (travelDirection) diagonal = this.toStation.isDiagonal(this.line);
+                else diagonal = !this.fromStation.isDiagonal(this.line);
             }
-
-            // update 'from' and 'to' variables
-            fromX = (int) this.fromStation.getX();
-            fromY = (int) this.fromStation.getY();
-            toX = (int) this.toStation.getX();
-            toY = (int) this.toStation.getY();
-
-            // update 'diagonal' (refer to the first use of this code for more information)
-            if (travelDirection) diagonal = this.toStation.isDiagonal(this.line);
-            else diagonal = !this.fromStation.isDiagonal(this.line);
         }
 
 //        Main.g2D.drawString(String.format("from: (%d, %d), to: (%d, %d), current: (%d, %d), diagonal: %b", fromX, fromY, toX, toY, (int) (this.x1), (int) (this.y1), diagonal), (int) (this.x1 + 50), (int) (this.y1));
@@ -294,102 +296,138 @@ public abstract class Train {
         if (Math.abs(this.x1 - fromX) >= Math.abs(newX - fromX) && Math.abs(this.y1 - fromY) >= Math.abs(newY - fromY)) moveDirection = secondDirection;
         else moveDirection = firstDirection;
 
+        Main.g2D.setColor(this.line.getColour());
+        Main.g2D.setStroke(new BasicStroke((float) (Main.gridSize * 0.8), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        GeneralPath trainPath = new GeneralPath();
+
         // for each of the eight directions...
         switch (moveDirection) {
             case UP -> {
-                if (this.travelDirection) {
-                    if (diagonal) this.x1 = toX;
-                    else this.x1 = fromX;
-                } else {
-                    if (diagonal) this.x1 = toX;
-                    else this.x1 = fromX;
-                }
-                this.y1 -= this.MOVE_STRAIGHT * Main.tickRate;
+                if (!waiting) {
+                    if (this.travelDirection) {
+                        if (diagonal) this.x1 = toX;
+                        else this.x1 = fromX;
+                    } else {
+                        if (diagonal) this.x1 = toX;
+                        else this.x1 = fromX;
+                    }
+                    this.y1 -= this.MOVE_STRAIGHT * Main.tickRate;
 
-                this.x2 = this.x1;
-                this.y2 = this.y1 - this.TRAIN_SIZE_STRAIGHT;
+                    this.x2 = this.x1;
+                    this.y2 = this.y1 - this.TRAIN_SIZE_STRAIGHT;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET, this.y1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_STRAIGHT / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET, this.y2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_STRAIGHT / 2.0);
             }
             case DOWN -> {
-                if (this.travelDirection) {
-                    if (diagonal) this.x1 = toX;
-                    else this.x1 = fromX;
-                } else {
-                    if (diagonal) this.x1 = toX;
-                    else this.x1 = fromX;
-                }
-                this.y1 += this.MOVE_STRAIGHT * Main.tickRate;
+                if (!waiting) {
+                    if (this.travelDirection) {
+                        if (diagonal) this.x1 = toX;
+                        else this.x1 = fromX;
+                    } else {
+                        if (diagonal) this.x1 = toX;
+                        else this.x1 = fromX;
+                    }
+                    this.y1 += this.MOVE_STRAIGHT * Main.tickRate;
 
-                this.x2 = this.x1;
-                this.y2 = this.y1 + this.TRAIN_SIZE_STRAIGHT;
+                    this.x2 = this.x1;
+                    this.y2 = this.y1 + this.TRAIN_SIZE_STRAIGHT;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET, this.y1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_STRAIGHT / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET, this.y2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_STRAIGHT / 2.0);
             }
 
             case LEFT_UP -> {
-                this.x1 -= this.MOVE_DIAGONAL * Main.tickRate;
-                this.y1 -= this.MOVE_DIAGONAL * Main.tickRate;
+                if (!waiting) {
+                    this.x1 -= this.MOVE_DIAGONAL * Main.tickRate;
+                    this.y1 -= this.MOVE_DIAGONAL * Main.tickRate;
 
-                this.x2 = this.x1 - this.TRAIN_SIZE_DIAGONAL;
-                this.y2 = this.y1 - this.TRAIN_SIZE_DIAGONAL;
-            }
-            case LEFT -> {
-                this.x1 -= this.MOVE_STRAIGHT * Main.tickRate;
-                if (this.travelDirection) {
-                    if (diagonal) this.y1 = toY;
-                    else this.y1 = fromY;
-                } else {
-                    if (diagonal) this.y1 = toY;
-                    else this.y1 = fromY;
+                    this.x2 = this.x1 - this.TRAIN_SIZE_DIAGONAL;
+                    this.y2 = this.y1 - this.TRAIN_SIZE_DIAGONAL;
                 }
 
-                this.x2 = this.x1 - this.TRAIN_SIZE_STRAIGHT;
-                this.y2 = this.y1;
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0, this.y1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0, this.y2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0);
+            }
+            case LEFT -> {
+                if (!waiting) {
+                    this.x1 -= this.MOVE_STRAIGHT * Main.tickRate;
+                    if (this.travelDirection) {
+                        if (diagonal) this.y1 = toY;
+                        else this.y1 = fromY;
+                    } else {
+                        if (diagonal) this.y1 = toY;
+                        else this.y1 = fromY;
+                    }
+                    this.x2 = this.x1 - this.TRAIN_SIZE_STRAIGHT;
+                    this.y2 = this.y1;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_STRAIGHT / 2.0, this.y1 + this.line.LINE_OFFSET);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_STRAIGHT / 2.0, this.y2 + this.line.LINE_OFFSET);
             }
             case LEFT_DOWN -> {
-                this.x1 -= this.MOVE_DIAGONAL * Main.tickRate;
-                this.y1 += this.MOVE_DIAGONAL * Main.tickRate;
+                if (!waiting) {
+                    this.x1 -= this.MOVE_DIAGONAL * Main.tickRate;
+                    this.y1 += this.MOVE_DIAGONAL * Main.tickRate;
 
-                this.x2 = this.x1 - this.TRAIN_SIZE_DIAGONAL;
-                this.y2 = this.y1 + this.TRAIN_SIZE_DIAGONAL;
+                    this.x2 = this.x1 - this.TRAIN_SIZE_DIAGONAL;
+                    this.y2 = this.y1 + this.TRAIN_SIZE_DIAGONAL;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0, this.y1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0, this.y2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0);
             }
 
             case RIGHT_UP -> {
-                this.x1 += this.MOVE_DIAGONAL * Main.tickRate;
-                this.y1 -= this.MOVE_DIAGONAL * Main.tickRate;
+                if (!waiting) {
+                    this.x1 += this.MOVE_DIAGONAL * Main.tickRate;
+                    this.y1 -= this.MOVE_DIAGONAL * Main.tickRate;
 
-                this.x2 = this.x1 + this.TRAIN_SIZE_DIAGONAL;
-                this.y2 = this.y1 - this.TRAIN_SIZE_DIAGONAL;
-            }
-            case RIGHT -> {
-                this.x1 += this.MOVE_STRAIGHT * Main.tickRate;
-                if (this.travelDirection) {
-                    if (diagonal) this.y1 = toY;
-                    else this.y1 = fromY;
-                } else {
-                    if (diagonal) this.y1 = toY;
-                    else this.y1 = fromY;
+                    this.x2 = this.x1 + this.TRAIN_SIZE_DIAGONAL;
+                    this.y2 = this.y1 - this.TRAIN_SIZE_DIAGONAL;
                 }
 
-                this.x2 = this.x1 + this.TRAIN_SIZE_STRAIGHT;
-                this.y2 = this.y1;
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0, this.y1 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0, this.y2 + this.line.LINE_OFFSET + this.TRAIN_SIZE_DIAGONAL / 2.0);
+            }
+            case RIGHT -> {
+                if (!waiting) {
+                    this.x1 += this.MOVE_STRAIGHT * Main.tickRate;
+                    if (this.travelDirection) {
+                        if (diagonal) this.y1 = toY;
+                        else this.y1 = fromY;
+                    } else {
+                        if (diagonal) this.y1 = toY;
+                        else this.y1 = fromY;
+                    }
+
+                    this.x2 = this.x1 + this.TRAIN_SIZE_STRAIGHT;
+                    this.y2 = this.y1;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_STRAIGHT / 2.0, this.y1 + this.line.LINE_OFFSET);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_STRAIGHT / 2.0, this.y2 + this.line.LINE_OFFSET);
             }
             case RIGHT_DOWN -> {
-                this.x1 += this.MOVE_DIAGONAL * Main.tickRate;
-                this.y1 += this.MOVE_DIAGONAL * Main.tickRate;
+                if (!waiting) {
+                    this.x1 += this.MOVE_DIAGONAL * Main.tickRate;
+                    this.y1 += this.MOVE_DIAGONAL * Main.tickRate;
 
-                this.x2 = this.x1 + this.TRAIN_SIZE_DIAGONAL;
-                this.y2 = this.y1 + this.TRAIN_SIZE_DIAGONAL;
+                    this.x2 = this.x1 + this.TRAIN_SIZE_DIAGONAL;
+                    this.y2 = this.y1 + this.TRAIN_SIZE_DIAGONAL;
+                }
+
+                trainPath.moveTo(this.x1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0, this.y1 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0);
+                trainPath.lineTo(this.x2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0, this.y2 + this.line.LINE_OFFSET - this.TRAIN_SIZE_DIAGONAL / 2.0);
             }
         }
 
-//        Main.g2D.drawString(String.format("from: %d, to: %d, moveDirection: " + moveDirection + ", travelDirection: %b, diagonal: %b", this.line.getStations().indexOf(this.fromStation), this.line.getStations().indexOf(this.toStation), this.travelDirection, diagonal), (int) (this.x1 + 50), (int) (this.y1 + 50));
-    }
+        Main.g2D.draw(trainPath);
 
-    /**
-     * Draw the train.
-     */
-    public void draw() {
-        Main.g2D.setColor(this.line.getColour());
-        Main.g2D.setStroke(new BasicStroke((float) (Main.gridSize * 0.8), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        Main.g2D.drawLine((int) (this.x1 + this.line.LINE_OFFSET), (int) (this.y1 + this.line.LINE_OFFSET), (int) (this.x2 + this.line.LINE_OFFSET), (int) (this.y2 + this.line.LINE_OFFSET));
+//        Main.g2D.drawString(String.format("from: %d, to: %d, moveDirection: " + moveDirection + ", travelDirection: %b, diagonal: %b", this.line.getStations().indexOf(this.fromStation), this.line.getStations().indexOf(this.toStation), this.travelDirection, diagonal), (int) (this.x1 + 50), (int) (this.y1 + 50));
     }
 
     /**

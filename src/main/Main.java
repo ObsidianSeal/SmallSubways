@@ -364,8 +364,7 @@ public class Main {
                         line.draw();
 
                         for (Train train : line.getTrains()) {
-                            train.move();
-                            train.draw();
+                            train.moveAndDraw();
                         }
                     }
                 }
