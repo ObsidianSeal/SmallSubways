@@ -112,7 +112,7 @@ public class Main {
     Main() {
         // title, icon
         mainFrame.setTitle("SmallSubways");
-        mainFrame.setIconImage(new ImageIcon("src\\images\\icons\\app.png").getImage());
+        mainFrame.setIconImage(new ImageIcon("images/icons/app.png").getImage());
 
         // defaults and decorations, then show the window
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -179,25 +179,25 @@ public class Main {
         int studioTitleScreenOpacity = 0;
 
         // images
-        Image studioTitleScreen = ImageUtilities.importImage("src\\images\\other\\barking-seal-design.png");
-        Image mainMenu = ImageUtilities.importImage("src\\images\\other\\main-menu.png");
+        Image studioTitleScreen = ImageUtilities.importImage("images/other/barking-seal-design.png");
+        Image mainMenu = ImageUtilities.importImage("images/other/main-menu.png");
 
-        Image lineIcon = ImageUtilities.importImage("src\\images\\icons\\line.png");
-        Image tunnelIcon = ImageUtilities.importImage("src\\images\\icons\\tunnel.png");
-        Image bridgeIcon = ImageUtilities.importImage("src\\images\\icons\\bridge.png");
-        Image locomotiveIcon = ImageUtilities.importImage("src\\images\\icons\\locomotive.png");
-        Image carriageIcon = ImageUtilities.importImage("src\\images\\icons\\carriage.png");
-        Image interchangeIcon = ImageUtilities.importImage("src\\images\\icons\\interchange.png");
+        Image lineIcon = ImageUtilities.importImage("images/icons/line.png");
+        Image tunnelIcon = ImageUtilities.importImage("images/icons/tunnel.png");
+        Image bridgeIcon = ImageUtilities.importImage("images/icons/bridge.png");
+        Image locomotiveIcon = ImageUtilities.importImage("images/icons/locomotive.png");
+        Image carriageIcon = ImageUtilities.importImage("images/icons/carriage.png");
+        Image interchangeIcon = ImageUtilities.importImage("images/icons/interchange.png");
 
-        Image person = ImageUtilities.importImage("src\\images\\icons\\person.png");
+        Image person = ImageUtilities.importImage("images/icons/person.png");
 
         Image[] mapThumbnails = {
-                ImageUtilities.importImage("src\\images\\thumbnails\\elora-fergus.png"),
-                ImageUtilities.importImage("src\\images\\thumbnails\\london.png"),
-                ImageUtilities.importImage("src\\images\\thumbnails\\ottawa.png"),
-                ImageUtilities.importImage("src\\images\\thumbnails\\stratford.png"),
-                ImageUtilities.importImage("src\\images\\thumbnails\\victoria.png"),
-                ImageUtilities.importImage("src\\images\\thumbnails\\waterloo.png")
+                ImageUtilities.importImage("images/thumbnails/elora-fergus.png"),
+                ImageUtilities.importImage("images/thumbnails/london.png"),
+                ImageUtilities.importImage("images/thumbnails/ottawa.png"),
+                ImageUtilities.importImage("images/thumbnails/stratford.png"),
+                ImageUtilities.importImage("images/thumbnails/victoria.png"),
+                ImageUtilities.importImage("images/thumbnails/waterloo.png")
         };
 
         /**
@@ -209,10 +209,10 @@ public class Main {
             gridSize = mainFrame.getWidth() / 80.0;
 
             // fonts
-            robotoMonoRegular24 = FontUtilities.importFont("src\\fonts\\RobotoMono-Regular.ttf", (float) (gridSize));
-            robotoSerifMedium48 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Medium.ttf", (float) (gridSize * 2.0));
-            robotoSerifLight36 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Light.ttf", (float) (gridSize * 1.5));
-            robotoSerifLight16 = FontUtilities.importFont("src\\fonts\\RobotoSerif-Light.ttf", (float) (gridSize * 2.0 / 3.0));
+            robotoMonoRegular24 = FontUtilities.importFont("fonts/RobotoMono-Regular.ttf", (float) (gridSize));
+            robotoSerifMedium48 = FontUtilities.importFont("fonts/RobotoSerif-Medium.ttf", (float) (gridSize * 2.0));
+            robotoSerifLight36 = FontUtilities.importFont("fonts/RobotoSerif-Light.ttf", (float) (gridSize * 1.5));
+            robotoSerifLight16 = FontUtilities.importFont("fonts/RobotoSerif-Light.ttf", (float) (gridSize * 2.0 / 3.0));
 
             GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
             graphicsEnvironment.registerFont(robotoMonoRegular24);

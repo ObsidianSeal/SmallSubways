@@ -7,10 +7,12 @@
 
 package utilities;
 
+import main.Main;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Font-related utilities.
@@ -27,7 +29,7 @@ public class FontUtilities {
         Font font = null;
 
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File(path)).deriveFont(size);
+            font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(path))).deriveFont(size);
         } catch (FontFormatException e) {
             JOptionPane.showMessageDialog(null, "A font failed to load: " + path, "FontFormatException", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {

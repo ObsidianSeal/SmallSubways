@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SmallSubways">
+    <output-path>$PROJECT_DIR$/out/artifacts/SmallSubways</output-path>
+    <root id="archive" name="SmallSubways.jar">
+      <element id="module-output" name="SmallSubways" />
+    </root>
+  </artifact>
+</component>

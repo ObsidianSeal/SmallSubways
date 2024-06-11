@@ -12,8 +12,8 @@ import main.Main;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * The image importer and manipulator class.
@@ -29,7 +29,7 @@ public class ImageUtilities {
         Image image = null;
 
         try {
-            image = ImageIO.read(new File(path));
+            image = ImageIO.read(Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(path)));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "An image failed to load: " + path, "ERROR 404 / Not Found", JOptionPane.ERROR_MESSAGE);
         }

@@ -46,7 +46,7 @@ public class MetroMap {
     public MetroMap(Map map) {
         switch (map) {
             case ELORA_FERGUS -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\elora-fergus.png");
+                this.map = ImageUtilities.importImage("images/levels/elora-fergus.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#A82222"),
@@ -68,7 +68,7 @@ public class MetroMap {
                 this.waterTravelType = false;
             }
             case LONDON -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\london.png");
+                this.map = ImageUtilities.importImage("images/levels/london.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#F69679"),
@@ -90,7 +90,7 @@ public class MetroMap {
                 this.waterTravelType = true;
             }
             case OTTAWA -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\ottawa.png");
+                this.map = ImageUtilities.importImage("images/levels/ottawa.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#3B4C51"),
@@ -112,7 +112,7 @@ public class MetroMap {
                 this.waterTravelType = true;
             }
             case STRATFORD -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\stratford.png");
+                this.map = ImageUtilities.importImage("images/levels/stratford.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#CE2424"),
@@ -134,7 +134,7 @@ public class MetroMap {
                 this.waterTravelType = false;
             }
             case VICTORIA -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\victoria.png");
+                this.map = ImageUtilities.importImage("images/levels/victoria.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#22D8BA"),
@@ -156,7 +156,7 @@ public class MetroMap {
                 this.waterTravelType = false;
             }
             case WATERLOO -> {
-                this.map = ImageUtilities.importImage("src\\images\\levels\\waterloo.png");
+                this.map = ImageUtilities.importImage("images/levels/waterloo.png");
                 this.colours = new Color[] {
                         // lines
                         Color.decode("#DCB35D"),
