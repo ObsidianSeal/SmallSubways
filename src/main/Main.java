@@ -172,9 +172,9 @@ public class Main {
 //            lines[6] = new MetroLine(map.getColours()[6]);
 
         // add initial stations
-        stations.add(new Station());
-        stations.add(new Station());
-        stations.add(new Station());
+        stations.add(new Station(Shape.CIRCLE));
+        stations.add(new Station(Shape.TRIANGLE));
+        stations.add(new Station(Shape.SQUARE));
 
         return ImageUtilities.resizeFullScreen(map.getMap());
     }
