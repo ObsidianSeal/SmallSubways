@@ -64,6 +64,7 @@ public class Main {
     static Image mapImage;
     public static MetroLine[] lines;
     public static ArrayList<Station> stations = new ArrayList<Station>();
+    public static ArrayList<Shape> shapesPresent = new ArrayList<Shape>(10);
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     public static Screen screenState = Screen.STUDIO_TITLE;
 
@@ -117,7 +118,7 @@ public class Main {
     Main() {
         // title, icon
         mainFrame.setTitle("SmallSubways");
-        mainFrame.setIconImage(new ImageIcon("images/icons/app.png").getImage());
+        mainFrame.setIconImage(ImageUtilities.importImage("images/icons/app.png"));
 
         // defaults and decorations, then show the window
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -131,6 +132,7 @@ public class Main {
 
         // event listeners
         graphicsPanel.addMouseListener(new MouseListener());
+        graphicsPanel.addMouseWheelListener(new MouseWheelListener());
         graphicsPanel.addMouseMotionListener(new MouseMotionListener());
         graphicsPanel.addKeyListener(new KeyboardListener());
 
@@ -341,7 +343,7 @@ public class Main {
 
                 // spawning
                 StationSpawner.stationTick();
-                PassengerSpawner.passengerTick();
+                for (Station station : stations) PassengerSpawner.passengerTick(station);
 
                 // EDIT/DEBUG MODE!!
                 if (controlHeld) {
@@ -607,6 +609,32 @@ public class Main {
     }
 
     /**
+     * Listener for mouse wheel events.
+     */
+    private static class MouseWheelListener extends MouseAdapter {
+
+        /**
+         * Event handler for when the scroll wheel moves.
+         * @param e The event to be processed.
+         */
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            if (screenState == Screen.GAME) {
+                int lastUnlockedLineIndex = -1;
+
+                for (int i = 0; i < 7; i++) {
+                    if (lines[i] != null) lastUnlockedLineIndex++;
+                }
+
+                // scroll through lines
+                int scrollAmount = e.getWheelRotation();
+                if ((currentLine > 0 && scrollAmount < 0) || (currentLine < lastUnlockedLineIndex && scrollAmount > 0)) currentLine += scrollAmount;
+            }
+        }
+
+    }
+
+    /**
      * Listener for mouse movement events.
      */
     private static class MouseMotionListener extends MouseMotionAdapter {
@@ -718,11 +746,11 @@ public class Main {
                 }
 
                 // EDIT/DEBUG MODE!!
-                if (controlHeld) {
-                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
-                    }
-                }
+//                if (controlHeld) {
+//                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
+//                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
+//                    }
+//                }
             }
         }
 

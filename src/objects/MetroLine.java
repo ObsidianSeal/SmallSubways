@@ -37,6 +37,8 @@ public class MetroLine {
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
         this.END_OFFSET = this.CURVE_OFFSET * 5;
+
+        Main.resources[0]++; // +1 train!
     }
 
     /**
@@ -51,6 +53,8 @@ public class MetroLine {
         this.CURVE_OFFSET = Main.mainFrame.getWidth() / 384;
         this.LINE_OFFSET = Main.mainFrame.getWidth() / 160;
         this.END_OFFSET = this.CURVE_OFFSET * 5;
+
+        Main.resources[0]++; // +1 train!
     }
 
     /**
@@ -78,7 +82,10 @@ public class MetroLine {
         if (end) this.stations.addFirst(station);
         else this.stations.add(station);
 
-        if (this.stations.size() == 2) this.trains.add(new Locomotive(this)); // if there is at least one line segment, get a train moving across it
+        if (this.stations.size() == 2) {
+            this.trains.add(new Locomotive(this)); // if there is at least one line segment, get a train moving across it
+            Main.resources[0]--; // use a train
+        }
     }
 
     /**
@@ -88,7 +95,10 @@ public class MetroLine {
     public void removeStation(Station station) {
         this.stations.remove(station);
 
-        if (this.stations.size() < 2) this.trains.clear(); // too few stations for train travel
+        if (this.stations.size() == 1) {
+            this.trains.clear(); // too few stations for train travel
+            Main.resources[0]++; // regain a train
+        }
     }
 
     /**

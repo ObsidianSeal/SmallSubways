@@ -13,6 +13,7 @@ import main.Main;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Train game, now with trains.
@@ -41,12 +42,12 @@ public abstract class Train {
     Train(MetroLine line) {
         this.line = line;
 
-        // passengers
-        this.passengers = new ArrayList<Passenger>();
-
         // initial 'to' and 'from' stations
         this.fromStation = this.line.getStations().get(0);
         this.toStation = this.line.getStations().get(1);
+
+        // passengers
+        this.passengers = new ArrayList<Passenger>();
 
         // begin forwards
         this.isTravellingForward = true;
@@ -74,56 +75,73 @@ public abstract class Train {
         int toY = (int) this.toStation.getY();
         boolean diagonal;
 
-        if (isTravellingForward) diagonal = this.toStation.isDiagonal(this.line); // forwards: get the 'diagonal' of the destination station
+        if (this.isTravellingForward) diagonal = this.toStation.isDiagonal(this.line); // forwards: get the 'diagonal' of the destination station
         else diagonal = !this.fromStation.isDiagonal(this.line); // reverse: get the opposite 'diagonal' of the origin station
 
         // reached destination station?
         if (Math.abs(this.x1 - fromX) >= Math.abs(toX - fromX) && Math.abs(this.y1 - fromY) >= Math.abs(toY - fromY)) {
-            // if just arrived, start waiting at this time
+            // if just arrived, start waiting at this time IF NECESSARY, and also do the things that a train does at a station
             if (!waiting) {
-                this.waiting = true;
                 this.waitTick = Main.ticks;
 
-                ArrayList<Station> thisLineStations = this.line.getStations();
+                // where is the current station along the line?
+                int indexOfCurrentStation = this.line.getStations().indexOf(this.toStation);
 
-                int indexOfStation = thisLineStations.indexOf(this.toStation);
+                // iterate through passengers on the train
+                Iterator<Passenger> trainPassengersIterator = this.passengers.iterator();
 
-                for (int j = 0; j < toStation.getPassengers().size(); j++) {
-                    Passenger passenger = toStation.getPassengers().get(j);
+                while (trainPassengersIterator.hasNext()) {
+                    Passenger passenger = trainPassengersIterator.next();
+
+                    // drop off passengers that want to go to this station, add a point for each
                     if (passenger.getType() == toStation.getType()) {
-                        this.passengers.remove(passenger);
-                        System.out.println("Dropped passenger of type " + passenger.getType());
+                        this.waiting = true;
+                        trainPassengersIterator.remove();
+//                        System.out.println("Trip completed for passenger of type " + passenger.getType());
                         Main.points++;
                     }
                 }
 
-                for (int j = 0; j < toStation.getPassengers().size(); j++) {
-                    Passenger passenger = toStation.getPassengers().get(j);
-                    if (this.isTravellingForward) {
-                        for (int i = indexOfStation; i < thisLineStations.size(); i++) {
-                            if (thisLineStations.get(i).getType() == passenger.getType() && passengers.size() < 6) {
+                // iterate through passengers at the station
+                Iterator<Passenger> stationPassengersIterator = toStation.getPassengers().iterator();
+
+                while (stationPassengersIterator.hasNext()) {
+                    Passenger passenger = stationPassengersIterator.next();
+
+                    // pick up the passenger if the train will go to its destination and there is space left on the train (6 passenger maximum)
+                    if ((this.isTravellingForward && indexOfCurrentStation != this.line.getStations().size() - 1) || indexOfCurrentStation == 0) {
+//                        System.out.println("looking forwards...");
+                        for (int j = indexOfCurrentStation; j < this.line.getStations().size(); j++) {
+                            if (this.line.getStations().get(j).getType() == passenger.getType() && this.passengers.size() < 6) {
+                                this.waiting = true;
                                 this.passengers.add(passenger);
-                                System.out.println("Picked up passenger of type " + passenger.getType());
-                                toStation.getPassengers().remove(passenger);
+//                                System.out.println("Picked up passenger of type " + passenger.getType());
+                                stationPassengersIterator.remove();
+                                break;
                             }
                         }
                     } else {
-                        for (int i = indexOfStation; i >= 0; i--) {
-                            if (thisLineStations.get(i).getType() == passenger.getType() && passengers.size() < 6) {
-                                passengers.add(passenger);
-                                System.out.println("Picked up passenger of type " + passenger.getType());
-                                toStation.getPassengers().remove(passenger);
+//                        System.out.println("looking backwards...");
+                        for (int j = indexOfCurrentStation; j >= 0; j--) {
+                            if (this.line.getStations().get(j).getType() == passenger.getType() && this.passengers.size() < 6) {
+                                this.waiting = true;
+                                this.passengers.add(passenger);
+//                                System.out.println("Picked up passenger of type " + passenger.getType());
+                                stationPassengersIterator.remove();
+                                break;
                             }
                         }
                     }
                 }
+
+                if (indexOfCurrentStation == 0 || indexOfCurrentStation == this.line.getStations().size() - 1) this.waiting = true;
             }
 
             // if it has been long enough, stop waiting
             if (Main.ticks >= this.waitTick + this.WAIT_TIME) waiting = false;
 
             if (!waiting) {
-                if (isTravellingForward) {
+                if (this.isTravellingForward) {
                     // too far? switch direction
                     if (toStation == this.line.getStations().getLast()) {
                         fromStation = toStation;
@@ -154,9 +172,13 @@ public abstract class Train {
                 toY = (int) this.toStation.getY();
 
                 // update 'diagonal' (refer to the first use of this code for more information)
-                if (isTravellingForward) diagonal = this.toStation.isDiagonal(this.line);
+                if (this.isTravellingForward) diagonal = this.toStation.isDiagonal(this.line);
                 else diagonal = !this.fromStation.isDiagonal(this.line);
             }
+        }
+
+        for (int i = 0; i < this.passengers.size(); i++) {
+            Main.g2D.drawString(String.valueOf(this.passengers.get(i).getType()), (int) (this.x1 + 50), (int) (this.y1 + i * 25));
         }
 
 //        Main.g2D.drawString(String.format("from: (%d, %d), to: (%d, %d), current: (%d, %d), diagonal: %b", fromX, fromY, toX, toY, (int) (this.x1), (int) (this.y1), diagonal), (int) (this.x1 + 50), (int) (this.y1));

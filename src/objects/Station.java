@@ -38,6 +38,7 @@ public class Station {
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
+        updateShapeAvailability();
     }
 
     /**
@@ -55,6 +56,7 @@ public class Station {
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
+        updateShapeAvailability();
     }
 
     /**
@@ -70,6 +72,7 @@ public class Station {
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
+        updateShapeAvailability();
     }
 
     /**
@@ -88,6 +91,7 @@ public class Station {
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
+        updateShapeAvailability();
     }
 
     /**
@@ -107,6 +111,7 @@ public class Station {
         this.passengers = new ArrayList<Passenger>();
 
         updateGridAvailability();
+        updateShapeAvailability();
     }
 
     /**
@@ -151,6 +156,13 @@ public class Station {
             }
         }
         Main.openCount = openCount;
+    }
+
+    /**
+     * Update list of shapes present on the map.
+     */
+    public void updateShapeAvailability() {
+        if (!Main.shapesPresent.contains(this.type)) Main.shapesPresent.add(this.type);
     }
 
     /**
@@ -371,7 +383,7 @@ public class Station {
         int opacity = 255; // opacity begins at 100%
 
         for (Passenger passenger : this.passengers) {
-            if (total >= 5 && opacity >= 30) opacity -= 15; // opacity begins decreasing at the 7th passenger
+            if (total >= 4 && opacity >= 30) opacity -= 15; // opacity begins decreasing at the 5th passenger
 
             // set colour with opacity, draw shape (same as station but smaller)
             Main.g2D.setColor(new Color(0, 0, 0, opacity));

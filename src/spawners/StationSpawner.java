@@ -23,14 +23,17 @@ public class StationSpawner {
      * Spawn stations until no more can be spawned.
      */
     public static void stationTick() {
+        // space to spawn?
         if (Main.openCount > 1) {
+            // enough time has passed?
             if (Main.tickRate != 0 && Main.ticks - previousSpawnCheckTick >= SPAWN_CHECK_INTERVAL) {
+                // random chance?
                 if ((int) (Math.random() * SPAWN_CHANCE) == 0) {
                     Main.stations.add(new Station());
                 }
-                previousSpawnCheckTick = Main.ticks;
 
-//                OtherUtilities.debugPrint("station", Main.ticks, previousSpawnCheckTick);
+                // update last checked tick
+                previousSpawnCheckTick = Main.ticks;
             }
         }
     }

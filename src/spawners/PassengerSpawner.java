@@ -7,29 +7,44 @@
 
 package spawners;
 
+import enums.Shape;
 import main.Main;
 import objects.Passenger;
+import objects.Station;
+
+import java.util.HashMap;
 
 /**
  * People to ride the subways.
  */
 public class PassengerSpawner {
 
-    private static final int SPAWN_CHECK_INTERVAL = 10;
+    private static final int SPAWN_CHECK_INTERVAL = 200;
     private static final int SPAWN_CHANCE = 15;
-    private static int previousSpawnCheckTick;
+    private static HashMap<Station, Integer> previousSpawnCheckTicks = new HashMap<Station, Integer>();
 
     /**
      * Spawn passengers.
      */
-    public static void passengerTick() {
-        if (Main.tickRate != 0 && Main.ticks - previousSpawnCheckTick >= SPAWN_CHECK_INTERVAL) {
-            if ((int) (Math.random() * SPAWN_CHANCE) == 0) {
-                Main.stations.get((int) (Math.random() * Main.stations.size())).getPassengers().add(new Passenger());
-            }
-            previousSpawnCheckTick = Main.ticks;
+    public static void passengerTick(Station station) {
+        if (Main.ticks == 0) previousSpawnCheckTicks.clear(); // clear if restarted
+        if (!previousSpawnCheckTicks.containsKey(station)) previousSpawnCheckTicks.put(station, 0); // initialize values
 
-//            OtherUtilities.debugPrint("passenger", Main.ticks, previousSpawnCheckTick);
+        // enough time has passed?
+        if (Main.tickRate != 0 && Main.ticks - previousSpawnCheckTicks.get(station) >= SPAWN_CHECK_INTERVAL) {
+            // random chance?
+            if ((int) (Math.random() * SPAWN_CHANCE) == 0) {
+                Shape type;
+
+                do {
+                    type = Shape.values()[(int) (Math.random() * Shape.values().length)];
+                } while (type == station.getType() || !Main.shapesPresent.contains(type)); // passengers should only spawn of shapes that have appeared on the map, and not of their own station
+
+                station.getPassengers().add(new Passenger(type));
+            }
+
+            // update last checked tick
+            previousSpawnCheckTicks.put(station, Main.ticks);
         }
     }
 

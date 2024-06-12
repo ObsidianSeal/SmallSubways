@@ -23,6 +23,13 @@ public class Passenger {
     }
 
     /**
+     * Passenger constructor.
+     */
+    public Passenger(Shape type) {
+        this.type = type;
+    }
+
+    /**
      * Get the passenger's type.
      * @return The passenger's current type.
      */
