@@ -12,6 +12,7 @@ import main.Main;
 import objects.Passenger;
 import objects.Station;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -36,8 +37,16 @@ public class PassengerSpawner {
             if ((int) (Math.random() * SPAWN_CHANCE) == 0) {
                 Shape type;
 
+                ArrayList<Shape> usedShapes = new ArrayList<Shape>();
+
+                for (Station s : Main.stations) {
+                    if (!usedShapes.contains(s.getType())) {
+                        usedShapes.add(s.getType());
+                    }
+                }
+
                 do {
-                    type = Shape.values()[(int) (Math.random() * Shape.values().length)];
+                    type = usedShapes.get((int) (Math.random() * usedShapes.size()));
                 } while (type == station.getType() || !Main.shapesPresent.contains(type)); // passengers should only spawn of shapes that have appeared on the map, and not of their own station
 
                 station.getPassengers().add(new Passenger(type));
