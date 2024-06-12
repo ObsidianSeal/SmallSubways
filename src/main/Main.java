@@ -150,6 +150,7 @@ public class Main {
         map = new MetroMap(level);
 
         // reset level data
+        ticks = 0; tickRate = 1; regularTickRate = 1;
         lines = new MetroLine[]{null, null, null, null, null, null, null};
         stations.clear();
         currentLine = 0;
@@ -699,7 +700,7 @@ public class Main {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case (KeyEvent.VK_ESCAPE) -> System.exit(0);
+//                case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
                 case (KeyEvent.VK_D) -> dHeld = true;
                 case (KeyEvent.VK_S) -> sHeld = true;
