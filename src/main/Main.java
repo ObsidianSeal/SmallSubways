@@ -16,6 +16,7 @@ import spawners.StationSpawner;
 import utilities.FontUtilities;
 import utilities.ImageUtilities;
 import utilities.MapUtilities;
+import utilities.SoundUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,7 +68,6 @@ public class Main {
     public static ArrayList<Shape> shapesPresent = new ArrayList<Shape>(10);
     static String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     public static Screen screenState = Screen.STUDIO_TITLE;
-
     // variables
     public static double gridSize;
     static int mouseX, mouseY;
@@ -119,6 +119,9 @@ public class Main {
         // title, icon
         mainFrame.setTitle("SmallSubways");
         mainFrame.setIconImage(ImageUtilities.importImage("images/icons/app.png"));
+        //sound
+       // SoundUtilities sound = new SoundUtilities();
+        //playMusic(0);
 
         // defaults and decorations, then show the window
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -140,6 +143,8 @@ public class Main {
         graphicsPanel.requestFocus();
         timer.start();
     }
+
+
 
     /**
      * After a map is chosen from level select, set up the necessary things.
@@ -245,6 +250,7 @@ public class Main {
                 mapThumbnails[i] = ImageUtilities.rezise(mapThumbnails[i], (int) (Main.gridSize * 16), (int) (Main.gridSize * 10));
             }
         }
+
 
         /**
          * This is where the drawing occurs.
@@ -486,7 +492,21 @@ public class Main {
         }
 
     }
+    //public void playMusic(int i){
 
+       // SoundUtilities.setFile(i);
+       // SoundUtilities.play();
+        //SoundUtilities.loop();
+
+    //}
+   // public void stopMusic(){
+
+        //SoundUtilities.stop();
+    //}
+   // public void playSE(int i){
+        //SoundUtilities.setFile(i);
+       // SoundUtilities.play();
+    //}
     /**
      * Listener for mouse events.
      */

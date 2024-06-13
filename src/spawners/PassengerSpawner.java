@@ -11,6 +11,7 @@ import enums.Shape;
 import main.Main;
 import objects.Passenger;
 import objects.Station;
+import utilities.SoundUtilities;
 
 import java.util.HashMap;
 
@@ -22,6 +23,7 @@ public class PassengerSpawner {
     private static final int SPAWN_CHECK_INTERVAL = 200;
     private static final int SPAWN_CHANCE = 15;
     private static HashMap<Station, Integer> previousSpawnCheckTicks = new HashMap<Station, Integer>();
+    private static SoundUtilities soundUtilities = new SoundUtilities(); // Create an instance of SoundUtilities
 
     /**
      * Spawn passengers.
@@ -42,6 +44,8 @@ public class PassengerSpawner {
 
                 station.getPassengers().add(new Passenger(type));
             }
+            soundUtilities.setFile(0); // Set the first sound
+            soundUtilities.play(); // Play the sound
 
             // update last checked tick
             previousSpawnCheckTicks.put(station, Main.ticks);

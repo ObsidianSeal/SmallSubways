@@ -11,16 +11,44 @@ public class SoundUtilities {
     //main stores the variables.
     //make sure that there are circumstances for the sounds to be played.
     //make sure to add all sound effects on trello
+static Clip clip;
+    static URL[] soundURL = new URL[30];
 
-    public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public SoundUtilities() {
 
-        File file = new File("PassengerBoop.wav");
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-        Clip clip= AudioSystem.getClip();
-        clip.open(audioStream);
+        soundURL[0] = getClass().getResource("/sound/PassengerBoop.wav");
+        soundURL[1] = getClass().getResource("/sound/Boop.wav");
+        soundURL[2] = getClass().getResource("/sound/PassengerBoop.wav");
+        soundURL[3] = getClass().getResource("/sound/PassengerBoop.wav");
+        soundURL[4] = getClass().getResource("/sound/PassengerBoop.wav");
 
-        clip.start();
 
     }
-}
 
+    public static void setFile(int i){
+        try {
+
+            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
+            clip = AudioSystem.getClip();
+            clip.open(ais);
+
+        }catch(Exception e){
+
+        }
+
+    }
+
+    public static void play(){
+
+        clip.start();
+    }
+
+    public static void loop(){
+
+        clip.loop(clip.LOOP_CONTINUOUSLY);
+    }
+
+    public static void stop(){
+        clip.stop();
+    }
+}
