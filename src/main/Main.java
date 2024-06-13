@@ -191,6 +191,7 @@ public class Main {
         Image[] mapThumbnails = {
                 ImageUtilities.importImage("images/thumbnails/elora-fergus.png"),
                 ImageUtilities.importImage("images/thumbnails/london.png"),
+                ImageUtilities.importImage("images/thumbnails/montserrat.png"),
                 ImageUtilities.importImage("images/thumbnails/ottawa.png"),
                 ImageUtilities.importImage("images/thumbnails/stratford.png"),
                 ImageUtilities.importImage("images/thumbnails/victoria.png"),

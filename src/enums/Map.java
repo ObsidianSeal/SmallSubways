@@ -13,6 +13,7 @@ package enums;
 public enum Map {
     ELORA_FERGUS,
     LONDON,
+    MONTSERRAT,
     OTTAWA,
     STRATFORD,
     VICTORIA,

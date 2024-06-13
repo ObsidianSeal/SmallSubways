@@ -24,6 +24,7 @@ public class MetroMap {
     public static String[] cities = {
             "Elora-Fergus",
             "London",
+            "Montserrat",
             "Ottawa",
             "Stratford",
             "Victoria",
@@ -34,6 +35,7 @@ public class MetroMap {
     public static String[] countries = {
             "CANADA",
             "CANADA",
+            "MONTSERRAT",
             "CANADA",
             "CANADA",
             "CANADA",
@@ -47,7 +49,7 @@ public class MetroMap {
         switch (map) {
             case ELORA_FERGUS -> {
                 this.map = ImageUtilities.importImage("images/levels/elora-fergus.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#A82222"),
                         Color.decode("#BA6BB0"),
@@ -69,7 +71,7 @@ public class MetroMap {
             }
             case LONDON -> {
                 this.map = ImageUtilities.importImage("images/levels/london.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#F69679"),
                         Color.decode("#7BCDC8"),
@@ -89,9 +91,31 @@ public class MetroMap {
                 };
                 this.waterTravelType = true;
             }
+            case MONTSERRAT -> {
+                this.map = ImageUtilities.importImage("images/levels/montserrat.png");
+                this.colours = new Color[]{
+                        // lines
+                        Color.decode("#FF595E"),
+                        Color.decode("#FFCA3A"),
+                        Color.decode("#6A4C93"),
+                        Color.decode("#F7977A"),
+                        Color.decode("#CD7AF7"),
+                        Color.decode("#C5F3A8"),
+                        Color.decode("#8CBFF3"),
+                        // map
+                        Color.decode("#A6C48A"),
+                        Color.decode("#F9D6B6"),
+                        Color.decode("#000000"),
+                        Color.decode("#1982C4"),
+                        Color.decode("#000000"),
+                        // locked line
+                        Colour.GREY_40
+                };
+                this.waterTravelType = false;
+            }
             case OTTAWA -> {
                 this.map = ImageUtilities.importImage("images/levels/ottawa.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#3B4C51"),
                         Color.decode("#75AA70"),
@@ -113,7 +137,7 @@ public class MetroMap {
             }
             case STRATFORD -> {
                 this.map = ImageUtilities.importImage("images/levels/stratford.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#CE2424"),
                         Color.decode("#D688D9"),
@@ -135,7 +159,7 @@ public class MetroMap {
             }
             case VICTORIA -> {
                 this.map = ImageUtilities.importImage("images/levels/victoria.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#22D8BA"),
                         Color.decode("#38D822"),
@@ -157,7 +181,7 @@ public class MetroMap {
             }
             case WATERLOO -> {
                 this.map = ImageUtilities.importImage("images/levels/waterloo.png");
-                this.colours = new Color[] {
+                this.colours = new Color[]{
                         // lines
                         Color.decode("#DCB35D"),
                         Color.decode("#8AC696"),
@@ -182,6 +206,7 @@ public class MetroMap {
 
     /**
      * Get the level's background image.
+     *
      * @return The map's background BufferedImage.
      */
     public Image getMap() {
@@ -190,6 +215,7 @@ public class MetroMap {
 
     /**
      * Get the level's colour scheme.
+     *
      * @return The map's colour scheme.
      */
     public Color[] getColours() {
@@ -198,6 +224,7 @@ public class MetroMap {
 
     /**
      * Get the level's water travel type.
+     *
      * @return True if the map prefers tunnels, false if the map prefers bridges.
      */
     public boolean getWaterTravelType() {
