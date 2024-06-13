@@ -467,7 +467,10 @@ public class Main {
 
                 // check for game over
                 for (Station station : stations) {
-                    if (station.getPassengers().size() >= 6) screenState = Screen.GAME_OVER;
+                    if (station.getPassengers().size() >= 6) {
+                        screenState = Screen.GAME_OVER;
+                        break;
+                    }
                 }
             }
 
@@ -490,7 +493,8 @@ public class Main {
                 g2D.drawString("One of your stations overcrowded, prompting the closure of your transit system.", (int) (gridSize * 5), (int) (gridSize * 11));
 
                 g2D.setColor(Color.WHITE);
-                g2D.drawString(String.format("You had %d points.", points), (int) (gridSize * 5), (int) (gridSize * 14));
+                if (points == 1) g2D.drawString("You had 1 point.", (int) (gridSize * 5), (int) (gridSize * 14));
+                else g2D.drawString(String.format("You had %d points.", points), (int) (gridSize * 5), (int) (gridSize * 14));
             }
 
             if (controlHeld) {
