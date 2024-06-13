@@ -73,8 +73,9 @@ public class Main {
     static int mouseX, mouseY;
     static int gridX, gridY;
     static boolean controlHeld = false;
-    static boolean dHeld = false;
     static boolean sHeld = false;
+    static boolean doubleClick = false;
+    static int lastClickedTick = 0;
     static int currentLine;
     static int circleHover = -1;
     public static int[] resources = new int[4];
@@ -381,7 +382,14 @@ public class Main {
                 for (Station station : stations) {
                     if (station.isSelected()) {
                         if (circleHover >= 0) station.highlight(lines[circleHover].getColour());
-                        else station.highlight(lines[currentLine].getColour());
+                        else {
+                            station.highlight(lines[currentLine].getColour());
+                            for (MetroLine l : lines) {
+                                if (!(l == null)) {
+                                    if (l.getStations().contains(station)) station.highlight(l.getColour());
+                                }
+                            }
+                        }
                     }
                     station.draw();
                 }
@@ -574,6 +582,13 @@ public class Main {
                     // back arrow
                     if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
                 } else if (screenState == Screen.GAME) {
+                    if (ticks - lastClickedTick < 50) {
+                        doubleClick = true;
+                    } else {
+                        doubleClick = false;
+                    }
+
+                    lastClickedTick = ticks;
                     // back arrow
                     if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.LEVEL_SELECT;
 
@@ -584,17 +599,21 @@ public class Main {
                             // station is not already on the line
                             if (!lines[currentLine].getStations().contains(station)) {
                                 // if adding to the beginning, set diagonal of FIRST station (which will become the NEXT station)
-                                if (sHeld && !lines[currentLine].getStations().isEmpty()) lines[currentLine].getStations().getFirst().setDiagonal(lines[currentLine], !dHeld);
-                                else station.setDiagonal(lines[currentLine], dHeld); // otherwise current station
+                                if (sHeld && !lines[currentLine].getStations().isEmpty()) lines[currentLine].getStations().getFirst().setDiagonal(lines[currentLine], !doubleClick);
+                                else station.setDiagonal(lines[currentLine], doubleClick); // otherwise current station
 
                                 lines[currentLine].addStation(station, sHeld); // add the station
                             } else {
-                                // you can always remove stations if doing so would make the line invisible
-                                if (lines[currentLine].getStations().size() <= 2) lines[currentLine].removeStation(station);
+                                if (!doubleClick) {
+                                    // you can always remove stations if doing so would make the line invisible
+                                    if (lines[currentLine].getStations().size() <= 2)
+                                        lines[currentLine].removeStation(station);
 
-                                // make sure the station is not being used by a train!
-                                for (Train train : lines[currentLine].getTrains()) {
-                                    if (!(station == train.getFromStation() || station == train.getToStation())) lines[currentLine].removeStation(station);
+                                    // make sure the station is not being used by a train!
+                                    for (Train train : lines[currentLine].getTrains()) {
+                                        if (!(station == train.getFromStation() || station == train.getToStation()))
+                                            lines[currentLine].removeStation(station);
+                                    }
                                 }
                             }
                         }
@@ -707,10 +726,34 @@ public class Main {
                             }
                         }
                     }
-                } else {
-                    // station hover
+                } else { // station hover
+                    Station hoveredStation = null;
+
+                    // Finds station being hovered over
                     for (Station station : stations) {
-                        station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
+                        if (station.getGridX() == gridX && station.getGridY() == gridY) {
+                            hoveredStation = station;
+                            hoveredStation.setSelected(true);
+                            break;
+                        }
+                    }
+
+                    // Unselects stations
+                    if (hoveredStation == null) {
+                        for (Station s : stations) {
+                            s.setSelected(false);
+                        }
+                    }
+
+                    // Finds all lines connected to hovered station
+                    for (MetroLine l : lines) {
+                        if (!(l == null)) {
+                            if (l.getStations().contains(hoveredStation)) {
+                                for (Station s : l.getStations()) {
+                                    s.setSelected(true);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -732,7 +775,6 @@ public class Main {
             switch (e.getKeyCode()) {
 //                case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
-                case (KeyEvent.VK_D) -> dHeld = true;
                 case (KeyEvent.VK_S) -> sHeld = true;
             }
 
@@ -799,7 +841,6 @@ public class Main {
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case (KeyEvent.VK_CONTROL) -> controlHeld = false;
-                case (KeyEvent.VK_D) -> dHeld = false;
                 case (KeyEvent.VK_S) -> sHeld = false;
             }
         }
