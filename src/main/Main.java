@@ -476,6 +476,33 @@ public class Main {
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
                 g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
+
+                // check for game over
+                for (Station station : stations) {
+                    if (station.getPassengers().size() >= 6) screenState = Screen.GAME_OVER;
+                }
+            }
+
+            if (screenState == Screen.GAME_OVER) {
+                // background
+                g2D.setColor(Colour.GREY_95);
+                g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+                // back arrow
+                g2D.setColor(Colour.GREY_30); g2D.setStroke(new BasicStroke((float) (gridSize / 2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 7), (int) (gridSize * 3));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 2));
+                g2D.drawLine((int) (gridSize * 3), (int) (gridSize * 3), (int) (gridSize * 4), (int) (gridSize * 4));
+
+                // text
+                g2D.setColor(Colour.LIGHT_RED); g2D.setFont(robotoSerifLight36);
+                g2D.drawString("GAME OVER", (int) (gridSize * 5), (int) (gridSize * 8));
+
+                g2D.setColor(Colour.PASTEL_RED);
+                g2D.drawString("One of your stations overcrowded, prompting the closure of your transit system.", (int) (gridSize * 5), (int) (gridSize * 11));
+
+                g2D.setColor(Color.WHITE);
+                g2D.drawString(String.format("You had %d points.", points), (int) (gridSize * 5), (int) (gridSize * 14));
             }
 
             if (controlHeld) {
@@ -584,6 +611,9 @@ public class Main {
                             }
                         }
                     }
+                } else if (screenState == Screen.GAME_OVER) {
+                    // back arrow
+                    if (gridX >= 3 && gridX < 7 && gridY >= 2 && gridY < 4) screenState = Screen.MAIN_MENU;
                 }
             }
 
@@ -755,6 +785,9 @@ public class Main {
 //                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
 //                    }
 //                }
+            } else if (screenState == Screen.GAME_OVER) {
+                // back arrow
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;
             }
         }
 

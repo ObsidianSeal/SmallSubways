@@ -15,7 +15,7 @@ import objects.Station;
  */
 public class StationSpawner {
 
-    private static final int SPAWN_CHECK_INTERVAL = 120;
+    private static final int SPAWN_CHECK_INTERVAL = 200;
     private static final int SPAWN_CHANCE = 15;
     private static int previousSpawnCheckTick;
 
