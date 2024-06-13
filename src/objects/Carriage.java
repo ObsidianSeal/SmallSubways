@@ -8,7 +8,7 @@
 package objects;
 
 /**
- * Secondary train class.
+ * Secondary train class, unfinished and unimplemented.
  */
 public class Carriage extends Train {
     private Locomotive locomotive;
