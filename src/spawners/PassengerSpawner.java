@@ -19,8 +19,9 @@ import java.util.HashMap;
  */
 public class PassengerSpawner {
 
-    private static int SPAWN_CHECK_INTERVAL = 200;
     private static final int SPAWN_CHANCE = 15;
+
+    private static int spawnCheckInterval = 200;
     private static HashMap<Station, Integer> previousSpawnCheckTicks = new HashMap<Station, Integer>();
 
     /**
@@ -31,8 +32,10 @@ public class PassengerSpawner {
         if (!previousSpawnCheckTicks.containsKey(station)) previousSpawnCheckTicks.put(station, 0); // initialize values
 
         // enough time has passed?
-        if (Main.tickRate != 0 && Main.ticks - previousSpawnCheckTicks.get(station) >= SPAWN_CHECK_INTERVAL) {
-            SPAWN_CHECK_INTERVAL = Math.min(200 - Main.ticks/1000, 50); // Increases passenger spawning rate throughout
+        if (Main.tickRate != 0 && Main.ticks - previousSpawnCheckTicks.get(station) >= spawnCheckInterval) {
+            // decrease interval over time
+            spawnCheckInterval = Math.max(200 - Main.ticks / 1000, 50);
+
             // random chance?
             if ((int) (Math.random() * SPAWN_CHANCE) == 0) {
                 Shape type;

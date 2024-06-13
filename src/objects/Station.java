@@ -293,6 +293,10 @@ public class Station {
 
     /**
      * Fill a shape's background.
+     * @param offsetX How far from the station's x-coordinate the shape should be drawn.
+     * @param offsetY How far from the station's y-coordinate the shape should be drawn.
+     * @param sizeMultiplier How large the shape should be drawn relative to the size of a grid square.
+     * @param type The shape to draw.
      */
     private void fillShape(double offsetX, double offsetY, double sizeMultiplier, Shape type) {
         int iX = (int) (this.x + offsetX);

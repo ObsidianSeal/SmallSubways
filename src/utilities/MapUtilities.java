@@ -34,7 +34,7 @@ public class MapUtilities {
     public static void disallowEdge() {
         for (int i = 0; i < 45; i++) {
             for (int j = 0; j < 80; j++) {
-                if ((i < 2 || i > 42) || (j < 2 || j > 77)) {
+                if ((i < 2 || i > 42) || (j < 2 || j > 75)) {
                     Main.grid[i][j] = Main.MARGIN;
                 }
             }

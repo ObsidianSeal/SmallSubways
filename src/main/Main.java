@@ -706,7 +706,10 @@ public class Main {
                 case (KeyEvent.VK_S) -> sHeld = true;
             }
 
-            if (screenState == Screen.STUDIO_TITLE) {
+            if (screenState == Screen.MAIN_MENU) {
+                // exit!
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) System.exit(0);
+            } else if (screenState == Screen.STUDIO_TITLE) {
                 // skip to menu
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) screenState = Screen.MAIN_MENU;
             } else if (screenState == Screen.LEVEL_SELECT) {

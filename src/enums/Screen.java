@@ -15,5 +15,6 @@ public enum Screen {
     MAIN_MENU,
     LEVEL_SELECT,
     SETTINGS,
-    GAME
+    GAME,
+    GAME_OVER
 }
