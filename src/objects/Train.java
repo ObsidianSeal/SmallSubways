@@ -99,11 +99,30 @@ public abstract class Train {
                         trainPassengersIterator.remove();
 //                        System.out.println("Trip completed for passenger of type " + passenger.getType());
                         Main.points++;
+                    } else { // transfer lines if it is a transfer station and the passenger's destination is not on the line
+                        boolean transfer = true;
+                        for (MetroLine l : Main.lines) {
+                            if (l != null && l != this.line) {
+                                if (l.getStations().contains(toStation)) {
+                                    for (Station s : this.line.getStations()) {
+                                        if (s.getType() == passenger.getType()) {
+                                            transfer = false;
+                                        }
+                                    } if (transfer) {
+                                        this.waiting = true;
+                                        trainPassengersIterator.remove();
+                                        toStation.getPassengers().add(passenger);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
                 // iterate through passengers at the station
                 Iterator<Passenger> stationPassengersIterator = toStation.getPassengers().iterator();
+
+                boolean pickedUp = false;
 
                 while (stationPassengersIterator.hasNext()) {
                     Passenger passenger = stationPassengersIterator.next();
@@ -117,6 +136,7 @@ public abstract class Train {
                                 this.passengers.add(passenger);
 //                                System.out.println("Picked up passenger of type " + passenger.getType());
                                 stationPassengersIterator.remove();
+                                pickedUp = true;
                                 break;
                             }
                         }
@@ -128,9 +148,14 @@ public abstract class Train {
                                 this.passengers.add(passenger);
 //                                System.out.println("Picked up passenger of type " + passenger.getType());
                                 stationPassengersIterator.remove();
+                                pickedUp = true;
                                 break;
                             }
                         }
+                    } if (!pickedUp) { // if path exists to destination, pick up passenger anyways
+                        this.passengers.add(passenger);
+                        stationPassengersIterator.remove();
+                        pickedUp = true;
                     }
                 }
 
