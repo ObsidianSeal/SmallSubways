@@ -8,6 +8,7 @@
 package objects;
 
 import enums.Direction;
+import enums.Shape;
 import main.Main;
 
 import java.awt.*;
@@ -57,6 +58,44 @@ public abstract class Train {
 
         this.x2 = this.x1;
         this.y2 = this.y1;
+    }
+
+    /**
+     * Fill a shape's background.
+     */
+    private void fillShape(double offsetX, double offsetY, double sizeMultiplier, Shape type) {
+        int iX = (int) (this.x1 + offsetX);
+        int iY = (int) (this.y1 + offsetY);
+        int iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier);
+
+        // Shape filling; very manual. If you make any changes here, make sure to also change the corresponding draw method.
+        switch (type) {
+            case CIRCLE -> Main.g2D.fillOval(iX, iY, iSize, iSize);
+            case TRIANGLE ->  {iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier * 1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize}, new int[] {iY + iSize * 15 / 16, iY + iSize / 16, iY + iSize * 15 / 16}, 3);}
+            case SQUARE -> {iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier * 0.9); iX += iSize/20; iY += iSize/20; Main.g2D.fillRect(iX, iY, iSize, iSize);}
+            case STAR -> {iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier*1.3); iX -= iSize*3/20; iY -= iSize*3/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize * 3 / 8, iX + iSize / 2, iX + iSize * 5 / 8, iX + iSize, iX + iSize * 11 / 16, iX + iSize * 25 / 32, iX + iSize / 2, iX + iSize * 7 / 32, iX + iSize * 5 / 16}, new int[] {iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize/16, iY + iSize * 3 / 8, iY + iSize * 3 / 8, iY + iSize * 19 / 32, iY + iSize * 15 / 16, iY + iSize * 3 / 4, iY + iSize * 15 / 16, iY + iSize * 19 / 32}, 10);}
+            case PENTAGON -> {iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier*1.1); iX -= iSize/20; iY -= iSize/20; Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize * 4 / 5, iX + iSize / 5}, new int[] {iY + iSize * 2 / 5, iY + iSize / 40, iY + iSize * 2 / 5, iY + iSize * 39 / 40, iY + iSize * 39 / 40}, 5);}
+            case GEM -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 2, iX + iSize, iX + iSize / 2}, new int[] {iY + iSize / 2, iY, iY + iSize / 2, iY + iSize}, 4);
+            case CROSS -> Main.g2D.fillPolygon(new int[] {iX, iX + iSize / 3, iX + iSize / 3, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize, iX + iSize, iX + iSize * 2 / 3, iX + iSize * 2 / 3, iX + iSize / 3, iX + iSize / 3, iX}, new int[] {iY + iSize / 3, iY + iSize / 3, iY, iY, iY + iSize / 3, iY + iSize / 3, iY + iSize * 2 / 3, iY + iSize * 2 / 3, iY + iSize, iY + iSize, iY + iSize * 2 / 3, iY + iSize * 2 / 3}, 12);
+            case WEDGE ->  {
+                iY += iSize / 5;
+                GeneralPath shape = new GeneralPath();
+                shape.moveTo(iX + iSize / 2f, iY - iSize / 10f);
+                shape.lineTo(iX + iSize, iY + iSize / 2f);
+                shape.curveTo(iX + iSize, iY + iSize / 2f, iX + iSize / 2f, iY + iSize * 6 / 5f, iX, iY + iSize / 2f);
+                shape.closePath();
+                Main.g2D.fill(shape);
+            }
+            case DIAMOND -> {iSize = (int) (this.TRAIN_SIZE_DIAGONAL * sizeMultiplier*1.2); iX -= iSize/10; iY -= iSize/10; Main.g2D.fillPolygon(new int[] {iX + iSize / 2, iX, iX + iSize / 5, iX + iSize * 4 / 5, iX + iSize}, new int[] {iY + iSize * 17 / 20, iY + iSize * 7 / 20, iY + iSize * 3 / 20, iY + iSize * 3 / 20, iY + iSize * 7 / 20}, 5);}
+            case OVAL -> {
+                GeneralPath shape = new GeneralPath();
+                shape.moveTo(iX, iY + iSize);
+                shape.curveTo(iX, iY + iSize, iX - iSize / 10f, iY - iSize / 10f, iX + iSize, iY);
+                shape.curveTo(iX + iSize, iY, iX + iSize * 11 / 10f, iY + iSize * 11 / 10f, iX, iY + iSize);
+                shape.closePath();
+                Main.g2D.fill(shape);
+            }
+        }
     }
 
     /**
@@ -178,7 +217,7 @@ public abstract class Train {
         }
 
         for (int i = 0; i < this.passengers.size(); i++) {
-            Main.g2D.drawString(String.valueOf(this.passengers.get(i).getType()), (int) (this.x1 + 50), (int) (this.y1 + i * 25));
+            fillShape(30 + 15 * i, -10, 0.6, this.passengers.get(i).getType());
         }
 
 //        Main.g2D.drawString(String.format("from: (%d, %d), to: (%d, %d), current: (%d, %d), diagonal: %b", fromX, fromY, toX, toY, (int) (this.x1), (int) (this.y1), diagonal), (int) (this.x1 + 50), (int) (this.y1));
