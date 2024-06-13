@@ -50,7 +50,7 @@ public class Station {
         this.size = Main.gridSize;
         this.x = x * (Main.gridSize);
         this.y = y * Main.gridSize;
-        this.type = Shape.values()[(int) (Math.random() * Shape.values().length)];
+        this.type = generateType();
         this.diagonal = new HashMap<MetroLine, Boolean>();
         this.selected = false;
         this.passengers = new ArrayList<Passenger>();
@@ -114,20 +114,23 @@ public class Station {
         updateShapeAvailability();
     }
 
+    /**
+     * Generate a random station type from percentage chances.
+     * @return The random station type.
+     */
     public Shape generateType() {
-        int r = (int) (Math.random()*100);
+        int r = (int) (Math.random() * 100);
 
-        if (r < 2) return Shape.OVAL;
-        else if (r < 4) return Shape.GEM;
-        else if (r < 6) return Shape.STAR;
-        else if (r < 8) return Shape.CROSS;
-        else if (r < 10) return Shape.DIAMOND;
-        else if (r < 12) return Shape.PENTAGON;
-        else if (r < 14) return Shape.WEDGE;
-        else if (r < 25) return Shape.SQUARE;
-        else if (r < 50) return Shape.TRIANGLE;
-        else if (r < 100) return Shape.CIRCLE;
-        else return Shape.CIRCLE;
+        if (r < 2) return Shape.OVAL; // 2%
+        else if (r < 4) return Shape.GEM; // 2%
+        else if (r < 6) return Shape.STAR; // 2%
+        else if (r < 8) return Shape.CROSS; // 2%
+        else if (r < 10) return Shape.DIAMOND; // 2%
+        else if (r < 12) return Shape.PENTAGON; // 2%
+        else if (r < 14) return Shape.WEDGE; // 2%
+        else if (r < 25) return Shape.SQUARE; // 11%
+        else if (r < 50) return Shape.TRIANGLE; // 25%
+        else return Shape.CIRCLE; // 50%
     }
 
     /**
