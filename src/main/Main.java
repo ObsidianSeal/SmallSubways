@@ -86,23 +86,15 @@ public class Main {
     public static int ticks = 0; // set to 450 to skip studio screen
     public static int tickRate = 1; // tick speed multiplier
     static int regularTickRate = tickRate;
-//    static long pTime = System.nanoTime(); // for delay debugging
     static Screen pScreen;
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-//            long time1 = System.nanoTime();
-
             if (screenState != pScreen) ticks = 0;
             pScreen = screenState;
 
             graphicsPanel.repaint();
             ticks += tickRate;
-
-//            long time2 = System.nanoTime();
-//
-//            System.out.println(((time1 - pTime) / 1_000_000.0) + "ms, " + ((time2 - time1) / 1_000_000.0) + "ms");
-//            pTime = time1;
         }
     });
 
@@ -166,10 +158,6 @@ public class Main {
         lines[0] = new MetroLine(map.getColours()[0]);
         lines[1] = new MetroLine(map.getColours()[1]);
         lines[2] = new MetroLine(map.getColours()[2]);
-//            lines[3] = new MetroLine(map.getColours()[3]);
-//            lines[4] = new MetroLine(map.getColours()[4]);
-//            lines[5] = new MetroLine(map.getColours()[5]);
-//            lines[6] = new MetroLine(map.getColours()[6]);
 
         // add initial stations
         stations.add(new Station(Shape.CIRCLE));
@@ -730,7 +718,6 @@ public class Main {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-//                case (KeyEvent.VK_ESCAPE) -> System.exit(0);
                 case (KeyEvent.VK_CONTROL) -> controlHeld = true;
                 case (KeyEvent.VK_D) -> dHeld = true;
                 case (KeyEvent.VK_S) -> sHeld = true;
@@ -778,13 +765,6 @@ public class Main {
                     if (tickRate > 0) tickRate--;
                     if (tickRate != 0) regularTickRate = tickRate;
                 }
-
-                // EDIT/DEBUG MODE!!
-//                if (controlHeld) {
-//                    if (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9) {
-//                        stations.add(new Station(gridX, gridY, Shape.values()[e.getKeyCode() - KeyEvent.VK_0]));
-//                    }
-//                }
             } else if (screenState == Screen.GAME_OVER) {
                 // back arrow
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) screenState = Screen.MAIN_MENU;

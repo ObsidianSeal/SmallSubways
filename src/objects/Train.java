@@ -96,7 +96,6 @@ public abstract class Train {
                     if (passenger.getType() == toStation.getType()) {
                         this.waiting = true;
                         trainPassengersIterator.remove();
-//                        System.out.println("Trip completed for passenger of type " + passenger.getType());
                         Main.points++;
                     }
                 }
@@ -109,23 +108,19 @@ public abstract class Train {
 
                     // pick up the passenger if the train will go to its destination and there is space left on the train (6 passenger maximum)
                     if ((this.isTravellingForward && indexOfCurrentStation != this.line.getStations().size() - 1) || indexOfCurrentStation == 0) {
-//                        System.out.println("looking forwards...");
                         for (int j = indexOfCurrentStation; j < this.line.getStations().size(); j++) {
                             if (this.line.getStations().get(j).getType() == passenger.getType() && this.passengers.size() < 6) {
                                 this.waiting = true;
                                 this.passengers.add(passenger);
-//                                System.out.println("Picked up passenger of type " + passenger.getType());
                                 stationPassengersIterator.remove();
                                 break;
                             }
                         }
                     } else {
-//                        System.out.println("looking backwards...");
                         for (int j = indexOfCurrentStation; j >= 0; j--) {
                             if (this.line.getStations().get(j).getType() == passenger.getType() && this.passengers.size() < 6) {
                                 this.waiting = true;
                                 this.passengers.add(passenger);
-//                                System.out.println("Picked up passenger of type " + passenger.getType());
                                 stationPassengersIterator.remove();
                                 break;
                             }
@@ -175,8 +170,6 @@ public abstract class Train {
                 else diagonal = !this.fromStation.isDiagonal(this.line);
             }
         }
-
-//        Main.g2D.drawString(String.format("from: (%d, %d), to: (%d, %d), current: (%d, %d), diagonal: %b", fromX, fromY, toX, toY, (int) (this.x1), (int) (this.y1), diagonal), (int) (this.x1 + 50), (int) (this.y1));
 
         // calculations
         int xDiff = toX - fromX;
@@ -331,17 +324,11 @@ public abstract class Train {
             }
         }
 
-//        Main.g2D.drawString(firstDirection + ", " + secondDirection, (int) (this.x1 + 50), (int) (this.y1 + 25));
-
         // if there's only one line segment (visually), discard the invisible one
         if (newX == fromX && newY == fromY || newX == toX && newY == toY) {
             if (newX == toX && newY == toY) secondDirection = firstDirection;
             else firstDirection = secondDirection;
         }
-
-//        Main.g2D.setStroke(new BasicStroke(1));
-//        Main.g2D.drawLine(fromX + this.line.LINE_OFFSET, fromY + this.line.LINE_OFFSET, newX + this.line.LINE_OFFSET, newY + this.line.LINE_OFFSET);
-//        Main.g2D.drawLine(newX + this.line.LINE_OFFSET, newY + this.line.LINE_OFFSET, toX + this.line.LINE_OFFSET, toY + this.line.LINE_OFFSET);
 
         // determine which line segment the train is on
         Direction moveDirection;
@@ -479,12 +466,8 @@ public abstract class Train {
 
         Main.g2D.draw(trainPath);
 
-//        Main.g2D.drawString(String.format("from: %d, to: %d, moveDirection: " + moveDirection + ", travelDirection: %b, diagonal: %b", this.line.getStations().indexOf(this.fromStation), this.line.getStations().indexOf(this.toStation), this.travelDirection, diagonal), (int) (this.x1 + 50), (int) (this.y1 + 50));
-
         Main.g2D.setColor(Color.BLACK);
-//        Main.g2D.setFont(Main.robotoSerifLight16);
         for (int i = 0; i < this.passengers.size(); i++) {
-//            Main.g2D.drawString(String.valueOf(this.passengers.get(i).getType()), (int) (this.x1), (int) (this.y1 + i * Main.gridSize));
             fillShape(Main.gridSize + Main.gridSize / 2.0 * i, Main.gridSize / -2.0, 0.4, this.passengers.get(i).getType());
         }
     }

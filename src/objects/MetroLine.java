@@ -354,32 +354,6 @@ public class MetroLine {
                 }
             }
 
-            // DEBUG: show directions
-//            switch (firstDirection) {
-//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 20);
-//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 20);
-//
-//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 20);
-//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 20);
-//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 20);
-//
-//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 20);
-//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 20);
-//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 20);
-//            }
-//            switch (secondDirection) {
-//                case UP -> Main.g2D.drawString("UP", toX + 20, toY - 10);
-//                case DOWN -> Main.g2D.drawString("DOWN", toX + 20, toY - 10);
-//
-//                case LEFT_UP -> Main.g2D.drawString("LEFT_UP", toX + 20, toY - 10);
-//                case LEFT -> Main.g2D.drawString("LEFT", toX + 20, toY - 10);
-//                case LEFT_DOWN -> Main.g2D.drawString("LEFT_DOWN", toX + 20, toY - 10);
-//
-//                case RIGHT_UP -> Main.g2D.drawString("RIGHT_UP", toX + 20, toY - 10);
-//                case RIGHT -> Main.g2D.drawString("RIGHT", toX + 20, toY - 10);
-//                case RIGHT_DOWN -> Main.g2D.drawString("RIGHT_DOWN", toX + 20, toY - 10);
-//            }
-
             // make sure line segments are drawn from the centre of the stations
             fromX += this.LINE_OFFSET; fromY += this.LINE_OFFSET;
             newX1 += this.LINE_OFFSET; newY1 += this.LINE_OFFSET;
