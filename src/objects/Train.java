@@ -1,6 +1,6 @@
 /*
  * TITLE: Train
- * AUTHOR: Benjamin Gosselin
+ * AUTHOR: Benjamin Gosselin, Daniel Zhong
  * DATE: Tuesday, May 28th, 2024
  * DESCRIPTION: Represents a train.
  */
