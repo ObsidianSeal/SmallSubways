@@ -168,6 +168,39 @@ public class Main {
     }
 
     /**
+     * Determine which stations should be selected.
+     */
+    public static void checkStationHover() {
+        // hover
+        circleHover = -1;
+
+        if (gridX >= 54 && gridY >= 38) {
+            // line circle hover
+            for (int i = 0; i < 7; i++) {
+                for (int j = 0; j < 2; j++) {
+                    for (int k = 0; k < 2; k++) {
+                        if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
+                            if (lines[i] != null) circleHover = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            // station hover, entire line
+            for (Station station : stations) {
+                if (station.getGridX() == gridX && station.getGridY() == gridY) {
+                    circleHover = currentLine;
+                    break;
+                }
+            }
+        }
+
+        for (Station station : stations) station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
+        if (circleHover >= 0) for (Station station : lines[circleHover].getStations()) station.setSelected(true);
+    }
+
+    /**
      * Inner class for drawing.
      */
     private static class GraphicsPanel extends JPanel {
@@ -652,7 +685,11 @@ public class Main {
 
                 // scroll through lines
                 int scrollAmount = e.getWheelRotation();
-                if ((currentLine > 0 && scrollAmount < 0) || (currentLine < lastUnlockedLineIndex && scrollAmount > 0)) currentLine += scrollAmount;
+                if ((currentLine > 0 && scrollAmount < 0) || (currentLine < lastUnlockedLineIndex && scrollAmount > 0)) {
+                    currentLine += scrollAmount;
+                    circleHover = currentLine;
+                    checkStationHover();
+                }
             }
         }
 
@@ -676,33 +713,7 @@ public class Main {
             gridY = (int) (mouseY / gridSize);
 
             if (screenState == Screen.GAME) {
-                // hover
-                circleHover = -1;
-
-                if (gridX >= 54 && gridY >= 38) {
-                    // line circle hover
-                    for (int i = 0; i < 7; i++) {
-                        for (int j = 0; j < 2; j++) {
-                            for (int k = 0; k < 2; k++) {
-                                if (i * 3 + 58 + j == gridX && k + 41 == gridY) {
-                                    if (lines[i] != null) circleHover = i;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // station hover, entire line
-                    for (Station station : stations) {
-                        if (station.getGridX() == gridX && station.getGridY() == gridY) {
-                            circleHover = currentLine;
-                            break;
-                        }
-                    }
-                }
-
-                for (Station station : stations) station.setSelected(station.getGridX() == gridX && station.getGridY() == gridY);
-                if (circleHover >= 0) for (Station station : lines[circleHover].getStations()) station.setSelected(true);
+                checkStationHover();
             }
         }
 
@@ -747,7 +758,11 @@ public class Main {
 
                 // line selection
                 if (e.getKeyCode() >= KeyEvent.VK_1 && e.getKeyCode() <= KeyEvent.VK_7) {
-                    if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) currentLine = e.getKeyCode() - KeyEvent.VK_1;
+                    if (lines[e.getKeyCode() - KeyEvent.VK_1] != null) {
+                        currentLine = e.getKeyCode() - KeyEvent.VK_1;
+                        circleHover = currentLine;
+                        checkStationHover();
+                    }
                 }
 
                 // pause/unpause
