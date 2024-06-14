@@ -96,7 +96,7 @@ public class MetroMap {
                 this.colours = new Color[]{
                         // lines
                         Color.decode("#FF595E"),
-                        Color.decode("#FFCA3A"),
+                        Color.decode("#FFA83A"),
                         Color.decode("#6A4C93"),
                         Color.decode("#F7977A"),
                         Color.decode("#CD7AF7"),
@@ -104,10 +104,10 @@ public class MetroMap {
                         Color.decode("#8CBFF3"),
                         // map
                         Color.decode("#A6C48A"),
-                        Color.decode("#F9D6B6"),
-                        Color.decode("#000000"),
+                        Color.decode("#F9C8B6"),
+                        Color.decode("#0C3D19"),
                         Color.decode("#1982C4"),
-                        Color.decode("#000000"),
+                        Color.decode("#1F185C"),
                         // locked line
                         Colour.GREY_40
                 };
