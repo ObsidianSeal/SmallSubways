@@ -94,6 +94,7 @@ public class MetroLine {
      */
     public void removeStation(Station station) {
         this.stations.remove(station);
+        station.disconnect(this);
 
         if (this.stations.size() == 1) {
             this.trains.clear(); // too few stations for train travel

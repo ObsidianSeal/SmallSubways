@@ -142,15 +142,16 @@ public class Main {
         map = new MetroMap(level);
 
         // reset level data
-        ticks = 0; tickRate = 1; regularTickRate = 1;
-        lines = new MetroLine[]{null, null, null, null, null, null, null};
-        stations.clear();
-        currentLine = 0;
-        points = 0;
+        ticks = 0; tickRate = 1; regularTickRate = 1; // regular speed (1x)
+        lines = new MetroLine[]{null, null, null, null, null, null, null}; // clear lines
+        stations.clear(); // clear stations
+        resources = new int[4]; // reset resources
+        currentLine = 0; // first line is selected
+        points = 0; // reset points
 
         // set up grid squares
         MapUtilities.initializeGrid(); // set all to default ("COUNTRY")
-        MapUtilities.disallowWater();
+        MapUtilities.detectWaterAndCity();
         MapUtilities.disallowEdge();
         MapUtilities.disallowMenuAreas();
 
@@ -405,7 +406,9 @@ public class Main {
                         if (circleHover >= 0) station.highlight(lines[circleHover].getColour());
                         else station.highlight(lines[currentLine].getColour());
                     }
-                    station.draw();
+
+                    if (station.isConnected()) station.draw();
+                    else station.draw(Colour.LIGHT_RED);
                 }
 
                 // line selection menu

@@ -75,9 +75,9 @@ public class MapUtilities {
     }
 
     /**
-     * Prevent stations from spawning on water.
+     * Prevent stations from spawning on water and detect CITY tiles.
      */
-    public static void disallowWater() {
+    public static void detectWaterAndCity() {
         BufferedImage map = (BufferedImage) Main.map.getMap();
 
         int mapHeight = map.getHeight();

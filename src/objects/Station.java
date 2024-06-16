@@ -20,10 +20,10 @@ import java.util.HashMap;
  */
 public class Station {
     private double size;
+    private boolean selected;
     private double x, y;
     private Shape type;
     private HashMap<MetroLine, Boolean> diagonal;
-    private boolean selected;
     private ArrayList<Passenger> passengers;
 
     /**
@@ -281,13 +281,20 @@ public class Station {
     }
 
     /**
-     * Draw the station.
+     * Draw the station, default colour.
      */
     public void draw() {
+        draw(Color.BLACK);
+    }
+
+    /**
+     * Draw the station, specified colour.
+     */
+    public void draw(Color outlineColour) {
         Main.g2D.setColor(Color.WHITE);
         fillShape(0, 0, 1, this.type);
 
-        Main.g2D.setColor(Color.BLACK);
+        Main.g2D.setColor(outlineColour);
         drawShape(1);
     }
 
@@ -441,6 +448,22 @@ public class Station {
      */
     public int getGridY() {
         return (int) (this.y / Main.gridSize);
+    }
+
+    /**
+     * Determine if the station is connected to any lines.
+     * @return If there is at least one line that connects to this station.
+     */
+    public boolean isConnected() {
+        return !this.diagonal.isEmpty();
+    }
+
+    /**
+     * Delete the record of a line's diagonal state for this station.
+     * @param line The line to disconnect from.
+     */
+    public void disconnect(MetroLine line) {
+        this.diagonal.remove(line);
     }
 
 }
