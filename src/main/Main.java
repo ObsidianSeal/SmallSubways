@@ -614,7 +614,7 @@ public class Main {
                             if (!lines[currentLine].getStations().contains(station)) {
                                 // if adding to the beginning, set diagonal of FIRST station (which will become the NEXT station)
                                 if (sHeld && !lines[currentLine].getStations().isEmpty()) lines[currentLine].getStations().getFirst().setDiagonal(lines[currentLine], !dHeld);
-                                else station.setDiagonal(lines[currentLine], dHeld); // otherwise current station
+                                station.setDiagonal(lines[currentLine], dHeld); // current station (always set for connection display purposes)
 
                                 lines[currentLine].addStation(station, sHeld); // add the station
                             } else {
