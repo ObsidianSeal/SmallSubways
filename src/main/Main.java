@@ -90,11 +90,11 @@ public class Main {
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (screenState != pScreen) ticks = 0;
-            pScreen = screenState;
+            if (screenState != pScreen) ticks = 0; // reset ticks if screen has changed
+            pScreen = screenState; // save current screen
 
-            graphicsPanel.repaint();
-            ticks += tickRate;
+            graphicsPanel.repaint(); // draw graphics
+            ticks += tickRate; // increment ticks by rate
         }
     });
 
