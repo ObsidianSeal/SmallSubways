@@ -2,6 +2,9 @@
 ### Major Software Development Project
 
 # Small Subways
+
+[![CodeFactor](https://www.codefactor.io/repository/github/obsidianseal/smallsubways/badge)](https://www.codefactor.io/repository/github/obsidianseal/smallsubways)
+
 This is our Mini Metro clone, made in Java Swing.
 
 [https://pinniped.page/projects/small-subways](https://pinniped.page/projects/small-subways)
